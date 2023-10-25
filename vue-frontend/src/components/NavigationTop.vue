@@ -39,7 +39,7 @@ export default {
 
   mounted() {
      // const getUrl = URL.captchaURL; // 使用基本URL,需要时可进行拼接扩展
-     //通过取出登录后在本地存储的用户id获取用户名
+     //通过取出登录后在本地存储的用户id获取用户信息
     // if (localStorage.getItem("uid") !== null) {
     //   fetchGet(localStorage.getItem("uid"),getUrl).then(res => {
     //     this.user = res.data;

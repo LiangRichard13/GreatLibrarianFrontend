@@ -1,7 +1,6 @@
-const URL = {
-  captchaURL: 'http://www.sstl-business.org.cn/WebServices/Common/SendMessagebyJSON.ashx'
-}
+const config = {
+    //后端api地址
+    API_URL: "http://localhost:5000/",
+};
 
-export default {
-  URL
-}
+export default config

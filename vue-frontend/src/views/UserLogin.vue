@@ -7,6 +7,7 @@
                 <p>Password</p>
                 <el-input class="login-form-input" placeholder="密 码" v-model="password" show-password></el-input>
                 <div style="padding-top: 10px">
+                  <el-checkbox v-model="remember">记住我</el-checkbox>
                     <div style="float: right">
                         <el-tooltip class="item" effect="dark" content="请联系管理员修改" placement="bottom">
                             <el-link style="font-weight: bolder;font-size: 14px;color:#91949c;"
@@ -29,31 +30,32 @@
 </template>
 
 <script>
-// import {fetchPost} from '@/services/ajax';
-// import { URL } from '../services/conf';
+import {Login} from '@/api/user.js';
+
     export default {
         data() {
             return {
                 username: '',
                 password: '',
+                remember: false,
             }
         },
 
         methods: {
             postLogin()
     {
-                // const postUrl = URL.captchaURL; // 使用基本URL,需要时可进行拼接扩展
                 const LoginData = {
                     username: this.username,
                     password: this.password,
+                    remember:  this.remember,
                 };
                 console.log(LoginData);
 
-                // fetchPost(LoginData,postUrl).then(res => {
-                //     localStorage.setItem("uid", res.data.user.id);
-                //     localStorage.setItem("token", res.data.token);//将用户id和token存放到本地
-                //     this.$router.push({path: '/Home', replace: true})
-                // })
+                Login(LoginData).then(res => {
+                    localStorage.setItem("uid", res.data.user.id);
+                    localStorage.setItem("token", res.data.token);//将用户id和token存放到本地
+                    this.$router.push({path: '/home', replace: true})
+                })
             }
         }
     }
@@ -106,8 +108,9 @@
         padding-top: 40px;
         text-align: center;
     }
-
-    >>> .el-input__inner {
-        height: 48px;
+     .el-checkbox {
+        color: #91949c;
+        font-weight: bolder;
+        font-size: 15px;
     }
 </style>

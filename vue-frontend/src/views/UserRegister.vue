@@ -23,8 +23,7 @@
 </template>
 
 <script>
-// import { fetchPost} from '@/services/ajax';
-// import { URL } from '../services/conf';
+import {Register} from '@/api/user.js';
 
 export default {
   data() {
@@ -51,16 +50,16 @@ export default {
         });
         return
       }
-       const RegisterData = {
+      const RegisterData = {
         username: this.username,
         password: this.password,
       };
       console.log(RegisterData);
-      // fetchPost(postUrl, RegisterData).then(res => {
-      //   if (res.success) {
-      //     this.$router.push("/login")
-      //   }
-      // })
+      Register(RegisterData).then(res => {
+        if (res.success) {
+          this.$router.push("/login")
+        }
+      })
     }
   }
 }
@@ -83,19 +82,6 @@ export default {
   letter-spacing: 2px;
 }
 
-.login-form-header {
-  height: 20px;
-  padding-left: 45px;
-  padding-bottom: 100px;
-}
-
-.login-form-text {
-  color: #000000;
-  font-weight: bold;
-  font-size: 30px;
-  padding-top: 15px;
-}
-
 .login-form-input {
   margin-bottom: 10px;
 }
@@ -112,7 +98,7 @@ export default {
   margin-top: 35px;
 }
 
-.login-form-button:hover{
+.login-form-button:hover {
   color: #ffffff;
   text-shadow: 0 0 10px #ffffff,
   0 0 20px #ffffff,
@@ -121,15 +107,12 @@ export default {
   0 0 120px #ffffff,
   0 0 160px #ffffff;
 }
+
 .login-form-footer {
   font-weight: bolder;
   color: #91949c;
   padding-top: 40px;
   text-align: center;
-}
-
->>> .el-input__inner {
-  height: 48px;
 }
 
 </style>

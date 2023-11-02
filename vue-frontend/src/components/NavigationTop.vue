@@ -25,26 +25,32 @@
 </template>
 
 <script>
-// import { fetchGet} from '@/services/ajax';
-// import { URL } from '../services/conf';
+import {findById} from '@/api/user';
 
 export default {
   name: "NavigationTop",
   data() {
     return {
-      state: '',
       user: {'username':'UserName'},
     }
   },
 
   mounted() {
-     // const getUrl = URL.captchaURL; // 使用基本URL,需要时可进行拼接扩展
      //通过取出登录后在本地存储的用户id获取用户信息
-    // if (localStorage.getItem("uid") !== null) {
-    //   fetchGet(localStorage.getItem("uid"),getUrl).then(res => {
-    //     this.user = res.data;
-    //   })
-    // }
+    if (localStorage.getItem("uid") !== null) {
+      findById(localStorage.getItem("uid")).then(res => {
+        this.user = res.data;
+      })
+
+    }
+    //如果本地没有存储的用户id则说明没有登录，跳转到登录页面
+    else{
+       this.$message({
+        message: '检测到您尚未登录，请登录',
+        type: 'warning' // 设置消息类型为警告
+      });
+        this.$router.push("/login")
+    }
   },
 
   methods: {
@@ -105,8 +111,5 @@ export default {
   font-size: 15px;
   letter-spacing: 2px;
 }
->>>.el-input__inner {
-  border-radius: 20px;
-  height: 40px;
-}
+
 </style>

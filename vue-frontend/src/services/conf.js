@@ -1,6 +1,6 @@
 const config = {
     //后端api地址
-    API_URL: "http://localhost:5000/",
+    API_URL: "/api",
 };
 
 export default config

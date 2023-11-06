@@ -2,12 +2,12 @@
   <div class="header">
     <div style="height: 70px;width: 100%">
       <div class="header-links">
-        <el-link style="color: white" href="/Home" class="header-link" :underline="false">首页</el-link>
+        <el-link style="color: white" href="/Home" class="header-link" :underline="false">Home</el-link>
       </div>
 
       <el-dropdown style="float: right;padding-right: 10px">
         <el-button type="text">
-          <div class="header-name">{{ this.user.username }}
+          <div class="header-name">Welcome！{{ this.user.name }}
             <i class="el-icon-caret-bottom"></i>
           </div>
         </el-button>
@@ -25,26 +25,56 @@
 </template>
 
 <script>
-// import { fetchGet} from '@/services/ajax';
-// import { URL } from '../services/conf';
+import {findById, isExpired} from '@/api/user';
 
 export default {
   name: "NavigationTop",
   data() {
     return {
-      state: '',
-      user: {'username':'UserName'},
+      user: {},
     }
   },
 
   mounted() {
-     // const getUrl = URL.captchaURL; // 使用基本URL,需要时可进行拼接扩展
-     //通过取出登录后在本地存储的用户id获取用户信息
-    // if (localStorage.getItem("uid") !== null) {
-    //   fetchGet(localStorage.getItem("uid"),getUrl).then(res => {
-    //     this.user = res.data;
-    //   })
-    // }
+    //如果本地有存储的用户id则说明有登录
+    if (localStorage.getItem("uid") !== null) {
+
+      //检查token是否过期
+      const token = {
+        token: localStorage.getItem('token')
+      }
+      isExpired(token).then(res => {
+        if (!res.success) {
+          this.$message({
+            message: '您的令牌已过期请重新登录',
+            type: 'warning'
+          });
+          localStorage.removeItem("uid");
+          localStorage.removeItem("token");
+          this.$router.push("/login");
+        }
+      });
+
+      const id = {
+        id: parseInt(localStorage.getItem("uid")),
+        // id:localStorage.getItem('uid')
+      }
+
+      //如果令牌没过期
+      //通过取出登录后在本地存储的用户id获取用户信息
+      findById(id).then(res => {
+        this.user = res.data;
+        console.log(res.data)
+      })
+    }
+    //如果本地没有存储的用户id则说明没有登录，跳转到登录页面
+    else {
+      this.$message({
+        message: '检测到您尚未登录，请登录',
+        type: 'warning' // 设置消息类型为警告
+      });
+      this.$router.push("/login")
+    }
   },
 
   methods: {
@@ -62,19 +92,20 @@ export default {
 
 <style scoped>
 
-#loginButton:hover{
+#loginButton:hover {
   color: white;
-  transform: scale(1.0,1.0);
+  transform: scale(1.0, 1.0);
 }
-  .header-link:hover{
-    color: #ffffff;
-    text-shadow: 0 0 10px #ffffff,
-    0 0 20px #ffffff,
-    0 0 40px #ffffff,
-    0 0 80px #ffffff,
-    0 0 120px #ffffff,
-    0 0 160px #ffffff;
-  }
+
+.header-link:hover {
+  color: #ffffff;
+  text-shadow: 0 0 10px #ffffff,
+  0 0 20px #ffffff,
+  0 0 40px #ffffff,
+  0 0 80px #ffffff,
+  0 0 120px #ffffff,
+  0 0 160px #ffffff;
+}
 
 .header {
   height: 70px;
@@ -105,8 +136,5 @@ export default {
   font-size: 15px;
   letter-spacing: 2px;
 }
->>>.el-input__inner {
-  border-radius: 20px;
-  height: 40px;
-}
+
 </style>

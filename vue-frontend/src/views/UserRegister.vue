@@ -4,6 +4,10 @@
       <div style="color: #91949c;font-weight: bolder">
         <p>Username</p>
         <el-input class="login-form-input" v-model="username" placeholder="账 号"></el-input>
+        <p>Phone Number</p>
+        <el-input class="login-form-input" v-model="tel" placeholder="手机号"></el-input>
+        <p>E-mail</p>
+        <el-input class="login-form-input" v-model="email" placeholder="邮箱"></el-input>
         <p>Password</p>
         <el-input class="login-form-input" placeholder="密 码" v-model="password" show-password></el-input>
         <p>Check Password</p>
@@ -23,13 +27,15 @@
 </template>
 
 <script>
-// import { fetchPost} from '@/services/ajax';
-// import { URL } from '../services/conf';
+import {Register} from '@/api/user.js';
+import {Notification} from "element-ui";
 
 export default {
   data() {
     return {
       username: '',
+      tel:'',
+      email:'',
       password: '',
       checkPassword: '',
     }
@@ -44,6 +50,27 @@ export default {
         });
         return
       }
+      if (!this.isValidPhoneNumber(this.tel)) {
+        this.$message({
+          message: '无效的手机号',
+          type: 'warning'
+      });
+         return
+      }
+      if (!this.isValidEmail(this.email)) {
+     this.$message({
+          message: '无效的邮箱',
+          type: 'warning'
+      });
+      return
+}
+       if (this.password.length < 6) {
+        this.$message({
+          message: '请输入不少于6位的密码',
+          type: 'warning'
+        });
+        return
+      }
       if (this.password !== this.checkPassword) {
         this.$message({
           message: '您两次输入的密码不同!',
@@ -51,17 +78,34 @@ export default {
         });
         return
       }
-       const RegisterData = {
+      const RegisterData = {
         username: this.username,
+        tel:this.tel,
+        email:this.email,
         password: this.password,
       };
       console.log(RegisterData);
-      // fetchPost(postUrl, RegisterData).then(res => {
-      //   if (res.success) {
-      //     this.$router.push("/login")
-      //   }
-      // })
-    }
+      Register(RegisterData).then(res => {
+        if (res.success) {
+           Notification.success({
+                    title: 'Success!',
+                    message:res.message,
+                    type: 'success'
+                });
+          this.$router.push("/login")
+        }
+      })
+    },
+    isValidEmail(email) {
+  // 使用正则表达式匹配标准的邮箱格式
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailPattern.test(email);
+},
+   isValidPhoneNumber(phoneNumber) {
+  // 使用正则表达式匹配11位数字
+  const phonePattern = /^\d{11}$/;
+  return phonePattern.test(phoneNumber);
+}
   }
 }
 </script>
@@ -83,19 +127,6 @@ export default {
   letter-spacing: 2px;
 }
 
-.login-form-header {
-  height: 20px;
-  padding-left: 45px;
-  padding-bottom: 100px;
-}
-
-.login-form-text {
-  color: #000000;
-  font-weight: bold;
-  font-size: 30px;
-  padding-top: 15px;
-}
-
 .login-form-input {
   margin-bottom: 10px;
 }
@@ -112,7 +143,7 @@ export default {
   margin-top: 35px;
 }
 
-.login-form-button:hover{
+.login-form-button:hover {
   color: #ffffff;
   text-shadow: 0 0 10px #ffffff,
   0 0 20px #ffffff,
@@ -121,15 +152,12 @@ export default {
   0 0 120px #ffffff,
   0 0 160px #ffffff;
 }
+
 .login-form-footer {
   font-weight: bolder;
   color: #91949c;
   padding-top: 40px;
   text-align: center;
-}
-
->>> .el-input__inner {
-  height: 48px;
 }
 
 </style>

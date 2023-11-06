@@ -4,14 +4,9 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'Home',
-  //   component:()=>import('../views/Home')
-  // },
     {
     path: '/',
-    redirect: '/login', // 将根路由重定向到/login
+    redirect: '/home', // 将根路由重定向到/login
   },
   {
     path: '/login',
@@ -49,7 +44,7 @@ const routes = [
          component: () => import("@/components/NavigationTop.vue"),
         children: [
             {
-                path: '/Home',
+                path: '/home',
                 component: () => import("@/views/UserHome.vue")
             },
             ]

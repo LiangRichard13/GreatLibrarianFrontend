@@ -32,3 +32,19 @@ export function isExpired(data){
         data: data
     })
 }
+
+export function updateUser(data) {
+    return service({
+        url: '/user',
+        method: 'post',
+        data: data
+    })
+}
+
+export function uploadAvatar(data) {
+    return service({
+        url: "/upload",
+        method: 'post',
+        data: data,
+    })
+}

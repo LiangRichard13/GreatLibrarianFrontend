@@ -89,7 +89,7 @@ export default {
         if (res.success) {
            Notification.success({
                     title: 'Success!',
-                    message:res.message,
+                    message:'注册成功！',
                     type: 'success'
                 });
           this.$router.push("/login")

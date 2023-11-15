@@ -75,7 +75,7 @@ export default {
         if (res.success) {
                Notification.success({
                     title: 'Success!',
-                    message:res.message,
+                    message:'登录成功！',
                     type: 'success'
                 });
           localStorage.setItem("uid", res.data.id);

@@ -19,6 +19,11 @@ const routes = [
     component:()=>import('../views/UserRegister.vue')
   },
   // {
+  //   path: '/setting',
+  //   name: 'Setting',
+  //   component:()=>import('../views/UserSetting.vue')
+  // },
+  // {
   //   path: '/debug',
   //   name: 'Debug',
   //   component:()=>console.log("Hi")
@@ -46,6 +51,10 @@ const routes = [
             {
                 path: '/home',
                 component: () => import("@/views/UserHome.vue")
+            },
+            {
+                path: '/setting',
+                component: () => import("@/views/UserSetting.vue")
             },
             ]
      }

@@ -9,6 +9,7 @@ from flask_cors import *
 
 
 def create_app():
+    print('*************creat___app*************')
     app = Flask(__name__)
 
     # 配置数据库

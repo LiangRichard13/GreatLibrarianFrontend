@@ -1,10 +1,9 @@
 import service from "@/utils/request";
 
-export function findById(data) {
+export function findById(id) {
     return service({
-        url: '/user/findById',
-        method: 'post',
-        data:data
+        url: '/user/findById/'+id,
+        method: 'get',
     })
 
 }

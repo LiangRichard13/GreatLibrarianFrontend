@@ -4,7 +4,9 @@
   <div class="header">
     <div style="height: 70px;width: 100%">
       <div class="header-links">
-        <el-link style="color: white" href="/Home" class="header-link" :underline="false">Home</el-link>
+        <el-link style="color: white" href="/Home" class="header-link" :underline="false">首页</el-link>
+        <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">配置</el-link>
+        <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">项目</el-link>
       </div>
 
       <el-dropdown style="float: right;padding-right: 10px">
@@ -53,54 +55,51 @@ export default {
     }
   },
   mounted() {
-    // //如果本地有存储的用户id则说明有登录
-    // if (localStorage.getItem("uid") !== null) {
-    //
-    //   //检查token是否过期
-    //   const token = {
-    //     token: localStorage.getItem('token')
-    //   }
-    //   isExpired(token).then(res => {
-    //     if (!res.success) {
-    //       this.$message({
-    //         message: '您的令牌已过期请重新登录',
-    //         type: 'warning'
-    //       });
-    //       localStorage.removeItem("uid");
-    //       localStorage.removeItem("token");
-    //       this.$router.push("/login");
-    //     }
-    //   });
-    //
-    //   const id = {
-    //     id: parseInt(localStorage.getItem("uid")),
-    //     // id:localStorage.getItem('uid')
-    //   }
-    //
-    //   //如果令牌没过期
-    //   //通过取出登录后在本地存储的用户id获取用户信息
-    //   findById(id).then(res => {
-    //     this.user = res.data;
-    //     console.log(res.data)
-    //   })
-    // }
-    // //如果本地没有存储的用户id则说明没有登录，跳转到登录页面
-    // else {
-    //   this.$message({
-    //     message: '检测到您尚未登录，请登录',
-    //     type: 'warning' // 设置消息类型为警告
-    //   });
-    //   this.$router.push("/login")
-    // }
-  },
-
-  methods: {
-
-    handleLogout() {
-      localStorage.removeItem("uid")
-      localStorage.removeItem("token")
-      this.$router.push('/login')
-    },
+  //   //如果本地有存储的用户id则说明有登录
+  //   if (localStorage.getItem("uid") !== null) {
+  //
+  //     //检查token是否过期
+  //     const token = {
+  //       token: localStorage.getItem('token')
+  //     }
+  //     isExpired(token).then(res => {
+  //       if (!res.success) {
+  //         this.$message({
+  //           message: '您的令牌已过期请重新登录',
+  //           type: 'warning'
+  //         });
+  //         localStorage.removeItem("uid");
+  //         localStorage.removeItem("token");
+  //         this.$router.push("/login");
+  //       }
+  //     });
+  //
+  //     const id = parseInt(localStorage.getItem("uid"))
+  //
+  //     //如果令牌没过期
+  //     //通过取出登录后在本地存储的用户id获取用户信息
+  //     findById(id).then(res => {
+  //       this.user = res.data;
+  //       console.log(res.data)
+  //     })
+  //   }
+  //   //如果本地没有存储的用户id则说明没有登录，跳转到登录页面
+  //   else {
+  //     this.$message({
+  //       message: '检测到您尚未登录，请登录',
+  //       type: 'warning' // 设置消息类型为警告
+  //     });
+  //     this.$router.push("/login")
+  //   }
+  // },
+  //
+  // methods: {
+  //
+  //   handleLogout() {
+  //     localStorage.removeItem("uid")
+  //     localStorage.removeItem("token")
+  //     this.$router.push('/login')
+  //   },
 
   },
 

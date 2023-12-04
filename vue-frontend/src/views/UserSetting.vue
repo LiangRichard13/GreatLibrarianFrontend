@@ -16,52 +16,22 @@
           <el-input type="email" v-model="user.email"></el-input>
         </el-form-item>
         <el-form-item style="padding: 0" label="电话号码">
-          <el-input type="number" v-model="user.phoneNumber"></el-input>
+          <el-input type="number" v-model="user.tel"></el-input>
         </el-form-item>
 
          <el-form-item style="padding: 0;" label="API_KEY:" >
         <div v-for="(row,index) in apiKeys" :key="index" class="api-key-item">
-      API_KEY({{index+1}}):{{ row.content }}
-       <el-popconfirm
-                            confirm-button-text='确定'
-                            cancel-button-text='不用了'
-                            icon="el-icon-info"
-                            icon-color="red"
-                            @confirm="removeKey(index,row)"
-                            title=" 确定要删除此API_KEY吗？ "
-                    >
-                        <el-button
-                                style="margin-left: 8px"
-                                size="mini"
-                                icon="el-icon-delete"
-                                type="danger"
-                                slot="reference">删除
-                        </el-button>
-       </el-popconfirm>
+      API_KEY({{index+1}}):{{ row.value }}
     </div>
-    <el-button @click="showDialog=true">添加API_KEY</el-button>
+    <el-button @click="goToKeyConfig" type="success">配置我的API_KEY</el-button>
 </el-form-item>
-    <el-dialog
-      title="添加 API Key"
-      :visible.sync="showDialog"
-      width="30%"
-      @close="resetDialog">
-      <div>
-        <el-input v-model="newApiKey" placeholder="输入新的 API Key" />
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="showDialog = false">取 消</el-button>
-        <el-button type="primary" @click="addKey">确 定</el-button>
-      </span>
-    </el-dialog>
-
         <el-form-item style="padding-top: 20px">
-          <el-button type="primary" @click="onCheck">更新基本信息</el-button>
+          <el-button type="primary" icon="el-icon-edit" @click="onCheck">更新基本信息</el-button>
         </el-form-item>
       </el-form>
       <div style="text-align: center;">
         <img style="padding-left: 150px;width: 150px; height: 150px;margin-bottom: 10px;" alt=""
-             :src="user.avatar || defaultAvatar">
+             :src="user.iconURL || defaultAvatar">
         <br>
         <el-upload
             style="padding-left: 150px;display:inline-block"
@@ -83,9 +53,8 @@
 
 <script>
 import {findById , updateUser} from "@/api/user";
-import {findByUserId,addApiKey,deleteById} from "@/api/apiKey";
+import {findByUserId} from "@/api/apiConfig";
 import config from "../services/conf";
-import {Notification} from "element-ui";
 
 export default {
   name: "UserSetting",
@@ -94,21 +63,19 @@ export default {
       uploadAction: config.API_URL + '/upload',
       user: {
         username: 'Richard',
-        phoneNumber:'13527454855',
+        tel:'13527454855',
         password: '123456',
         email: 'chendanliang793@gmail',
-        avatar: '',
+        iconURL: '',
       },
       checkPassword:'',
-      apiKeys:[{id:1,content:'123'},{id:2,content:'12345'}],
-      newApiKey: '',
-      showDialog:false,
+      apiKeys:[{value:'123'},{value:'12345'}],
       defaultAvatar: require('@/assets/avatar.png'), // 设置默认头像路径
     }
   },
    created() {
-    if (!this.user.avatar) {
-      this.user.avatar = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+    if (!this.user.iconURL) {
+      this.user.iconURL = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
     }
   },
   mounted() {
@@ -117,11 +84,12 @@ export default {
    methods: {
 load(){
       if (localStorage.getItem("uid") !== null) {
-      findById(localStorage.getItem("uid")).then(res => {
+ const id = parseInt(localStorage.getItem("uid"))
+      findById(id).then(res => {
         this.user = res.data;
         this.checkPassword=this.user.password
       })
-      findByUserId(localStorage.getItem("uid")).then(res => {
+      findByUserId(id).then(res => {
         this.apiKeys = res.data;
       })
     }
@@ -130,9 +98,8 @@ load(){
       updateUser(this.user).then(res => {
         if (res.success) {
           this.user = res.data;
-          Notification.success({
-                    title: 'Success!',
-                    message:res.message,
+           this.$message({
+                    message:'更新成功',
                     type: 'success'
                 });
           this.load()
@@ -141,13 +108,12 @@ load(){
     },
 
     handleUploadSuccess(res) {
-      this.user.avatar = res;
+      this.user.iconURL = res;
       updateUser(this.user).then(res => {
         if (res.success) {
           this.user = res.data;
-         Notification.success({
-                    title: 'Success!',
-                    message:res.message,
+          this.$message({
+                    message:'上传成功',
                     type: 'success'
                 });
          this.load()
@@ -203,50 +169,9 @@ load(){
   const phonePattern = /^\d{11}$/;
   return phonePattern.test(phoneNumber);
 },
-   addKey() {
-
-      if (this.newApiKey.trim()) {
-     const data={
-       newApiKey:this.newApiKey
+     goToKeyConfig(){
+       this.$router.push('/keyConfig');
      }
-     addApiKey(data).then(res=>{
-       if(res.success)
-       {
-         this.apiKeys.push(this.newApiKey);
-        this.newApiKey = ''; // 清空输入框
-        this.showDialog = false; // 关闭对话框
-        this.$message({
-          message: '添加成功',
-          type: 'success'
-        });
-       }
-     })
-      }
-      else
-      {
-         this.$message({
-          message: 'API_KEY不能为空',
-          type: 'warning'
-        });
-      }
-    },
-    removeKey(index,row) {
-  const data={
-    id:row.id
-  }
-  deleteById(data).then(res =>{
-    if(res.success) {
-      this.apiKeys.splice(index, 1);
-      this.$message({
-        message: '删除成功',
-        type: 'success',
-      });
-    }
-  })
-    },
-    resetDialog() {
-      this.newApiKey = ''; // 重置输入框
-    },
   },
 }
 </script>

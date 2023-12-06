@@ -4,9 +4,10 @@
   <div class="header">
     <div style="height: 70px;width: 100%">
       <div class="header-links">
-        <el-link style="color: white" href="/Home" class="header-link" :underline="false">首页</el-link>
+        <el-link style="color: white" href="/Home" class="header-link" :underline="false">主页</el-link>
         <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">配置</el-link>
-        <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">项目</el-link>
+        <el-link style="color: white" href="/userList" class="header-link" :underline="false">合作</el-link>
+        <el-link style="color: white" href="/addProject" class="header-link" :underline="false">项目</el-link>
       </div>
 
       <el-dropdown style="float: right;padding-right: 10px">
@@ -19,7 +20,12 @@
         <el-dropdown-menu slot="dropdown">
              <el-dropdown-item>
             <el-link :underline="false" href="/setting" style="padding-right: 7px">
-              <i style="font-size: 15px; padding-right: 3px" class="el-icon-user-solid"></i>个人设置
+              <i style="font-size: 15px; padding-right: 3px" ></i>个人设置
+            </el-link>
+          </el-dropdown-item>
+            <el-dropdown-item>
+            <el-link :underline="false" href="/userFriendsList" style="padding-right: 7px">
+              <i style="font-size: 15px; padding-right: 3px"></i>我的好友
             </el-link>
           </el-dropdown-item>
           <el-dropdown-item divided>
@@ -59,9 +65,7 @@ export default {
   //   if (localStorage.getItem("uid") !== null) {
   //
   //     //检查token是否过期
-  //     const token = {
-  //       token: localStorage.getItem('token')
-  //     }
+  //     const token = localStorage.getItem('loginToken')
   //     isExpired(token).then(res => {
   //       if (!res.success) {
   //         this.$message({
@@ -69,7 +73,7 @@ export default {
   //           type: 'warning'
   //         });
   //         localStorage.removeItem("uid");
-  //         localStorage.removeItem("token");
+  //         localStorage.removeItem("loginToken");
   //         this.$router.push("/login");
   //       }
   //     });
@@ -97,7 +101,7 @@ export default {
   //
   //   handleLogout() {
   //     localStorage.removeItem("uid")
-  //     localStorage.removeItem("token")
+  //     localStorage.removeItem("loginToken")
   //     this.$router.push('/login')
   //   },
 

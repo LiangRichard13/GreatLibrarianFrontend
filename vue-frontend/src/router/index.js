@@ -57,16 +57,48 @@ const routes = [
                 component: () => import("@/views/UserSetting.vue")
             },
             {
+                path:'/userFriendsList',
+                component: () => import("@/views/UserFriendsList.vue")
+            },
+            {
                 path: '/configureNavigation',
                 component: () => import("../components/ConfigureNavigation.vue"),
                 children: [
                     {
                         path: '/keyConfig',
-                        component: () => import("@/views/ApiKeyConfig.vue")
+                        component: () => import("@/views/Config/ApiKeyConfig.vue")
                     },
                      {
                         path: '/dataSetConfig',
-                        component: () => import("@/views/DadaSetConfig.vue")
+                        component: () => import("@/views/Config/DadaSetConfig.vue")
+                    }
+                ]
+            },
+             {
+                path: '/collaborateNavigation',
+                component: () => import("../components/CollaborateNavigation.vue"),
+                children: [
+                    {
+                        path: '/myCollaborate',
+                        component: () => import("@/views/Collaborate/MyCollaborate.vue")
+                    },
+                     {
+                        path: '/userList',
+                        component: () => import("@/views/Collaborate/UserList.vue")
+                    }
+                ]
+            },
+               {
+                path: '/projectNavigation',
+                component: () => import("../components/ProjectNavigation.vue"),
+                children: [
+                    {
+                        path: '/addProject',
+                        component: () => import("@/views/Project/AddProject.vue")
+                    },
+                     {
+                        path: '/projectsList',
+                        component: () => import("@/views/Project/ProjectsList.vue")
                     }
                 ]
             },

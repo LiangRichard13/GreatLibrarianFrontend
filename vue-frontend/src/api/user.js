@@ -24,18 +24,17 @@ export function Register(data){
     })
 }
 
-export function isExpired(data){
+export function isExpired(token){
     return service({
-        url: '/user/isExpired',
-        method: 'post',
-        data: data
+        url: '/user/isExpired'+token,
+        method: 'get',
     })
 }
 
 export function updateUser(data) {
     return service({
         url: '/user',
-        method: 'post',
+        method: 'put',
         data: data
     })
 }

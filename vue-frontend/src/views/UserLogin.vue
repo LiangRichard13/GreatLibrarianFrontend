@@ -80,7 +80,8 @@ export default {
                 });
           localStorage.setItem("uid", res.data.id);
           console.log(res.data.token)
-            localStorage.setItem("token", res.data.token);//将用户id和token存放到本地
+          localStorage.setItem("loginToken", res.data.token);//将用户id和token存放到本地
+          // localStorage.setItem("authToken", res.data.authToken);
           this.$router.push({path: '/home', replace: true})
         }
       })

@@ -16,6 +16,8 @@
         <el-table-column prop="id" label="API_KEY ID"></el-table-column>
         <el-table-column prop="name" label="接口"></el-table-column>
         <el-table-column prop="value" label="内容"></el-table-column>
+        <el-table-column prop="auth" label="认证token"></el-table-column>
+
 
         <!-- 操作列 -->
         <el-table-column label="操作" width="180" align="center">
@@ -49,6 +51,7 @@
         @close="resetDialog">
       <div>
         <el-form ref="form" :model="newApiKey" label-width="100px">
+
           <el-form-item label="接口来源">
             <el-input v-model="newApiKey.name"></el-input>
           </el-form-item>
@@ -56,7 +59,13 @@
           <el-form-item label="KEY内容">
             <el-input v-model="newApiKey.value"></el-input>
           </el-form-item>
+
+            <el-form-item label="认证token">
+            <el-input v-model="newApiKey.auth"></el-input>
+          </el-form-item>
         </el-form>
+
+
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showDialog = false">取 消</el-button>
@@ -75,7 +84,7 @@ export default {
   name: "ApiConfig",
   data() {
     return {
-      apiKeys: [{id: '1', name: '文心一言', value: '123'}, {id: 2, name: 'openAI', value: '12345'}],
+      apiKeys: [{id: '1', name: '文心一言', value: '123',auth:'xxx'}, {id: 2, name: 'openAI', value: '12345',auth:'xxx'}],
       showDialog: false,
       newApiKey: {name: '', value: ''}
     }
@@ -87,22 +96,25 @@ export default {
       {
         load() {
           if (localStorage.getItem("uid") !== null) {
-            const id = parseInt(localStorage.getItem("uid"))
+            const id = localStorage.getItem("uid")
             findByUserId(id).then(res => {
               this.apiKeys = res.data;
             })
           }
         },
         addKey() {
-          if (this.newApiKey.value.trim() && this.newApiKey.name.trim()) {
+          if (this.newApiKey.value.trim() && this.newApiKey.name.trim()&&this.newApiKey.auth) {
             const data = {
+              uid:localStorage.getItem('uid'),
               name: this.newApiKey.name,
-              value: this.newApiKey.value
+              value: this.newApiKey.value,
+              auth:this.newApiKey.auth
             }
             addApiKey(data).then(res => {
               if (res.success) {
                 this.newApiKey.name = '';
                 this.newApiKey.value = ''; // 清空输入框
+                this.newApiKey.auth='';
                 this.showDialog = false; // 关闭对话框
                 this.$message({
                   message: '添加成功',
@@ -113,7 +125,7 @@ export default {
             })
           } else {
             this.$message({
-              message: 'API_KEY不能为空',
+              message: '添加API_KEY各字段不能为空',
               type: 'warning'
             });
           }
@@ -133,6 +145,7 @@ export default {
         resetDialog() {
           this.newApiKey.name = '';
           this.newApiKey.value = '';// 重置输入
+          this.newApiKey.auth='';
         },
       }
 }
@@ -146,7 +159,7 @@ export default {
   margin: auto; /* 这将使得表格居中 */
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* 可选：添加阴影效果 */
   padding: 20px; /* 可选：添加一些内边距 */
-  border: 1px solid #ebeef5; /* 根据你的截图，看起来你需要一个边框 */
+  border: 1px solid #ebeef5;
 }
 
 .main {

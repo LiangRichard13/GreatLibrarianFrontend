@@ -54,11 +54,11 @@ const routes = [
             },
             {
                 path: '/setting',
-                component: () => import("@/views/UserSetting.vue")
+                component: () => import("@/views/me/UserSetting.vue")
             },
             {
                 path:'/userFriendsList',
-                component: () => import("@/views/UserFriendsList.vue")
+                component: () => import("@/views/me/UserFriendsList.vue")
             },
             {
                 path: '/configureNavigation',

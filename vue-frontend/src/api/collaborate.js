@@ -1,29 +1,40 @@
 import service from "@/utils/request";
 
-export function getUserList() {
+export function getUserList(id) {
     return service({
         url: '/collaborate/getUserList',
         method: 'get',
+           params: {
+            id: id
+        }
     })
 }
+
 export function addFriend(data) {
     return service({
         url: '/collaborate/addFriend',
         method: 'post',
-        data:data
+        data: data
     })
 }
 
 export function getUserFriendsById(id) {
     return service({
-        url: '/collaborate/addFriend/'+id,
+        url: '/collaborate/getUserFriendsById',
         method: 'get',
+        params: {
+            id: id
+        }
     })
 }
 
-export function deleteFriendById(id) {
+export function deleteById(id,uid) {
     return service({
-        url: '/collaborate/addFriend/'+id,
-        method: 'get',
+        url: '/collaborate/deleteById',
+        method: 'delete',
+        params: {
+            id: id,
+            uid:uid
+        }
     })
 }

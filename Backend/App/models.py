@@ -5,6 +5,7 @@
 from .extensions import db
 
 
+# 用户信息表
 class User(db.Model):
     __tablename__ = 'tb_user'
     user_id = db.Column(db.String(30), primary_key=True)  # 用户ID
@@ -14,9 +15,9 @@ class User(db.Model):
     user_password = db.Column(db.String(30), nullable=False)  # 不为空值
     user_IP = db.Column(db.String(30))  # 用户IP
     user_iconUrl = db.Column(db.String(80))  # 用户头像Url
+    user_authToken = db.Column(db.String(30))  # 用户密钥
 
     apiKeys = db.relationship('APIKey', backref='user', lazy='dynamic')
-    testProjects = db.relationship('TestProject', backref='user', lazy='dynamic')
 
     def __str__(self):
         if self.user_tel:
@@ -25,6 +26,16 @@ class User(db.Model):
             return f'id:{self.user_id}\tname:{self.user_name}\temail:{self.user_email}'
 
 
+# 用户好友关系表
+class FriendShip(db.Model):
+    __tablename__ = 'tb_friendship'
+    friendship_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 好友关系id值，自增
+    userid = db.Column(db.String(30), db.ForeignKey(User.user_id), nullable=False)  # 用户ID---外键
+    friendship_token = db.Column(db.String(30), nullable=False)  # 好友的token密钥
+    friendship_createTime = db.Column(db.DateTime, nullable=False)  # 好友创建的时间
+
+
+# APIKey信息表
 class APIKey(db.Model):
     __tablename__ = 'tb_APIKey'
     apiKey_id = db.Column(db.String(30), primary_key=True)
@@ -34,20 +45,22 @@ class APIKey(db.Model):
     userid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
 
 
+# 项目数据表
+class Project(db.Model):
+    __tablename__ = 'tb_Project'
+    project_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 项目id值，自增
+    project_name = db.Column(db.String(80))  # 项目名称
+    project_info = db.Column(db.String(200))  # 项目描述
+    project_LLM = db.Column(db.String(200))  # 项目内可用的LLM
+    project_DataSet = db.Column(db.String(200))  # 数据集
+    userId = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
+
+
 # 用户测试实验信息
 class TestProject(db.Model):
     __tablename__ = 'tb_TestProject'
     testProject_id = db.Column(db.String(30), primary_key=True)  # 测试实验信息ID
-    testProject_name = db.Column(db.String(30))  # 测试项目名称
     testProject_time = db.Column(db.DateTime)  # 测试时间
-    testProject_caseNum = db.Column(db.Integer)  # 测试项目包含测试数据条目
-    testProject_LLMName = db.Column(db.String(30))  # APIKey中的name字段
-    userid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
-
-
-'''class SharedFile(db.Model):
-    __tablename__ = 'tb_sharedFile'
-    file_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    file_name = db.Column(db.String(50))
-    file_url = db.Column(db.String(80), nullable=False)  # 不为空值
-    file_userId = db.Column(db.Integer, db.ForeignKey(User.id))  # 外键,关联到用户表的主键，实现⼀对多关系，'''
+    testProject_LLMs = db.Column(db.String(100))  # APIKey中的name字段【指定大模型】
+    testProject_dataSet = db.Column(db.String(100))  # 实验所用的数据集路径
+    projectId = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # 项目ID---外键

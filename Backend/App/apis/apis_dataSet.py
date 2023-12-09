@@ -1,29 +1,9 @@
 # @Author: LiXiang
-# @Time: 2023/11/15 20:22
+# @Time: 2023/12/8 16:02
 # @version: 1.0
 from flask import jsonify, request
 from flask_restful import Resource
 from App.models import *
-
-
-class APIKeyAdd(Resource):
-    def post(self):
-        pass
-
-
-class APIKeyDelete(Resource):
-    def post(self):
-        pass
-
-
-class APIKeyUpdate(Resource):
-    def post(self):
-        pass
-
-
-class APIKeySearch(Resource):
-    def post(self):
-        pass
 
 
 class DataSetAdd(Resource):

@@ -47,8 +47,8 @@
           <el-button
             size="mini"
             type="primary"
-            @click.stop="createExperiment(scope.row)"> <!-- 阻止冒泡 -->
-            创建实验
+            @click.stop="handleExperiment(scope.row.id,scope.row.name)"> <!-- 阻止冒泡 -->
+            实验列表
           </el-button>
         </el-dropdown-item>
         <el-dropdown-item>
@@ -86,8 +86,8 @@
       <!-- 对话框 -->
       <el-dialog title="请为当前项目添加协作者" :visible.sync="showDialog" @close="handleDialogClose">
 
-        <div style="text-align: center; margin-top: 10px;">
-          当前项目：{{ currentProjectId }} - {{ currentProjectName }}
+        <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
+          <h4>当前项目：{{ currentProjectId }} - {{ currentProjectName }}</h4>
         </div>
 
         <!-- 复选框列表 -->
@@ -192,6 +192,7 @@ export default {
           });
         }
       })
+      this.load()
     },
     setCurrentProjectID(projectId, projectName) {
       this.currentProjectId = projectId
@@ -213,7 +214,10 @@ export default {
         }
       })
       this.handleDialogClose(); // 关闭对话框
-      this.load
+      this.load()
+    },
+    handleExperiment(id,name){
+      this.$router.push({ path: `/experimentList/${id}/${name}` });
     }
   }
 }

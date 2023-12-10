@@ -141,6 +141,7 @@ export default {
               });
             }
           })
+          this.load()
         },
         resetDialog() {
           this.newApiKey.name = '';

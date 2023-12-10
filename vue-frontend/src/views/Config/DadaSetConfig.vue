@@ -183,6 +183,7 @@ export default {
               });
             }
           })
+          this.load()
         },
         resetDialog() {
           this.newDataItem.name = '';

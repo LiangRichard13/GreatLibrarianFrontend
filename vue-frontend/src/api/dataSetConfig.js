@@ -2,14 +2,20 @@ import service from "@/utils/request";
 
 export function findByUserId(id) {
     return service({
-        url: '/dataSetConfig/findByUserId/'+id,
+        url: '/dataSetConfig/findByUserId',
         method: 'get',
+           params: {
+            id: id
+        }
     })
 }
 export function deleteById(id) {
     return service({
-        url: '/dataSetConfig/deleteById/'+id,
+        url: '/dataSetConfig/deleteById',
         method: 'delete',
+           params: {
+            id: id
+        }
     })
 }
 

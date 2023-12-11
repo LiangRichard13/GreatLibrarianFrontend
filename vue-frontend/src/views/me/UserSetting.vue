@@ -31,7 +31,7 @@
       </el-form>
       <div style="text-align: center;">
         <img style="padding-left: 150px;width: 150px; height: 150px;margin-bottom: 10px;" alt=""
-             :src="user.iconURL || defaultAvatar">
+             :src="user.iconUrl || defaultAvatar">
         <br>
         <el-upload
             style="padding-left: 150px;display:inline-block"
@@ -54,7 +54,7 @@
 <script>
 import {findById , updateUser} from "@/api/user";
 import {findByUserId} from "@/api/apiConfig";
-import config from "../services/conf";
+import config from "../../services/conf";
 
 export default {
   name: "UserSetting",
@@ -66,7 +66,7 @@ export default {
         tel:'13527454855',
         password: '123456',
         email: 'chendanliang793@gmail',
-        iconURL: '',
+        iconUrl: '',
       },
       checkPassword:'',
       apiKeys:[{value:'123'},{value:'12345'}],
@@ -74,8 +74,8 @@ export default {
     }
   },
    created() {
-    if (!this.user.iconURL) {
-      this.user.iconURL = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+    if (!this.user.iconUrl) {
+      this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
     }
   },
   mounted() {
@@ -84,7 +84,7 @@ export default {
    methods: {
 load(){
       if (localStorage.getItem("uid") !== null) {
- const id = parseInt(localStorage.getItem("uid"))
+ const id = localStorage.getItem("uid")
       findById(id).then(res => {
         this.user = res.data;
         this.checkPassword=this.user.password
@@ -108,7 +108,7 @@ load(){
     },
 
     handleUploadSuccess(res) {
-      this.user.iconURL = res;
+      this.user.iconUrl = res;
       updateUser(this.user).then(res => {
         if (res.success) {
           this.user = res.data;

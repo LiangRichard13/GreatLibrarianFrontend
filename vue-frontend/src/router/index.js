@@ -18,32 +18,8 @@ const routes = [
         name: 'Register',
         component: () => import('../views/UserRegister.vue')
     },
-    // {
-    //   path: '/setting',
-    //   name: 'Setting',
-    //   component:()=>import('../views/UserSetting.vue')
-    // },
-    // {
-    //   path: '/debug',
-    //   name: 'Debug',
-    //   component:()=>console.log("Hi")
-    // },
-    // {
-    //   path:  '/apps/hadoken',
-    //   component: {render: (e) => e("router-view") },
-    //   children: [
-    //     {
-    //       path: 'index',
-    //       component: ()=>import('../apps/hadoken/views/Index')
-    //     },
-    //     {
-    //       path: 'cart',
-    //       component: ()=>import('../apps/hadoken/views/Cart')
-    //     }
-    //       ]
-    // }
 
-//导航栏组件复用
+    //导航栏组件复用
     {
         path: '',
         component: () => import("@/components/NavigationTop.vue"),
@@ -54,11 +30,15 @@ const routes = [
             },
             {
                 path: '/setting',
-                component: () => import("@/views/UserSetting.vue")
+                component: () => import("@/views/me/UserSetting.vue")
             },
             {
-                path:'/userFriendsList',
-                component: () => import("@/views/UserFriendsList.vue")
+                path: '/userFriendsList',
+                component: () => import("@/views/me/UserFriendsList.vue")
+            },
+            {
+                path: '/experimentList/:id/:name',
+                component: () => import("@/views/Experiment/ExperimentList.vue")
             },
             {
                 path: '/configureNavigation',
@@ -68,13 +48,13 @@ const routes = [
                         path: '/keyConfig',
                         component: () => import("@/views/Config/ApiKeyConfig.vue")
                     },
-                     {
+                    {
                         path: '/dataSetConfig',
                         component: () => import("@/views/Config/DadaSetConfig.vue")
                     }
                 ]
             },
-             {
+            {
                 path: '/collaborateNavigation',
                 component: () => import("../components/CollaborateNavigation.vue"),
                 children: [
@@ -82,13 +62,13 @@ const routes = [
                         path: '/myCollaborate',
                         component: () => import("@/views/Collaborate/MyCollaborate.vue")
                     },
-                     {
+                    {
                         path: '/userList',
                         component: () => import("@/views/Collaborate/UserList.vue")
                     }
                 ]
             },
-               {
+            {
                 path: '/projectNavigation',
                 component: () => import("../components/ProjectNavigation.vue"),
                 children: [
@@ -96,7 +76,7 @@ const routes = [
                         path: '/addProject',
                         component: () => import("@/views/Project/AddProject.vue")
                     },
-                     {
+                    {
                         path: '/projectsList',
                         component: () => import("@/views/Project/ProjectsList.vue")
                     }
@@ -111,7 +91,7 @@ const router = new VueRouter({
         if (savedPosition) {
             return savedPosition
         } else {
-            return {x: 0, y: 0}
+            return { x: 0, y: 0 }
         }
     },
     mode: 'history',

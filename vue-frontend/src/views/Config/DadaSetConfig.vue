@@ -14,22 +14,26 @@
     <div class="table-container">
       <el-table :data="dataSet" style="width: 100%">
         <el-table-column type="expand">
-      <template slot-scope="props">
-        <el-form label-position="left" inline class="demo-table-expand">
-          <el-form-item label="详细描述">
-            <span>{{ props.row.info}}</span>
-          </el-form-item>
-        </el-form>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="数据集 ID"
-      prop="id">
-    </el-table-column>
-    <el-table-column
-      label="接口"
-      prop="name">
-    </el-table-column>
+          <template slot-scope="props">
+            <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item label="数据集文件URL:">
+                <span>{{ props.row.fileURL }}</span>
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
+        <el-table-column
+            label="数据集 ID"
+            prop="id">
+        </el-table-column>
+        <el-table-column
+            label="测试对象"
+            prop="name">
+        </el-table-column>
+        <el-table-column
+            label="详细描述"
+            prop="info">
+        </el-table-column>
 
         <!-- 操作列 -->
         <el-table-column label="操作" width="180" align="center">
@@ -61,22 +65,41 @@
         :visible.sync="showDialog"
         width="30%"
         @close="resetDialog">
+
       <div>
         <el-form ref="form" :model="newDataItem" label-width="100px">
-          <el-form-item label="接口来源">
+          <el-form-item label="测试对象">
             <el-input v-model="newDataItem.name"></el-input>
           </el-form-item>
 
-          <el-form-item label="数据集内容">
-            <el-input v-model="newDataItem.value"></el-input>
+          <el-form-item label="详细描述">
+            <el-input v-model="newDataItem.info"></el-input>
+          </el-form-item>
+
+          <!-- Upload button added here -->
+          <el-form-item label="上传文件">
+            <el-upload
+                class="upload-demo"
+                accept="application/zip"
+                :action="uploadAction"
+                :on-success="handleUploadSuccess"
+                multiple
+                :limit="1">
+              <el-button size="small" type="primary">
+                <i class="el-icon-upload2"></i> 点击上传
+              </el-button>
+              <div class="el-upload__tip">只能上传zip文件</div>
+            </el-upload>
           </el-form-item>
         </el-form>
       </div>
+
       <span slot="footer" class="dialog-footer">
-        <el-button @click="showDialog = false">取 消</el-button>
-        <el-button type="primary" @click="addDataSet">确 定</el-button>
-      </span>
+    <el-button @click="showDialog = false">取 消</el-button>
+    <el-button type="primary" @click="addDataSet">确 定</el-button>
+  </span>
     </el-dialog>
+
 
   </div>
 </template>
@@ -84,14 +107,21 @@
 
 <script>
 import {addDateSet, deleteById, findByUserId} from "@/api/dataSetConfig";
+import config from "@/services/conf";
 
 export default {
   name: "DataSetConfig",
   data() {
     return {
-      dataSet: [{id: '1', name: '文心一言', info: '123'}, {id: '1', name: 'chatGpt', info: '123'}],
+      uploadAction: config.API_URL + '/upload',
+      dataSet: [{id: '1', name: '文心一言', info: '123', fileURL: 'http://localhost:8080/dataSetFile/1'}, {
+        id: '1',
+        name: 'chatGpt',
+        info: '123',
+        fileURL: 'http://localhost:8080/dataSetFile/2'
+      }],
       showDialog: false,
-      newDataItem: {name: '', info: ''}
+      newDataItem: {name: '', info: '', fileUrl: ''}
     }
   },
   mounted() {
@@ -101,7 +131,7 @@ export default {
       {
         load() {
           if (localStorage.getItem("uid") !== null) {
-            const id = parseInt(localStorage.getItem("uid"))
+            const id = localStorage.getItem("uid")
             findByUserId(id).then(res => {
               this.dataSet = res.data;
             })
@@ -109,31 +139,41 @@ export default {
         },
         addDataSet() {
           if (this.newDataItem.info.trim() && this.newDataItem.name.trim()) {
-            const data = {
-              name: this.newDataItem.name,
-              info: this.newDataItem.info
-            }
-            addDateSet(data).then(res => {
-              if (res.success) {
-                this.newDataItem.name = '';
-                this.newDataItem.info = ''; // 清空输入框
-                this.showDialog = false; // 关闭对话框
-                this.$message({
-                  message: '添加成功',
-                  type: 'success'
-                });
-                this.load()
+            if (this.newDataItem.fileUrl !== '') {
+              const data = {
+                uid:localStorage.getItem('uid'),
+                name: this.newDataItem.name,
+                info: this.newDataItem.info,
+                fileUrl: this.newDataItem.fileUrl
               }
-            })
+              addDateSet(data).then(res => {
+                if (res.success) {
+                  this.newDataItem.name = '';
+                  this.newDataItem.info = ''; // 清空输入框
+                  this.newDataItem.fileUrl = '';
+                  this.showDialog = false; // 关闭对话框
+                  this.$message({
+                    message: '添加成功',
+                    type: 'success'
+                  });
+                  this.load()
+                }
+              })
+            } else {
+              this.$message({
+                message: '请上传数据集文件',
+                type: 'warning'
+              });
+            }
           } else {
             this.$message({
-              message: 'API_KEY不能为空',
+              message: '数据集各字段不能为空',
               type: 'warning'
             });
           }
         },
         removeDataSet(index, row) {
-          const deleteId=row.id
+          const deleteId = row.id
           deleteById(deleteId).then(res => {
             if (res.success) {
               this.dataSet.splice(index, 1);
@@ -143,10 +183,21 @@ export default {
               });
             }
           })
+          this.load()
         },
         resetDialog() {
           this.newDataItem.name = '';
           this.newDataItem.value = '';// 重置输入
+          this.newDataItem.fileUrl = '';
+        },
+        handleUploadSuccess(res) {
+          if (res.success) {
+            this.$message({
+              message: '上传成功！',
+              type: 'success',
+            });
+            this.newDataItem.fileUrl = res;
+          }
         },
       }
 }

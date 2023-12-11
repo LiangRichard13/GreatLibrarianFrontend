@@ -2,8 +2,11 @@ import service from "@/utils/request";
 
 export function findById(id) {
     return service({
-        url: '/user/findById/'+id,
+        url: '/user/findById',
         method: 'get',
+        params: {
+            id: id
+        }
     })
 
 }
@@ -16,7 +19,7 @@ export function Login(data) {
     })
 }
 
-export function Register(data){
+export function Register(data) {
     return service({
         url: '/user/register',
         method: 'post',
@@ -24,16 +27,19 @@ export function Register(data){
     })
 }
 
-export function isExpired(token){
+export function isExpired(token) {
     return service({
-        url: '/user/isExpired'+token,
+        url: '/user/isExpired',
         method: 'get',
+        params: {
+            loginToken: token
+        }
     })
 }
 
 export function updateUser(data) {
     return service({
-        url: '/user',
+        url: '/user/updateUser',
         method: 'put',
         data: data
     })
@@ -46,3 +52,23 @@ export function uploadAvatar(data) {
         data: data,
     })
 }
+
+export function removeUserIp(id) {
+    return service({
+            url: "/user/removeUserIp",
+            method: 'delete',
+            params:{
+                id:id
+            }
+        }
+    )
+    }
+
+    export function setUserIp(data) {
+        return service({
+            url: "/user/setUserIp",
+            method: 'post',
+            data: data
+        })
+
+    }

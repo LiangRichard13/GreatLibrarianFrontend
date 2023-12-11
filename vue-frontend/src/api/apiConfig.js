@@ -2,14 +2,21 @@ import service from "@/utils/request";
 
 export function findByUserId(id) {
     return service({
-        url: '/apiConfig/findByUserId/'+id,
+        url: '/apiConfig/findByUserId',
         method: 'get',
+        params: {
+            id: id
+        }
     })
 }
+
 export function deleteById(id) {
     return service({
-        url: '/apiConfig/deleteById/'+id,
+        url: '/apiConfig/deleteById',
         method: 'delete',
+        params: {
+            id: id
+        }
     })
 }
 

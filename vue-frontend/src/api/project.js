@@ -7,9 +7,41 @@ export function addProject(data) {
         data: data
     })
 }
-export function getProjectsById(id) {
+
+export function getProjectsByUseId(id) {
     return service({
-        url: '/project/addProject/'+id,
+        url: '/project/getProjectsByUserId',
         method: 'get',
+        params: {
+            id: id
+        }
+    })
+}
+
+export function deleteById(id) {
+    return service({
+        url: '/project/deleteById',
+        method: 'delete',
+        params: {
+            id: id
+        }
+    })
+}
+
+export function addFriendsToProject(data) {
+    return service({
+        url: '/project/addFriendsToProject',
+        method: 'post',
+        data: data
+    })
+}
+
+export function getCollaborateProjectsByUseId(id) {
+    return service({
+        url: '/project/getCollaborateProjectsByUseId',
+        method: 'get',
+        params: {
+            id: id
+        }
     })
 }

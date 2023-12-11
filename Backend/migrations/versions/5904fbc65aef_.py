@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: bac3aa07a9f6
+Revision ID: 5904fbc65aef
 Revises: 3d7cbcf84d33
-Create Date: 2023-11-15 19:11:06.996765
+Create Date: 2023-12-08 16:47:12.930699
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bac3aa07a9f6'
+revision = '5904fbc65aef'
 down_revision = '3d7cbcf84d33'
 branch_labels = None
 depends_on = None
@@ -29,17 +29,17 @@ def upgrade():
     )
     op.create_table('tb_TestProject',
     sa.Column('testProject_id', sa.String(length=30), nullable=False),
-    sa.Column('testProject_name', sa.String(length=30), nullable=True),
     sa.Column('testProject_time', sa.DateTime(), nullable=True),
-    sa.Column('testProject_caseNum', sa.Integer(), nullable=True),
-    sa.Column('testProject_LLMName', sa.String(length=30), nullable=True),
-    sa.Column('userid', sa.String(length=30), nullable=True),
-    sa.ForeignKeyConstraint(['userid'], ['tb_user.user_id'], ),
+    sa.Column('testProject_LLMs', sa.String(length=100), nullable=True),
+    sa.Column('testProject_dataSet', sa.String(length=100), nullable=True),
+    sa.Column('projectId', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['projectId'], ['tb_Project.project_id'], ),
     sa.PrimaryKeyConstraint('testProject_id')
     )
     with op.batch_alter_table('tb_user', schema=None) as batch_op:
         batch_op.add_column(sa.Column('user_IP', sa.String(length=30), nullable=True))
         batch_op.add_column(sa.Column('user_iconUrl', sa.String(length=80), nullable=True))
+        batch_op.add_column(sa.Column('user_authToken', sa.String(length=30), nullable=True))
         batch_op.alter_column('user_id',
                existing_type=sa.INTEGER(),
                type_=sa.String(length=30),
@@ -57,6 +57,7 @@ def downgrade():
                existing_type=sa.String(length=30),
                type_=sa.INTEGER(),
                existing_nullable=False)
+        batch_op.drop_column('user_authToken')
         batch_op.drop_column('user_iconUrl')
         batch_op.drop_column('user_IP')
 

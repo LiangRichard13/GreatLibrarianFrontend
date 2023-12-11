@@ -9,9 +9,7 @@ from flask_cors import *
 
 
 def create_app():
-    print('*************creat___app*************')
     app = Flask(__name__)
-
     # 配置数据库
     db_uri = 'sqlite:///sqlite3.db'  # sqlite配置
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
@@ -20,5 +18,5 @@ def create_app():
     init_extensions(app=app)
     # 初始化CORS扩展并配置允许的来源
     # CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
-    CORS(app, resources=r'/*', origins="http://localhost:8080", methods=['GET', 'POST'])
+    CORS(app, resources=r'/*', origins="http://localhost:8080", methods=['GET', 'POST', 'DELETE', 'PUT'])
     return app

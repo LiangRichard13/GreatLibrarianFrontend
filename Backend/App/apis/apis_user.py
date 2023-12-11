@@ -32,8 +32,7 @@ class UpdateUser(Resource):
 class FindById(Resource):
     def post(self):
         print("this is findById")
-        user_id = request.json['id']
-        users = User.query.filter(User.user_id == user_id)
+        users = User.query.filter(User.user_id == request.json['id'])
         if list(users):
             user = users[0]
             data = {'name': user.user_name, 'tel': user.user_tel, 'email': user.user_email, }
@@ -59,17 +58,15 @@ class LoginToken(Resource):
 # 用户注册
 class Register(Resource):
     def post(self):
-        user = User()
-        user.user_id = creat_md5_id()
-        user.user_name = request.json['username']
-        user.user_tel = request.json['tel']
-        user.user_email = request.json['email']
-        user.user_password = request.json['password']
-        # user.user_IP = request.remote_addr
+        user = User(user_id=creat_md5_id()[:15],
+                    user_name=request.json['username'],
+                    user_tel=request.json['tel'],
+                    user_email=request.json['email'],
+                    user_password=request.json['password'],
+                    user_authToken=creat_md5_id()[:5])
         try:
             db.session.add(user)  # 加入数据库
             db.session.commit()
-            print('注册成功！！')
             return jsonify({'success': True})
         except Exception as e:  # 数据库插入操作异常处理
             db.session.rollback()  # 回滚
@@ -86,11 +83,8 @@ class Register(Resource):
 class Login(Resource):
     def post(self):
         global users
-        print("this is login 后端post请求处理")
-        # 获取到前端发送请求的json数据
-        # print(f'request.json:{request.json}  type:{type(request.json)}')
         login_type = request.json['type']  # 用户登录类型
-        username = request.json['loginName']  # 用户登录名
+        username = request.json['loginName']  # 用户登录输入【tel/email】
         password = request.json['password']  # 用户登录密码
         remember = request.json['remember']  # 用户免登录
         if login_type == 'tel':
@@ -101,16 +95,42 @@ class Login(Resource):
             print('未找到用户信息')
             return jsonify({'success': False, 'data': None, 'message': 'invalid tel or email'})
         else:
-            if password == users[0].user_password:
-                user_id = users[0].user_id
+            user = users[0]
+            if password == user.user_password:
+                user_id = user.user_id
                 data = {'id': user_id}
-                print(f'需要token:{remember}')
+                # print(f'需要token:{remember}')
                 if remember:
-                    data['token'] = encode(user_id, 60)
+                    data['loginToken'] = encode(user_id, 60)  # 免登录
                 else:
-                    data['token'] = encode(user_id, 10)
-                print(data)
+                    data['loginToken'] = encode(user_id, 10)  # 无需免登录
+                user.user_IP = request.remote_addr  # 获取本地ip地址
+                try:
+                    db.session.add(user)  # 加入数据库
+                    db.session.commit()
+                except Exception as e:  # 数据库插入操作异常处理
+                    db.session.rollback()  # 回滚
+                    db.session.flush()  # 刷新，清空缓存
+                    print(e)
                 return jsonify({'success': True, 'data': data})
             else:
                 print('登录密码错误')
                 return jsonify({'success': False, 'data': None, 'message': 'password is wrong'})
+
+
+# 获取当前局域网下所有的用户信息
+class GetSameNetUsers(Resource):
+    def get(self):
+        user_id = request.args['id']  # 获取当前用户id
+        ip = request.remote_addr
+        users = User.query.filter(User.user_IP == ip)
+        print("同一局域网下的所有用户:")
+        for user in users:
+            if user.user_id != user_id:
+                print(user)
+
+
+class AddFriendShip(Resource):
+    def get(self):
+        user_id = request.args['id']  # 获取当前用户id
+        friend_id = request.args['id']  # 获取好友的id

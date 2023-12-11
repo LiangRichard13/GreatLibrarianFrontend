@@ -38,6 +38,7 @@ def decode(token):
         print(f'token过期-----{e}')
         return False
 
-# code = encode('123456')
+
+# code = encode('123456', 30)
 # time.sleep(1)
 # decode(code)

@@ -37,9 +37,14 @@ const routes = [
                 component: () => import("@/views/me/UserFriendsList.vue")
             },
             {
-                path: '/experimentList/:id/:name',
+                path: '/FriendRequests',
+                component: () => import("@/views/me/FriendRequests.vue")
+            },
+            {
+                path: '/experimentList',
                 component: () => import("@/views/Experiment/ExperimentList.vue")
             },
+    
             {
                 path: '/configureNavigation',
                 component: () => import("../components/ConfigureNavigation.vue"),

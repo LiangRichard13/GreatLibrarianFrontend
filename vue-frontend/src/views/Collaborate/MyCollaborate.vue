@@ -54,7 +54,7 @@
 
 <script>
 
-import { getCollaborateProjectsByUseId } from '@/api/project'
+import { getCollaborateProjectsByUserId } from '@/api/project'
 export default {
   name: "MyCollaborate",
   data() {
@@ -92,7 +92,7 @@ export default {
     load() {
       if (localStorage.getItem("uid") !== null) {
         const id = localStorage.getItem("uid")
-        getCollaborateProjectsByUseId(id).then(res => {
+        getCollaborateProjectsByUserId(id).then(res => {
           this.projectList = res.data;
         })
       }

@@ -96,7 +96,7 @@
 
       <span slot="footer" class="dialog-footer">
     <el-button @click="showDialog = false">取 消</el-button>
-    <el-button type="primary" @click="addDataSet">确 定</el-button>
+    <el-button type="primary" @click="handleAddDataSet">确 定</el-button>
   </span>
     </el-dialog>
 
@@ -137,7 +137,7 @@ export default {
             })
           }
         },
-        addDataSet() {
+        handleAddDataSet() {
           if (this.newDataItem.info.trim() && this.newDataItem.name.trim()) {
             if (this.newDataItem.fileUrl !== '') {
               const data = {
@@ -183,7 +183,6 @@ export default {
               });
             }
           })
-          this.load()
         },
         resetDialog() {
           this.newDataItem.name = '';

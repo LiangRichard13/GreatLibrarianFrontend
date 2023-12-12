@@ -84,6 +84,7 @@ export default {
     },
     handleAddProject() {
       if (this.newProject.name.trim() && this.newProject.description.trim()) {
+        if(this.newProject.apiKey.length > 0 && this.newProject.dataset.length > 0){
         const data = {
           name: this.newProject.name,
           description: this.newProject.description,
@@ -103,6 +104,13 @@ export default {
             });
           }
         })
+      }
+      else{
+        this.$message({
+          message: '请选择apikey和数据集！',
+          type: 'warning'
+        });
+      }
       } else {
         this.$message({
           message: '项目名或测试说明不能为空',

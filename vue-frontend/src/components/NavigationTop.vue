@@ -12,20 +12,26 @@
 
           <el-dropdown style="float: right;padding-right: 10px">
             <el-button type="text">
-              <div class="header-name">Welcome！{{ this.user.name }}
+              <div class="header-name">Welcome!{{ this.user.name }}
                 <i class="el-icon-caret-bottom"></i>
               </div>
               <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.avatar || defaultAvatar">
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
-                <el-link :underline="false" href="/setting" style="padding-right: 7px">
-                  <i style="font-size: 15px; padding-right: 3px"></i>个人设置
+                <el-link :underline="false" href="/FriendRequests" style="padding-right: 7px">
+                  <i style="font-size: 15px; padding-right: 3px" class="el-icon-bell"></i>我的好友申请
                 </el-link>
               </el-dropdown-item>
               <el-dropdown-item>
                 <el-link :underline="false" href="/userFriendsList" style="padding-right: 7px">
-                  <i style="font-size: 15px; padding-right: 3px"></i>我的好友
+                  <i style="font-size: 15px; padding-right: 3px" class="el-icon-user
+"></i>我的好友
+                </el-link>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-link :underline="false" href="/setting" style="padding-right: 7px">
+                  <i style="font-size: 15px; padding-right: 3px" class="el-icon-setting"></i>个人设置
                 </el-link>
               </el-dropdown-item>
               <el-dropdown-item divided>
@@ -51,19 +57,15 @@ export default {
   name: "NavigationTop",
   data() {
     return {
-      user: {},
+      user: { name: '新用户', iconUrl: '' },
       defaultAvatar: require('@/assets/avatar.png'), // 设置默认头像路径
     }
   },
-  created() {
-    if (!this.user.avatar) {
-      this.user.avatar = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
-    }
-  },
+
   mounted() {
     // //如果本地有存储的用户id则说明有登录
     // if (localStorage.getItem("uid") !== null) {
-    //
+
     //   //检查token是否过期
     //   const token = localStorage.getItem('loginToken')
     //   isExpired(token).then(res => {
@@ -78,16 +80,19 @@ export default {
     //       this.$router.push("/login");
     //     }
     //   });
-    //
+
     //   const id = localStorage.getItem("uid")
-    // this.handleSetUserIp
-    // window.addEventListener('beforeunload', this.handleRemoveUserIp);//添加事件监听，如果用户关闭浏览器则请求移除用户ip
+    //   this.handleSetUserIp
+    //   window.addEventListener('beforeunload', this.handleRemoveUserIp);//添加事件监听，如果用户关闭浏览器则请求移除用户ip
     //   //如果令牌没过期
     //   //通过取出登录后在本地存储的用户id获取用户信息
     //   findById(id).then(res => {
     //     this.user = res.data;
     //     console.log(res.data)
     //   })
+    //   if (this.user.avatar=='') {
+    //   this.user.avatar = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+    // }
     // }
     // //如果本地没有存储的用户id则说明没有登录，跳转到登录页面
     // else {
@@ -99,6 +104,11 @@ export default {
     // }
   },
 
+  created(){
+    if (!this.user.avatar) {
+      this.user.avatar = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+    }
+  },
   methods: {
 
     handleLogout() {

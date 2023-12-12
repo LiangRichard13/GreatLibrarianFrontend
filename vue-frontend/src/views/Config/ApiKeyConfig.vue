@@ -28,7 +28,7 @@
                 icon="el-icon-info"
                 icon-color="red"
                 @confirm="removeKey(scope.$index, scope.row)"
-                title="确定要删除此API_KEY吗？"
+                title="确定要删除此API_KEY吗?"
             >
               <el-button
                   style="margin-left: 8px"
@@ -141,7 +141,6 @@ export default {
               });
             }
           })
-          this.load()
         },
         resetDialog() {
           this.newApiKey.name = '';

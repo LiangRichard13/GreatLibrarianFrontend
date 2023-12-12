@@ -50,6 +50,9 @@ export function uploadAvatar(data) {
         url: "/upload",
         method: 'post',
         data: data,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+          },
     })
 }
 

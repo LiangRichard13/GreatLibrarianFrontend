@@ -23,7 +23,7 @@
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
                             <el-button size="mini" type="warning"
-                                @click.stop="handleReviewExpirement(scope.row,thisProject)">
+                                @click.stop="handleReviewExpirement(scope.row)">
                                 开始审核
                             </el-button>
                         </template>
@@ -124,8 +124,8 @@ export default {
                 }
             });
         },
-        handleReviewExpirement(experiment,project) {
-            this.$router.push({ path: `/review`,query:{experiment,project}});
+        handleReviewExpirement(experiment) {
+            this.$router.push({ path: `/review`,query:experiment});
         },
         goBack() {
             this.$router.go(-1); // 返回上一个页面

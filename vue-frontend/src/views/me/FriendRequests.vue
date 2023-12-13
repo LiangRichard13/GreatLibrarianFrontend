@@ -20,7 +20,7 @@
 <script>
 // import { getFriendsRequest } from '@/api/collaborate'
 import { agreeToAdd, refuseToAdd } from '@/api/collaborate'
-import { config } from '@/services/conf'
+import config from "@/services/conf"
 export default {
     name: "FriendsRequests",
     data() {

@@ -8,7 +8,7 @@
       </h3>
     </div>
     <div class="table-container">
-      <el-table :data="QAList" style="width: 100%">
+      <el-table :data="pagedQAList" style="width: 100%">
         <el-table-column label="QA ID" prop="id"></el-table-column>
         <el-table-column label="问题" prop="question"></el-table-column>
         <el-table-column label="打分" prop="rate">
@@ -28,6 +28,12 @@
         </el-table-column>
       </el-table>
     </div>
+    <div class="pagination-container" style="margin-top: 20px;">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+        :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
+        layout="total, sizes, prev, pager, next, jumper">
+      </el-pagination>
+    </div>
     <div class="button-container" style="text-align: right; margin-top: 20px;">
       <el-button type="primary" @click="submitRate()">提交打分</el-button>
     </div>
@@ -42,7 +48,7 @@ export default {
     return {
       showDialog: false,
       QAList: [
-        { id: '1', question: '世界上最高的峰是哪个峰 ?', answer: '世界上最高的山峰是珠穆朗玛峰（Mount Everest），它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。', rate: 4 },
+        { id: '1', question: '世界上最高的峰是哪个峰 ?', answer: '世界上最高的山峰是珠穆朗玛峰,它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。', rate: 4 },
         { id: '2', question: '世界上最深的湖是哪个?', answer: '世界上最深的湖是贝加尔湖，位于俄罗斯。', rate: 3 },
         { id: '3', question: '世界上最长的山脉是什么?', answer: '世界上最长的山脉是安第斯山脉，延伸南美西部海岸线。', rate: 4 },
         { id: '4', question: '世界上最大的热带雨林是哪里?', answer: '世界上最大的热带雨林是亚马孙雨林，覆盖多个南美国家。', rate: 5 },
@@ -50,12 +56,15 @@ export default {
       ],
       thisExperiment: {},
       selectedIds: [],
+      currentPage: 1,
+      pageSize: 10,
+      pagedQAList: [] // 用于显示当前页的数据
     }
   },
   mounted() {
-    this.thisExperiment = this.$route.query.experiment
-    this.thisProject=this.$route.query.project
+    this.thisExperiment = this.$route.query
     // this.load()
+    this.updatePagedQAList(); // 初始加载
   },
   methods: {
     load() {
@@ -76,6 +85,22 @@ export default {
           this.load()
         }
       })
+    },
+    // 用于处理每页显示条目数变化
+    handleSizeChange(newSize) {
+      this.pageSize = newSize;
+      this.updatePagedQAList();
+    },
+    // 用于处理当前页变化
+    handleCurrentChange(newPage) {
+      this.currentPage = newPage;
+      this.updatePagedQAList();
+    },
+    // 更新当前页的 QA 列表
+    updatePagedQAList() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      this.pagedQAList = this.QAList.slice(startIndex, endIndex);
     },
   }
 }

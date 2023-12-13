@@ -42,7 +42,8 @@
                                             icon-color="red"
                                             @confirm.stop="handleRemoveExpirement(scope.$index, scope.row.id)"
                                             title="确定要删除此实验吗？">
-                                            <el-button icon="el-icon-delete" size="mini" type="danger" slot="reference" @click.stop> <!-- 阻止冒泡 -->
+                                            <el-button icon="el-icon-delete" size="mini" type="danger" slot="reference"
+                                                @click.stop> <!-- 阻止冒泡 -->
                                                 删除
                                             </el-button>
                                         </el-popconfirm>
@@ -75,9 +76,15 @@
                                 </el-button>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
+                                        <el-button size="mini" type="primary"
+                                            @click.stop="handleAssignExpirement(scope.row, thisProject.collaborators)">
+                                            分发协作
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
                                         <el-button size="mini" type="warning"
-                                            @click.stop="handleReviewExpirement(scope.row,thisProject)">
-                                            分发与审核
+                                            @click.stop="handleReviewExpirement(scope.row)">
+                                            审核结果
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
@@ -85,7 +92,8 @@
                                             icon-color="red"
                                             @confirm.stop="handleRemoveExpirement(scope.$index, scope.row.id)"
                                             title="确定要删除此实验吗？">
-                                            <el-button icon="el-icon-delete" size="mini" type="danger" slot="reference" @click.stop> <!-- 阻止冒泡 -->
+                                            <el-button icon="el-icon-delete" size="mini" type="danger" slot="reference"
+                                                @click.stop> <!-- 阻止冒泡 -->
                                                 删除
                                             </el-button>
                                         </el-popconfirm>
@@ -108,12 +116,13 @@
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
                             <el-button size="mini" type="primary" slot="reference" @click.stop> <!-- 阻止冒泡 -->
-                                    查看记录
-                                </el-button>
+                                查看记录
+                            </el-button>
                             <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                 icon-color="red" @confirm.stop="handleRemoveExpirement(scope.$index, scope.row.id)"
                                 title="确定要删除此实验吗？">
-                                <el-button  size="mini" type="danger" slot="reference" style="margin-left: 5px;" @click.stop > <!-- 阻止冒泡 -->
+                                <el-button size="mini" type="danger" slot="reference" style="margin-left: 5px;" @click.stop>
+                                    <!-- 阻止冒泡 -->
                                     删除
                                 </el-button>
                             </el-popconfirm>
@@ -225,7 +234,7 @@ export default {
                         "progress": 100
                     }
                 ],
-            newExpirement: { name: '', apiKey:'', dataSet: '' },
+            newExpirement: { name: '', apiKey: '', dataSet: '' },
             expList: [], // 待实验列表数据
             reviewList: [], // 待审核列表数据
             doneList: [], // 已完成列表数据
@@ -243,6 +252,7 @@ export default {
             // getExperimentByProjectId(id).then(res => {
             //     this.experimentList = res.data;
             // })
+
             this.experimentList.forEach(exp => {
                 switch (exp.status) {
                     case '待实验':
@@ -260,7 +270,7 @@ export default {
         },
         handleAddNewExpirement() {
             if (this.newExpirement.name.trim()) {
-                if (this.newExpirement.apiKey!==''&&this.newExpirement.dataSet!=='') {
+                if (this.newExpirement.apiKey !== '' && this.newExpirement.dataSet !== '') {
                     const data = {
                         name: this.newExpirement.name,
                         apiKey: this.newExpirement.apiKey,
@@ -307,8 +317,16 @@ export default {
         handleStartExpirement(index, id) {
             console.log(index, id)
         },
-        handleReviewExpirement(experiment,project) {
-            this.$router.push({ path: `/assignment`,query:{experiment,project}});
+        handleAssignExpirement(experiment, collaborators) {
+            this.$router.push({
+                path: `/assignment`, query: {
+                    experiment: JSON.stringify(experiment),
+                    collaborators: JSON.stringify(collaborators)
+                }
+            });
+        },
+        handleReviewExpirement(experiment) {
+            this.$router.push({ path: `/review`, query: experiment });
         },
         goBack() {
             this.$router.go(-1); // 返回上一个页面
@@ -356,5 +374,4 @@ export default {
     position: absolute;
     top: 10px;
     left: 10px;
-}
-</style>
+}</style>

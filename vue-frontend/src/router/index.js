@@ -44,7 +44,18 @@ const routes = [
                 path: '/experimentList',
                 component: () => import("@/views/Experiment/ExperimentList.vue")
             },
-    
+            {
+                path: '/experienceCollaborate',
+                component: () => import('@/views/Collaborate/ExperienceCollaborate.vue')
+            },
+            {
+                path: '/review',
+                component: () => import("@/views/QA/ReviewQA.vue")
+            },
+            {
+                path: '/assignment',
+                component: () => import("@/views/QA/AssignmentQA.vue")
+            },
             {
                 path: '/configureNavigation',
                 component: () => import("../components/ConfigureNavigation.vue"),

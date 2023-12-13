@@ -68,6 +68,7 @@
             @confirm.stop="removeDataSet(scope.$index, scope.row)"
             title="确定要删除此项目吗？">
             <el-button
+            icon="el-icon-delete"
               size="mini"
               type="danger"
               slot="reference"
@@ -125,7 +126,7 @@ export default {
           id: '1',
           name: 'FirstProject',
           description: 'This is a test',
-          collaborators:[{name:'Alice'},{name:'Bob'}],
+          collaborators:[{id:'1',name:'Alice'},{id:'2',name:'Bob'}],
           apiKey: [{ id: '1', name: '文心一言', value: '123', auth: 'xxx' }, { id: '2', name: 'openAI', value: '12345', auth: 'xxx' }],
           dataSet: [
             {
@@ -210,10 +211,10 @@ export default {
             message: '已为项目添加协作者！',
             type: 'success',
           });
+          this.load()
         }
       })
       this.handleDialogClose(); // 关闭对话框
-      this.load()
     },
     handleExperiment(project){
       this.$router.push({ path: `/experimentList`,query: project});

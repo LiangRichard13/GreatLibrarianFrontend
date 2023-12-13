@@ -41,7 +41,7 @@
             <el-button   style="margin-left: 8px"
               size="mini"
               type="primary"
-              slot="reference" @click=" InCollaboration(scope.row.id)">
+              slot="reference" @click=" InCollaboration(scope.row)">
             参与协作
             </el-button>
           </template>
@@ -64,7 +64,7 @@ export default {
           id: '1',
           name: 'FirstProject',
           description: 'This is a test',
-          collaborators: [{ name: 'Alice' }, { name: 'Bob' }],
+          collaborators: [{ id:'1',name: 'Alice' }, { id:'2',name: 'Bob' }],
           apikey: [{ id: '1', name: '文心一言', value: '123', auth: 'xxx' }, { id: '2', name: 'openAI', value: '12345', auth: 'xxx' }],
           dataSet: [
             {
@@ -97,8 +97,8 @@ export default {
         })
       }
     },
-    InCollaboration(id){
-console.log('参与协作项目：'+id)
+    InCollaboration(project){
+      this.$router.push({ path: `/experienceCollaborate`,query: project});
     }
   }
 }

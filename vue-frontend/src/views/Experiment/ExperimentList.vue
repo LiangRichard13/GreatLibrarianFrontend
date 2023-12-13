@@ -42,7 +42,7 @@
                                             icon-color="red"
                                             @confirm.stop="handleRemoveExpirement(scope.$index, scope.row.id)"
                                             title="确定要删除此实验吗？">
-                                            <el-button size="mini" type="danger" slot="reference" @click.stop> <!-- 阻止冒泡 -->
+                                            <el-button icon="el-icon-delete" size="mini" type="danger" slot="reference" @click.stop> <!-- 阻止冒泡 -->
                                                 删除
                                             </el-button>
                                         </el-popconfirm>
@@ -76,8 +76,8 @@
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
                                         <el-button size="mini" type="warning"
-                                            @click.stop="handleReviewExpirement(scope.$index, scope.row.id)">
-                                            开始审核
+                                            @click.stop="handleReviewExpirement(scope.row,thisProject)">
+                                            分发与审核
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
@@ -85,7 +85,7 @@
                                             icon-color="red"
                                             @confirm.stop="handleRemoveExpirement(scope.$index, scope.row.id)"
                                             title="确定要删除此实验吗？">
-                                            <el-button size="mini" type="danger" slot="reference" @click.stop> <!-- 阻止冒泡 -->
+                                            <el-button icon="el-icon-delete" size="mini" type="danger" slot="reference" @click.stop> <!-- 阻止冒泡 -->
                                                 删除
                                             </el-button>
                                         </el-popconfirm>
@@ -113,7 +113,7 @@
                             <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                 icon-color="red" @confirm.stop="handleRemoveExpirement(scope.$index, scope.row.id)"
                                 title="确定要删除此实验吗？">
-                                <el-button size="mini" type="danger" slot="reference" style="margin-left: 5px;" @click.stop > <!-- 阻止冒泡 -->
+                                <el-button  size="mini" type="danger" slot="reference" style="margin-left: 5px;" @click.stop > <!-- 阻止冒泡 -->
                                     删除
                                 </el-button>
                             </el-popconfirm>
@@ -307,8 +307,8 @@ export default {
         handleStartExpirement(index, id) {
             console.log(index, id)
         },
-        handleReviewExpirement(index, id) {
-            console.log(index, id)
+        handleReviewExpirement(experiment,project) {
+            this.$router.push({ path: `/assignment`,query:{experiment,project}});
         },
         goBack() {
             this.$router.go(-1); // 返回上一个页面

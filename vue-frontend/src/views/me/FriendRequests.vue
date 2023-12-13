@@ -86,6 +86,7 @@ export default {
                     message: '已同意好友请求！',
                     type: 'success'
                 });
+                this.load()
             }
         })
     },

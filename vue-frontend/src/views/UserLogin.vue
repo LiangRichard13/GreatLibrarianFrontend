@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import {Login} from '@/api/user.js';
+import {Login,setUserIp} from '@/api/user.js';
 import {Notification} from "element-ui";
 
 export default {
@@ -82,14 +82,22 @@ export default {
           console.log(res.data.token)
           localStorage.setItem("loginToken", res.data.token);//将用户id和token存放到本地
           // localStorage.setItem("authToken", res.data.authToken);
+          this.handleSetUserIp()
           this.$router.push({path: '/home', replace: true})
         }
       })
     },
     handleClick(tab, event) {
       console.log(tab, event);
-    }
+    },
+    handleSetUserIp()
+    {
+      const id= {
+        id:localStorage.getItem('uid')
+      }
+      setUserIp(id)
 
+    }
   }
 }
 </script>

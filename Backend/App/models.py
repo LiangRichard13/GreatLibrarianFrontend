@@ -26,13 +26,21 @@ class User(db.Model):
             return f'id:{self.user_id}\tname:{self.user_name}\temail:{self.user_email}'
 
 
-# 用户好友关系表
+# # 用户好友关系表
 class FriendShip(db.Model):
     __tablename__ = 'tb_friendship'
-    friendship_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 好友关系id值，自增
+    fs_Id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 好友关系id值，自增
     userid = db.Column(db.String(30), db.ForeignKey(User.user_id), nullable=False)  # 用户ID---外键
-    friendship_token = db.Column(db.String(30), nullable=False)  # 好友的token密钥
-    friendship_createTime = db.Column(db.DateTime, nullable=False)  # 好友创建的时间
+    friend_token = db.Column(db.String(30), nullable=False)  # 好友的token密钥
+    friend_state = db.Column(db.Integer, default=0, nullable=False)  # 好友状态【0:未审核;1:同意;-1:拒绝】
+    createTime = db.Column(db.DateTime, nullable=False)  # 好友创建的时间
+
+    # __tablename__ = 'tb_friendship'
+    # fsId = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 好友关系id值，自增
+    # userId = db.Column(db.String(30), db.ForeignKey(User.user_id), nullable=False)  # 用户ID---外键
+    # friend_token = db.Column(db.String(30), nullable=False)  # 好友的token密钥
+    # friend_state = db.Column(db.Integer, default=0, nullable=False)  # 好友状态【0:未审核;1:同意;-1:拒绝】
+    # createTime = db.Column(db.DateTime, nullable=False)  # 好友创建的时间
 
 
 # APIKey信息表
@@ -64,3 +72,12 @@ class TestProject(db.Model):
     testProject_LLMs = db.Column(db.String(100))  # APIKey中的name字段【指定大模型】
     testProject_dataSet = db.Column(db.String(100))  # 实验所用的数据集路径
     projectId = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # 项目ID---外键
+
+
+class DataSet(db.Model):
+    __tablename__ = 'tb_DataSet'
+    DS_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 数据集id
+    DS_name = db.Column(db.String(30), nullable=True)  # 数据集名称
+    DS_info = db.Column(db.String(200))  # 数据集描述
+    DS_url = db.Column(db.String(80))  # 数据集文件存储url
+    userid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键

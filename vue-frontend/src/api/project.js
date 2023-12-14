@@ -45,3 +45,23 @@ export function getCollaborateProjectsByUserId(id) {
         }
     })
 }
+
+export function getCollaboratorsByProjectId(id) {
+    return service({
+        url: '/project/getCollaboratorsByProjectId',
+        method: 'get',
+        params: {
+            id: id
+        }
+    })
+}
+
+export function getProjectByExpirementId(id) {
+    return service({
+        url: '/project/getCollaboratorsByProjectId',
+        method: 'get',
+        params: {
+            id: id
+        }
+    })
+}

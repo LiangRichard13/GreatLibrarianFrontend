@@ -64,6 +64,7 @@
      
 <script>
 import { getQAByExpirenceId, distributeToOthers } from '@/api/qa'
+import { getCollaboratorsByProjectId, getProjectByExpirementId } from "@/api/project"
 export default {
   name: "AssignmentQA",
   data() {
@@ -76,7 +77,8 @@ export default {
       { id: '5', question: '世界上最大的岛屿是哪个?', answer: '世界上最大的岛屿是格陵兰岛，属于丹麦。', rate: 2 }
       ],
       thisExperiment: {},
-      thisCollaborators:{},
+      thisProjejctId: '',
+      thisCollaborators: [{ id: '1', name: 'Alice' }, { id: '2', name: 'Bob' }],
       selectedIds: [],
       distributeUserId: '',
       currentPage: 1,
@@ -85,15 +87,26 @@ export default {
     }
   },
   mounted() {
+    this.thisExperiment = this.$route.query;
     // this.load()
     this.updatePagedQAList(); // 初始加载
-    this.thisExperiment = JSON.parse(this.$route.query.experiment);
-    this.thisCollaborators =JSON.parse(this.$route.query.collaborators);
+
+    console.log(this.thisProjejctId)
   },
   methods: {
     load() {
       getQAByExpirenceId(this.thisExperiment.id, localStorage.getItem('uid')).then(res => {
         this.QAList = res.data
+      })
+
+      //用于获取当前实验的项目
+      getProjectByExpirementId(this.thisExperiment.id).then(res => {
+        this.thisProjejctId = res.data
+      })
+
+      // 获取当前项目的协作者以便分发
+      getCollaboratorsByProjectId(this.thisProjejctId).then(res => {
+        this.thisCollaborators = res.data
       })
     },
     goBack() {

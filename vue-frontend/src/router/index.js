@@ -66,7 +66,7 @@ const routes = [
                     },
                     {
                         path: '/dataSetConfig',
-                        component: () => import("@/views/Config/DadaSetConfig.vue")
+                        component: () => import("@/views/Config/DataSetConfig.vue")
                     }
                 ]
             },

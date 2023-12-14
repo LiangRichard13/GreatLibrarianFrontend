@@ -77,7 +77,7 @@
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
                                         <el-button size="mini" type="primary"
-                                            @click.stop="handleAssignExpirement(scope.row, thisProject.collaborators)">
+                                            @click.stop="handleAssignExpirement(scope.row)">
                                             分发协作
                                         </el-button>
                                     </el-dropdown-item>
@@ -317,12 +317,9 @@ export default {
         handleStartExpirement(index, id) {
             console.log(index, id)
         },
-        handleAssignExpirement(experiment, collaborators) {
+        handleAssignExpirement(experiment) {
             this.$router.push({
-                path: `/assignment`, query: {
-                    experiment: JSON.stringify(experiment),
-                    collaborators: JSON.stringify(collaborators)
-                }
+                path: `/assignment`, query:experiment
             });
         },
         handleReviewExpirement(experiment) {

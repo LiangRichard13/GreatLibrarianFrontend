@@ -21,8 +21,11 @@ export function deleteById(id) {
 
 export function addDateSet(data) {
     return service({
-        url: '/dataSetConfig/addApiKey',
+        url: '/dataSetConfig/addDateSet',
         method: 'post',
-        data: data
+        data: data,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+          },
     })
 }

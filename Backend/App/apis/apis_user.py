@@ -6,6 +6,32 @@ from flask_restful import Resource
 from App.models import *
 from App.utils.token import encode, decode
 from App.utils.MD5_ID import creat_md5_id
+import os
+
+
+# 用户头像文件操作
+class Icon(Resource):
+    def get(self):
+        return jsonify({'url': User.query.filter(User.user_id == request.json['uid'])[0].user_iconUrl})
+
+    def post(self):
+        user = User.query.filter(User.user_id == request.args['uid'])[0]
+        file = request.files.get('iconFile')  # 获取到头像图片
+        file_dir = os.path.join("App", "data", "icon")
+        os.makedirs(file_dir, exist_ok=True)  # 创建多层文件夹
+        fileName = 'icon_' + user.user_id + '.' + file.filename.split('.')[-1]  # 文件名为icon_+用户Id
+        fileUrl = os.path.join(file_dir, fileName)
+        user.user_iconUrl = fileUrl
+        try:
+            file.save(fileUrl)
+            db.session.commit()
+            return jsonify({'success': True, 'url': fileUrl})
+        except OSError as oe:  # 文件处理异常
+            return jsonify({'success': False, 'message': oe})
+        except Exception as e:
+            db.session.rollback()  # 回滚
+            db.session.flush()  # 刷新，清空缓存
+            return jsonify({'success': False, 'message': e})
 
 
 # 用户修改个人信息
@@ -15,10 +41,6 @@ class UpdateUser(Resource):
         user_id = request.json['id']
         user = User.query.filter(User.user_id == user_id)[0]  # 通过ID值查找user
         user.user_name = request.json['name']
-        file = request.files.get('icon')  # 获取到头像图片
-        fileUrl = './icon/icon_' + user_id + '.' + file.filename.split('.')[-1]  # 存储文件名为icon_+用户Id
-        file.save(fileUrl)
-        user.user_iconUrl = fileUrl
         try:
             db.session.commit()  # 提交数据库
             return jsonify({'success': True})
@@ -128,9 +150,3 @@ class GetSameNetUsers(Resource):
         for user in users:
             if user.user_id != user_id:
                 print(user)
-
-
-class AddFriendShip(Resource):
-    def get(self):
-        user_id = request.args['id']  # 获取当前用户id
-        friend_id = request.args['id']  # 获取好友的id

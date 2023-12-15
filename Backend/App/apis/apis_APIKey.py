@@ -7,7 +7,8 @@ from App.models import *
 from App.utils.MD5_ID import *
 
 
-class APIKeyAdd(Resource):
+class APIKeyOperation(Resource):
+    # 添加
     def post(self):
         apiKey = APIKey(
             apiKey_id=creat_md5_id()[:8],
@@ -25,8 +26,7 @@ class APIKeyAdd(Resource):
             print(e)
             return jsonify({'success': False})
 
-
-class APIKeyDelete(Resource):
+    # 删除
     def delete(self):
         try:
             db.session.delete(APIKey.query.filter(APIKey.apiKey_id == request.json['id'])[0])
@@ -38,12 +38,11 @@ class APIKeyDelete(Resource):
             db.session.flush()  # 刷新，清空缓存
             return jsonify({'success': False})
 
-
-class APIKeySearch(Resource):
-    def post(self):
+    # 查询
+    def get(self):
         return jsonify({'data': [
             {'id': x.apiKey_id, 'name': x.apiKey_name, 'value': x.apiKey_value, 'auth': x.apiKey_auth}
-            for x in APIKey.query.filter(APIKey.userid == request.json['uid'])], 'success': True})
+            for x in APIKey.query.filter(APIKey.userid == request.args['uid'])], 'success': True})
 
 
 class APIKeyUpdate(Resource):

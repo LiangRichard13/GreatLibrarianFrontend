@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5904fbc65aef
+Revision ID: 50d577a0642e
 Revises: 3d7cbcf84d33
-Create Date: 2023-12-08 16:47:12.930699
+Create Date: 2023-12-11 23:12:04.334157
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5904fbc65aef'
+revision = '50d577a0642e'
 down_revision = '3d7cbcf84d33'
 branch_labels = None
 depends_on = None
@@ -36,6 +36,7 @@ def upgrade():
     sa.ForeignKeyConstraint(['projectId'], ['tb_Project.project_id'], ),
     sa.PrimaryKeyConstraint('testProject_id')
     )
+    op.drop_table('tb_friendship')
     with op.batch_alter_table('tb_user', schema=None) as batch_op:
         batch_op.add_column(sa.Column('user_IP', sa.String(length=30), nullable=True))
         batch_op.add_column(sa.Column('user_iconUrl', sa.String(length=80), nullable=True))
@@ -61,6 +62,13 @@ def downgrade():
         batch_op.drop_column('user_iconUrl')
         batch_op.drop_column('user_IP')
 
+    op.create_table('tb_friendship',
+    sa.Column('userid', sa.VARCHAR(length=30), nullable=False),
+    sa.Column('friendship_id', sa.INTEGER(), nullable=False),
+    sa.Column('friendship_token', sa.VARCHAR(length=30), nullable=False),
+    sa.Column('friendship_createTime', sa.DATETIME(), nullable=False),
+    sa.ForeignKeyConstraint(['userid'], ['tb_user.user_id'], )
+    )
     op.drop_table('tb_TestProject')
     op.drop_table('tb_APIKey')
     # ### end Alembic commands ###

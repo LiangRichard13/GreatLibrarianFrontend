@@ -1,27 +1,31 @@
 # @Author: LiXiang
 # @Time: 2023/11/2 14:57
 # @version: 1.0
-from .apis.apis_project import *
+
 from .extensions import api
 from App.apis.apis_user import *
 from App.apis.apis_APIKey import *
+from App.apis.apis_dataSet import *
+from App.apis.apis_friend import *
+from App.apis.apis_project import *
 
 # user用户类
 api.add_resource(FindById, '/user/findById')
-api.add_resource(Login, '/user/login/')
-api.add_resource(LoginToken, '/user/isExpired/')
-api.add_resource(Register, '/user/register/')
-api.add_resource(UpdateUser, '/user/update/')
-api.add_resource(GetSameNetUsers, '/user/getSameNetUsers/')
-api.add_resource(AddFriendShip, '/user/addFriendShip/')
+api.add_resource(Login, '/user/login')
+api.add_resource(LoginToken, '/user/isExpired')
+api.add_resource(Register, '/user/register')
+api.add_resource(UpdateUser, '/user/update')
+api.add_resource(GetSameNetUsers, '/user/getSameNetUsers')
+api.add_resource(Icon, '/user/icon')
+
+# 好友关系业务处理
+api.add_resource(Friend, '/friend')
 
 # configure类  管理APIKey
-api.add_resource(APIKeyAdd, '/APIKey/add')
-api.add_resource(APIKeyDelete, '/APIKey/delete')
-api.add_resource(APIKeySearch, '/APIKey/search')
+api.add_resource(APIKeyOperation, '/APIKey')
 
 # Project项目类
-api.add_resource(ProjectAdd, '/project/add')
-api.add_resource(ProjectDelete, '/project/delete')
-api.add_resource(ProjectUpdate, '/project/update')
-api.add_resource(ProjectSearch, '/project/search')
+api.add_resource(ProjectOperation, '/project')
+
+# DataSet数据集类
+api.add_resource(DataSetOperation, '/dataSet')

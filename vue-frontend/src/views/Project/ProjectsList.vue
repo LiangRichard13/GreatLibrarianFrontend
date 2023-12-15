@@ -21,7 +21,7 @@
         <!-- LLM 列 -->
         <el-table-column label="LLM">
           <template slot-scope="scope">
-            <div v-for="apiKey in scope.row.apikey" :key="apiKey.id">
+            <div v-for="apiKey in scope.row.apiKey" :key="apiKey.id">
               {{ apiKey.id }} - {{ apiKey.name }}
             </div>
           </template>
@@ -47,7 +47,7 @@
           <el-button
             size="mini"
             type="primary"
-            @click.stop="handleExperiment(scope.row.id,scope.row.name)"> <!-- 阻止冒泡 -->
+            @click.stop="handleExperiment(scope.row)"> <!-- 阻止冒泡 -->
             实验列表
           </el-button>
         </el-dropdown-item>
@@ -68,6 +68,7 @@
             @confirm.stop="removeDataSet(scope.$index, scope.row)"
             title="确定要删除此项目吗？">
             <el-button
+            icon="el-icon-delete"
               size="mini"
               type="danger"
               slot="reference"
@@ -125,8 +126,8 @@ export default {
           id: '1',
           name: 'FirstProject',
           description: 'This is a test',
-          collaborators:[{name:'Alice'},{name:'Bob'}],
-          apikey: [{ id: '1', name: '文心一言', value: '123', auth: 'xxx' }, { id: '2', name: 'openAI', value: '12345', auth: 'xxx' }],
+          collaborators:[{id:'1',name:'Alice'},{id:'2',name:'Bob'}],
+          apiKey: [{ id: '1', name: '文心一言', value: '123', auth: 'xxx' }, { id: '2', name: 'openAI', value: '12345', auth: 'xxx' }],
           dataSet: [
             {
               id: '1',
@@ -192,7 +193,6 @@ export default {
           });
         }
       })
-      this.load()
     },
     setCurrentProjectID(projectId, projectName) {
       this.currentProjectId = projectId
@@ -211,13 +211,13 @@ export default {
             message: '已为项目添加协作者！',
             type: 'success',
           });
+          this.load()
         }
       })
       this.handleDialogClose(); // 关闭对话框
-      this.load()
     },
-    handleExperiment(id,name){
-      this.$router.push({ path: `/experimentList/${id}/${name}` });
+    handleExperiment(project){
+      this.$router.push({ path: `/experimentList`,query: project});
     }
   }
 }

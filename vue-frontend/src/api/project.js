@@ -36,9 +36,29 @@ export function addFriendsToProject(data) {
     })
 }
 
-export function getCollaborateProjectsByUseId(id) {
+export function getCollaborateProjectsByUserId(id) {
     return service({
         url: '/project/getCollaborateProjectsByUseId',
+        method: 'get',
+        params: {
+            id: id
+        }
+    })
+}
+
+export function getCollaboratorsByProjectId(id) {
+    return service({
+        url: '/project/getCollaboratorsByProjectId',
+        method: 'get',
+        params: {
+            id: id
+        }
+    })
+}
+
+export function getProjectByExpirementId(id) {
+    return service({
+        url: '/project/getCollaboratorsByProjectId',
         method: 'get',
         params: {
             id: id

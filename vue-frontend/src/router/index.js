@@ -37,8 +37,24 @@ const routes = [
                 component: () => import("@/views/me/UserFriendsList.vue")
             },
             {
-                path: '/experimentList/:id/:name',
+                path: '/FriendRequests',
+                component: () => import("@/views/me/FriendRequests.vue")
+            },
+            {
+                path: '/experimentList',
                 component: () => import("@/views/Experiment/ExperimentList.vue")
+            },
+            {
+                path: '/experienceCollaborate',
+                component: () => import('@/views/Collaborate/ExperienceCollaborate.vue')
+            },
+            {
+                path: '/review',
+                component: () => import("@/views/QA/ReviewQA.vue")
+            },
+            {
+                path: '/assignment',
+                component: () => import("@/views/QA/AssignmentQA.vue")
             },
             {
                 path: '/configureNavigation',
@@ -50,7 +66,7 @@ const routes = [
                     },
                     {
                         path: '/dataSetConfig',
-                        component: () => import("@/views/Config/DadaSetConfig.vue")
+                        component: () => import("@/views/Config/DataSetConfig.vue")
                     }
                 ]
             },

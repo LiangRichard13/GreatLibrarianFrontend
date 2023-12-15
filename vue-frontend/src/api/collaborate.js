@@ -4,7 +4,7 @@ export function getUserList(id) {
     return service({
         url: '/collaborate/getUserList',
         method: 'get',
-           params: {
+        params: {
             id: id
         }
     })
@@ -28,13 +28,41 @@ export function getUserFriendsById(id) {
     })
 }
 
-export function deleteById(id,uid) {
+export function getFriendsRequest(id) {
+    return service({
+        url: '/collaborate/getFriendsRequest',
+        method: 'get',
+        params: {
+            id: id
+        }
+    })
+}
+
+export function deleteById(id, uid) {
     return service({
         url: '/collaborate/deleteById',
         method: 'delete',
         params: {
             id: id,
-            uid:uid
+            uid: uid
+        }
+    })
+}
+
+export function agreeToAdd(data) {
+    return service({
+        url: '/collaborate/getFriendsRequest',
+        method: 'put',
+        data: data
+    })
+}
+
+export function refuseToAdd(id) {
+    return service({
+        url: '/collaborate/getFriendsRequest',
+        method: 'delete',
+        params: {
+            id: id
         }
     })
 }

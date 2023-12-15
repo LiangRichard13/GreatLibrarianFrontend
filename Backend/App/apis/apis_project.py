@@ -14,7 +14,7 @@ class ProjectOperation(Resource):
             project_name=request.json['name'],
             project_info=request.json['info'],
             project_LLM='-'.join(request.json['LLM']),  # 获取到的是APIKey_id值  列表转化为字符串
-            project_DataSet=request.json['dataSet'],
+            project_DataSet=request.json['DSid'],
             userId=request.json['uid'])
         try:
             db.session.add(project)  # 加入数据库

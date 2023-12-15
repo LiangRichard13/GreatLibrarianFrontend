@@ -12,10 +12,11 @@ from App.apis.apis_project import *
 # user用户类
 api.add_resource(FindById, '/user/findById')
 api.add_resource(Login, '/user/login')
+api.add_resource(LoginOut, '/user/loginOut')
 api.add_resource(LoginToken, '/user/isExpired')
 api.add_resource(Register, '/user/register')
 api.add_resource(UpdateUser, '/user/update')
-api.add_resource(GetSameNetUsers, '/user/getSameNetUsers')
+api.add_resource(GetUserList, '/user/getUserList')
 api.add_resource(Icon, '/user/icon')
 
 # 好友关系业务处理

@@ -1,8 +1,8 @@
 import service from "@/utils/request";
 
-export function findByUserId(id) {
+export function findDataSetByUserId(id) {
     return service({
-        url: '/dataSetConfig/findByUserId',
+        url: '/dataSet',
         method: 'get',
            params: {
             id: id
@@ -11,7 +11,7 @@ export function findByUserId(id) {
 }
 export function deleteById(id) {
     return service({
-        url: '/dataSetConfig/deleteById',
+        url: '/dataSet',
         method: 'delete',
            params: {
             id: id
@@ -21,7 +21,7 @@ export function deleteById(id) {
 
 export function addDateSet(data) {
     return service({
-        url: '/dataSetConfig/addDateSet',
+        url: '/dataSet',
         method: 'post',
         data: data,
         headers: {

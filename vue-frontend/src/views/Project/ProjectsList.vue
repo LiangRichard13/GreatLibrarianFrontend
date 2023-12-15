@@ -7,7 +7,7 @@
       <el-table :data="projectList" style="width: 100%">
         <el-table-column label="项目 ID" prop="id"></el-table-column>
         <el-table-column label="项目名称" prop="name"></el-table-column>
-        <el-table-column label="测试说明" prop="description"></el-table-column>
+        <el-table-column label="测试说明" prop="info"></el-table-column>
 
          <!-- 协作者 列 -->
          <el-table-column label="协作者">
@@ -125,7 +125,7 @@ export default {
         {
           id: '1',
           name: 'FirstProject',
-          description: 'This is a test',
+          info: 'This is a test',
           collaborators:[{id:'1',name:'Alice'},{id:'2',name:'Bob'}],
           apiKey: [{ id: '1', name: '文心一言', value: '123', auth: 'xxx' }, { id: '2', name: 'openAI', value: '12345', auth: 'xxx' }],
           dataSet: [
@@ -133,13 +133,13 @@ export default {
               id: '1',
               name: '文心一言',
               info: '文心一言的测试数据集',
-              fileURL: 'http://localhost:8080/dataSetFile/1'
+              url: 'http://localhost:8080/dataSetFile/1'
             },
             {
               id: '2',
               name: 'chatGpt',
               info: 'chatGPT的测试数据集',
-              fileURL: 'http://localhost:8080/dataSetFile/2'
+              url: 'http://localhost:8080/dataSetFile/2'
             }],
 
         }
@@ -148,19 +148,19 @@ export default {
         {
           id: '1',
           username: "Alice",
-          iconUrl: "",
+          iconUrl: null,
           ip: "192.168.1.1"
         },
         {
           id: '2',
           username: "Bob",
-          iconUrl: "",
+          iconUrl: null,
           ip: ""
         },
         {
           id: '3',
           username: "Charlie",
-          iconUrl: "",
+          iconUrl:null,
           ip: "192.168.1.3"
         },],
       selectFriendsId: []

@@ -39,7 +39,7 @@ export function isExpired(token) {
 
 export function updateUser(data) {
     return service({
-        url: '/user/updateUser',
+        url: '/user/update',
         method: 'put',
         data: data
     })
@@ -47,7 +47,7 @@ export function updateUser(data) {
 
 export function uploadAvatar(data) {
     return service({
-        url: "/upload",
+        url: "/user/icon",
         method: 'post',
         data: data,
         headers: {
@@ -59,7 +59,7 @@ export function uploadAvatar(data) {
 export function removeUserIp(id) {
     return service({
             url: "/user/removeUserIp",
-            method: 'delete',
+            method: 'put',
             params:{
                 id:id
             }
@@ -67,11 +67,13 @@ export function removeUserIp(id) {
     )
     }
 
-    export function setUserIp(data) {
+    export function setUserIp(id) {
         return service({
             url: "/user/setUserIp",
-            method: 'post',
-            data: data
+            method: 'put',
+            params:{
+                id:id
+            }
         })
 
     }

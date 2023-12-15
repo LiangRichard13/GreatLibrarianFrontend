@@ -15,7 +15,7 @@
               <div class="header-name">Welcome!{{ this.user.name }}
                 <i class="el-icon-caret-bottom"></i>
               </div>
-              <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.avatar || defaultAvatar">
+              <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.iconUrl">
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
@@ -52,12 +52,13 @@
 
 <script>
 // import {findById, isExpired,removeUserIp,setUserIp} from '@/api/user';
+// import{config} from "@/services/conf"
 
 export default {
   name: "NavigationTop",
   data() {
     return {
-      user: { name: '新用户', iconUrl: '' },
+      user: { name: '新用户', iconUrl: null },
       defaultAvatar: require('@/assets/avatar.png'), // 设置默认头像路径
     }
   },
@@ -90,8 +91,14 @@ export default {
     //     this.user = res.data;
     //     console.log(res.data)
     //   })
-    //   if (this.user.avatar=='') {
-    //   this.user.avatar = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+    // if (!this.user.iconUrl) {
+    //   this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+    //   this.user.iconUrl = this.user.iconUrl.replace(/\\/g, "/");
+    //   this.user.iconUrl = config.API_URL + '/' + this.user.iconUrl;
+    // }
+    // else {
+    //   this.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+
     // }
     // }
     // //如果本地没有存储的用户id则说明没有登录，跳转到登录页面
@@ -104,9 +111,10 @@ export default {
     // }
   },
 
-  created(){
-    if (!this.user.avatar) {
-      this.user.avatar = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+  //使用过程需要去掉，仅作为展示
+  created() {
+    if (!this.user.iconUrl) {
+      this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
     }
   },
   methods: {

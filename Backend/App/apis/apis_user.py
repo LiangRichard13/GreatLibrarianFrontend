@@ -53,11 +53,11 @@ class UpdateUser(Resource):
 # 通过用户id获取信息
 class FindById(Resource):
     def post(self):
-        print("this is findById")
         users = User.query.filter(User.user_id == request.json['id'])
         if list(users):
             user = users[0]
-            data = {'name': user.user_name, 'tel': user.user_tel, 'email': user.user_email, }
+            data = {'name': user.user_name, 'tel': user.user_tel, 'email': user.user_email,
+                    "iconUrl": user.user_iconUrl}
             return jsonify({'success': True, 'data': data})
         else:
             return jsonify({'success': False, 'massage': 'not find'})
@@ -140,13 +140,61 @@ class Login(Resource):
                 return jsonify({'success': False, 'data': None, 'message': 'password is wrong'})
 
 
-# 获取当前局域网下所有的用户信息
-class GetSameNetUsers(Resource):
+# 修改用户ip地址，用户登出
+class LoginOut(Resource):
+    def put(self):
+        try:
+            user = User.query.filter(User.user_id == request.args['uid'])[0]
+            user.user_IP = None
+            db.session.commit()  # 提交数据库
+            return jsonify({'success': True})
+        except Exception as e:
+            db.session.rollback()  # 回滚
+            db.session.flush()  # 刷新，清空缓存
+            print(e)
+            return jsonify({'success': False, 'massage': e})
+
+
+# 定义全局 用户列表字典集合【key:uid,value:用户状态（0:同一局域网,1:好友在线,-1:好友非在线）】
+userIdDict = {}
+
+
+# 获取同一局域网下的所有用户id
+def getSameNetUsers(user_id, ip):
+    '''
+    :param user_id:
+    :param ip:
+    :return: userIdDict
+    '''
+    global userIdDict
+    for user in User.query.filter(User.user_IP == ip):
+        if user.user_id != user_id and user.user_id not in userIdDict:
+            userIdDict[user.user_id] = 0
+
+
+# 获取好友的用户id
+def getFriends(user_id, ip):
+    '''
+    :param user_id:
+    :param ip:
+    :return: userIdDict
+    '''
+    global userIdDict
+    for friend in FriendShip.query.filter(FriendShip.userid == user_id):
+        user = User.query.filter(User.user_authToken == friend.friend_token)[0]
+        userIdDict[user.user_id] = 1 if user.user_IP == ip else -1
+
+
+# 获取用户列表
+class GetUserList(Resource):
     def get(self):
         user_id = request.args['id']  # 获取当前用户id
         ip = request.remote_addr
-        users = User.query.filter(User.user_IP == ip)
-        print("同一局域网下的所有用户:")
-        for user in users:
-            if user.user_id != user_id:
-                print(user)
+        # 1、获取当前局域网下的所有用户id
+        getSameNetUsers(user_id, ip)
+        # 2、获取好友的用户id
+        getFriends(user_id, ip)
+        # 3、根据id进行数据封装
+        data = [{'id': user.user_id, 'name': user.user_name, 'icon': user.user_iconUrl, 'ip': user.user_IP,
+                 'state': userIdDict[user.user_id]} for user in User.query.filter(User.user_id.in_(userIdDict.keys()))]
+        return jsonify({'data': data})

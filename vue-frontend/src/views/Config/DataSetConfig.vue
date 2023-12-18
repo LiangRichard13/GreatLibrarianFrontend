@@ -14,7 +14,7 @@
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item label="数据集文件URL:">
-                <span>{{ props.row.fileURL }}</span>
+                <span>{{ props.row.url }}</span>
               </el-form-item>
             </el-form>
           </template>
@@ -77,17 +77,17 @@
 
 
 <script>
-import { addDateSet, deleteById, findByUserId } from "@/api/dataSetConfig";
+import { addDateSet, deleteById, findDataSetByUserId } from "@/api/dataSetConfig";
 
 export default {
   name: "DataSetConfig",
   data() {
     return {
-      dataSet: [{ id: '1', name: '文心一言', info: '123', fileURL: 'http://localhost:8080/dataSetFile/1' }, {
+      dataSet: [{ id: '1', name: '文心一言', info: '123', url: 'http://localhost:8080/dataSetFile/1' }, {
         id: '1',
         name: 'chatGpt',
         info: '123',
-        fileURL: 'http://localhost:8080/dataSetFile/2'
+        url: 'http://localhost:8080/dataSetFile/2'
       }],
       showDialog: false,
       newDataItem: { name: '', info: '' },
@@ -102,7 +102,7 @@ export default {
     load() {
       if (localStorage.getItem("uid") !== null) {
         const id = localStorage.getItem("uid")
-        findByUserId(id).then(res => {
+        findDataSetByUserId(id).then(res => {
           this.dataSet = res.data;
         })
       }
@@ -126,6 +126,7 @@ export default {
 
       // 创建 FormData 并添加数据
       const formData = new FormData();
+      formData.append('uid',localStorage.getItem('uid'));
       formData.append('name', this.newDataItem.name);
       formData.append('info', this.newDataItem.info);
       formData.append('file', this.uploadedFile);

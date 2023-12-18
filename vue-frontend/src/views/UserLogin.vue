@@ -18,8 +18,7 @@
           <el-checkbox v-model="remember">记住我</el-checkbox>
           <div style="float: right">
             <el-tooltip class="item" effect="dark" content="请联系管理员修改" placement="bottom">
-              <el-link style="font-weight: bolder;font-size: 14px;color:#91949c;"
-                       :underline="false">
+              <el-link style="font-weight: bolder;font-size: 14px;color:#91949c;" :underline="false">
                 忘记密码?
               </el-link>
             </el-tooltip>
@@ -38,8 +37,8 @@
 </template>
 
 <script>
-import {Login,setUserIp} from '@/api/user.js';
-import {Notification} from "element-ui";
+import { Login, setUserIp } from '@/api/user.js';
+import { Notification } from "element-ui";
 
 export default {
   data() {
@@ -73,30 +72,26 @@ export default {
       }
       Login(LoginData).then(res => {
         if (res.success) {
-               Notification.success({
-                    title: 'Success!',
-                    message:'登录成功！',
-                    type: 'success'
-                });
+          Notification.success({
+            title: 'Success!',
+            message: '登录成功！',
+            type: 'success'
+          });
           localStorage.setItem("uid", res.data.id);
           console.log(res.data.token)
           localStorage.setItem("loginToken", res.data.token);//将用户id和token存放到本地
           // localStorage.setItem("authToken", res.data.authToken);
           this.handleSetUserIp()
-          this.$router.push({path: '/home', replace: true})
+          this.$router.push({ path: '/home', replace: true })
         }
       })
     },
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    handleSetUserIp()
-    {
-      const id= {
-        id:localStorage.getItem('uid')
-      }
+    handleSetUserIp() {
+      const id = localStorage.getItem('uid')
       setUserIp(id)
-
     }
   }
 }
@@ -106,11 +101,11 @@ export default {
 .login-form-button:hover {
   color: #ffffff;
   text-shadow: 0 0 10px #ffffff,
-  0 0 20px #ffffff,
-  0 0 40px #ffffff,
-  0 0 80px #ffffff,
-  0 0 120px #ffffff,
-  0 0 160px #ffffff;
+    0 0 20px #ffffff,
+    0 0 40px #ffffff,
+    0 0 80px #ffffff,
+    0 0 120px #ffffff,
+    0 0 160px #ffffff;
 }
 
 .login {

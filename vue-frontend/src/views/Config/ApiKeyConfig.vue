@@ -78,7 +78,7 @@
 
 
 <script>
-import {addApiKey, deleteById, findByUserId} from "@/api/apiConfig";
+import {addApiKey, deleteById, findApiKeyByUserId} from "@/api/apiConfig";
 
 export default {
   name: "ApiConfig",
@@ -86,7 +86,7 @@ export default {
     return {
       apiKeys: [{id: '1', name: '文心一言', value: '123',auth:'xxx'}, {id: 2, name: 'openAI', value: '12345',auth:'xxx'}],
       showDialog: false,
-      newApiKey: {name: '', value: ''}
+      newApiKey: {name: '', value: '',auth:''}
     }
   },
   mounted() {
@@ -97,7 +97,7 @@ export default {
         load() {
           if (localStorage.getItem("uid") !== null) {
             const id = localStorage.getItem("uid")
-            findByUserId(id).then(res => {
+            findApiKeyByUserId(id).then(res => {
               this.apiKeys = res.data;
             })
           }

@@ -7,7 +7,7 @@
         </el-form-item>
 
         <el-form-item label="测试说明">
-          <el-input v-model="newProject.description"></el-input>
+          <el-input v-model="newProject.info"></el-input>
         </el-form-item>
 
         <el-form-item label="API Key">
@@ -36,13 +36,14 @@
 
 <script>
 import { addProject } from "@/api/project";
-import { findByUserId } from "@/api/apiConfig";
+import { findApiKeyByUserId } from "@/api/apiConfig";
+import { findDataSetByUserId } from "@/api/dataSetConfig"
 
 export default {
   name: "AddProject",
   data() {
     return {
-      newProject: { name: '', description: '', apiKey: [], dataset: [] },
+      newProject: { name: '', info: '', apiKey: [], dataset: [] },
       apiKeys: [
         { id: '1', name: '文心一言', value: '123', auth: 'xxx' },
         {
@@ -56,13 +57,13 @@ export default {
           id: '1',
           name: '文心一言',
           info: '文心一言的测试数据集',
-          fileURL: 'http://localhost:8080/dataSetFile/1'
+          url: 'http://localhost:8080/dataSetFile/1'
         },
         {
           id: '2',
           name: 'chatGpt',
           info: 'chatGPT的测试数据集',
-          fileURL: 'http://localhost:8080/dataSetFile/2'
+          url: 'http://localhost:8080/dataSetFile/2'
         }],
     }
   },
@@ -74,43 +75,43 @@ export default {
     load() {
       if (localStorage.getItem("uid") !== null) {
         const id = localStorage.getItem("uid")
-        findByUserId(id).then(res => {
+        findApiKeyByUserId(id).then(res => {
           this.apiKeys = res.data;
         })
-        findByUserId(id).then(res => {
+        findDataSetByUserId(id).then(res => {
           this.dataSet = res.data;
         })
       }
     },
     handleAddProject() {
-      if (this.newProject.name.trim() && this.newProject.description.trim()) {
-        if(this.newProject.apiKey.length > 0 && this.newProject.dataset.length > 0){
-        const data = {
-          name: this.newProject.name,
-          description: this.newProject.description,
-          apiKeyId: this.newProject.apiKey, // 确保包括了 apiKey
-          datasetId: this.newProject.dataset // 确保包括了 dataset
-        }
-        addProject(data).then(res => {
-          if (res.success) {
-            this.newProject.name = '';
-            this.newProject.description = ''; // 清空输入框
-            this.newProject.apiKey = [];
-            this.newProject.dataset = [];
-            this.showDialog = false; // 关闭对话框
-            this.$message({
-              message: '添加成功',
-              type: 'success'
-            });
+      if (this.newProject.name.trim() && this.newProject.info.trim()) {
+        if (this.newProject.apiKey.length > 0 && this.newProject.dataset.length > 0) {
+          const data = {
+            name: this.newProject.name,
+            info: this.newProject.info,
+            LLM: this.newProject.apiKey, // 确保包括了 apiKey
+            DSid: this.newProject.dataset // 确保包括了 dataset
           }
-        })
-      }
-      else{
-        this.$message({
-          message: '请选择apikey和数据集！',
-          type: 'warning'
-        });
-      }
+          addProject(data).then(res => {
+            if (res.success) {
+              this.newProject.name = '';
+              this.newProject.info = ''; // 清空输入框
+              this.newProject.apiKey = [];
+              this.newProject.dataset = [];
+              this.showDialog = false; // 关闭对话框
+              this.$message({
+                message: '添加成功',
+                type: 'success'
+              });
+            }
+          })
+        }
+        else {
+          this.$message({
+            message: '请选择apikey和数据集!',
+            type: 'warning'
+          });
+        }
       } else {
         this.$message({
           message: '项目名或测试说明不能为空',

@@ -49,20 +49,20 @@ export function deleteById(id, uid) {
     })
 }
 
-export function agreeToAdd(data) {
+export function handleFriendRequest(data) {
     return service({
-        url: '/collaborate/getFriendsRequest',
+        url: '/friend',
         method: 'put',
         data: data
     })
 }
 
-export function refuseToAdd(id) {
-    return service({
-        url: '/collaborate/getFriendsRequest',
-        method: 'delete',
-        params: {
-            id: id
-        }
-    })
-}
+// export function refuseToAdd(id) {
+//     return service({
+//         url: '/collaborate/getFriendsRequest',
+//         method: 'put',
+//         params: {
+//             id: id
+//         }
+//     })
+// }

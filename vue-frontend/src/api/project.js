@@ -2,7 +2,7 @@ import service from "@/utils/request";
 
 export function addProject(data) {
     return service({
-        url: '/project/addProject',
+        url: '/project',
         method: 'post',
         data: data
     })
@@ -10,17 +10,17 @@ export function addProject(data) {
 
 export function getProjectsByUseId(id) {
     return service({
-        url: '/project/getProjectsByUserId',
+        url: '/project',
         method: 'get',
         params: {
-            id: id
+            uid: id
         }
     })
 }
 
 export function deleteById(id) {
     return service({
-        url: '/project/deleteById',
+        url: '/project',
         method: 'delete',
         params: {
             id: id
@@ -30,7 +30,7 @@ export function deleteById(id) {
 
 export function addFriendsToProject(data) {
     return service({
-        url: '/project/addFriendsToProject',
+        url: '/projectCollaborate',
         method: 'post',
         data: data
     })
@@ -38,7 +38,7 @@ export function addFriendsToProject(data) {
 
 export function getCollaborateProjectsByUserId(id) {
     return service({
-        url: '/project/getCollaborateProjectsByUseId',
+        url: '/project/projectCollaborate/getCollaborateProjectsByUserId',
         method: 'get',
         params: {
             id: id
@@ -48,7 +48,7 @@ export function getCollaborateProjectsByUserId(id) {
 
 export function getCollaboratorsByProjectId(id) {
     return service({
-        url: '/project/getCollaboratorsByProjectId',
+        url: '/project/projectCollaborate/getCollaboratorsByProjectId',
         method: 'get',
         params: {
             id: id
@@ -58,7 +58,7 @@ export function getCollaboratorsByProjectId(id) {
 
 export function getProjectByExpirementId(id) {
     return service({
-        url: '/project/getCollaboratorsByProjectId',
+        url: '/project/getProjectByExpirementId',
         method: 'get',
         params: {
             id: id

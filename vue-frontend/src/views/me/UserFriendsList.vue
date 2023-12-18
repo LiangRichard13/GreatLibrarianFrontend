@@ -40,19 +40,19 @@ export default {
         {
           id: '1',
           username: "Alice",
-          iconUrl: "",
+          iconUrl: null,
           ip: "192.168.1.1"
         },
         {
           id: '2',
           username: "Bob",
-          iconUrl: "",
+          iconUrl: null,
           ip: ""
         },
         {
           id: '3',
           username: "Charlie",
-          iconUrl: "",
+          iconUrl: null,
           ip: "192.168.1.3"
         },]
     }
@@ -66,7 +66,7 @@ export default {
 
       // 更新 userFriends 列表中每个用户的 iconUrl
       this.userFriends = this.userFriends.map(user => {
-        if(user.iconUrl!==''){
+        if(!user.iconUrl){
           let iconUrl = user.iconUrl.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
           iconUrl = `${config.API_URL}/${iconUrl}`; // 拼接完整的 URL
           return { ...user, iconUrl }; // 返回更新后的用户对象

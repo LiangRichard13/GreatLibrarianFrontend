@@ -19,7 +19,7 @@
 </template>
 <script>
 // import { getFriendsRequest } from '@/api/collaborate'
-import { agreeToAdd, refuseToAdd } from '@/api/collaborate'
+import { handleFriendRequest} from '@/api/collaborate'
 import config from "@/services/conf"
 export default {
     name: "FriendsRequests",
@@ -32,25 +32,25 @@ export default {
                         id: '1',
                         userId: '3',
                         username: "Alice",
-                        iconUrl: "",
+                        iconUrl: null,
                     },
                     {
                         id: '2',
                         userId: '4',
                         username: "Bob",
-                        iconUrl: "",
+                        iconUrl: null,
                     },
                     {
                         id: '3',
                         userId: '5',
                         username: "Jack",
-                        iconUrl: "",
+                        iconUrl:null,
                     },
                     {
                         id: '4',
                         userId: '6',
                         username: "Rose",
-                        iconUrl: "",
+                        iconUrl: null,
                     },
                 ]
         }
@@ -67,7 +67,7 @@ export default {
 
             //设置用户头像
             this.userFriendsRequest = this.userFriendsRequest.map(user => {
-                if (user.iconUrl !== '') {
+                if (!user.iconUrl) {
                     let iconUrl = user.iconUrl.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
                     iconUrl = `${config.API_URL}/${iconUrl}`; // 拼接完整的 URL
                     return { ...user, iconUrl }; // 返回更新后的用户对象
@@ -80,7 +80,7 @@ export default {
     },
     handleAgree(row) {
         const requestId = row.id
-        agreeToAdd(requestId).then(res => {
+        handleFriendRequest(requestId).then(res => {
             if (res.success) {
                 this.$message({
                     message: '已同意好友请求！',
@@ -91,7 +91,7 @@ export default {
         })
     },
     handleRefuse(row, index) {
-      refuseToAdd(row.id).then(res => {
+      handleFriendRequest(row.id).then(res => {
         if (res.success) {
           this.userFriendsRequest.splice(index, 1);
           this.$message({

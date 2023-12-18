@@ -1,18 +1,18 @@
 import service from "@/utils/request";
 
-export function findByUserId(id) {
+export function findApiKeyByUserId(id) {
     return service({
-        url: '/apiConfig/findByUserId',
+        url: '/APIKey',
         method: 'get',
         params: {
-            id: id
+            uid: id
         }
     })
 }
 
 export function deleteById(id) {
     return service({
-        url: '/apiConfig/deleteById',
+        url: '/APIKey',
         method: 'delete',
         params: {
             id: id
@@ -22,7 +22,7 @@ export function deleteById(id) {
 
 export function addApiKey(data) {
     return service({
-        url: '/apiConfig/addApiKey',
+        url: '/APIKey',
         method: 'post',
         data: data
     })

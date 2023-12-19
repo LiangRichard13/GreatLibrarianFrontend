@@ -79,8 +79,12 @@ export default {
         },
     },
     handleAgree(row) {
-        const requestId = row.id
-        handleFriendRequest(requestId).then(res => {
+        const agreedData={
+          fid:row.id,
+          uid:localStorage.getItem('uid'),
+          result:true
+        }
+        handleFriendRequest(agreedData).then(res => {
             if (res.success) {
                 this.$message({
                     message: '已同意好友请求！',
@@ -91,7 +95,12 @@ export default {
         })
     },
     handleRefuse(row, index) {
-      handleFriendRequest(row.id).then(res => {
+      const refuseData={
+          fid:row.id,
+          uid:localStorage.getItem('uid'),
+          result:false
+        }
+      handleFriendRequest(refuseData).then(res => {
         if (res.success) {
           this.userFriendsRequest.splice(index, 1);
           this.$message({

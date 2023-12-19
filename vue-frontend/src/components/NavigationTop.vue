@@ -3,6 +3,10 @@
     <el-header style="padding: 0">
       <div class="header">
         <div style="height: 70px;width: 100%">
+          <div class="header-logo">
+            <img style="width: 50px; height: 50px;float: left" src="../assets/logo.png" alt="" />
+            <div class="header-logo-text">大模型测评工具箱</div>
+          </div>
           <div class="header-links">
             <el-link style="color: white" href="/Home" class="header-link" :underline="false">主页</el-link>
             <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">配置</el-link>
@@ -178,9 +182,9 @@ export default {
 
 .header-link {
   color: #FFFFFF;
-  letter-spacing: 2px;
-  font-size: 17px;
-  padding-right: 40px;
+  letter-spacing: 3px;
+  font-size: 20px;
+  padding-right: 50px;
 }
 
 .header-name {
@@ -195,5 +199,20 @@ export default {
 
 .el-main {
   overflow: auto;
+}
+.header-logo {
+  padding-top: 10px;
+  padding-left: 2%;
+  float:left;
+  letter-spacing: 2px;
+}
+
+.header-logo-text {
+  font-size: 25px;
+  padding-top: 3px;
+  font-weight: bolder;
+  padding-left: 15px;
+  float: left;
+  color: #FFFFFF;
 }
 </style>

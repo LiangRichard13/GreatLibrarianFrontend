@@ -61,7 +61,7 @@ export default {
       // })
       //设置用户头像
       this.userList = this.userList.map(user => {
-        if (!user.iconUrl) {
+        if (user.iconUrl) {
           let iconUrl = user.iconUrl.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
           iconUrl = `${config.API_URL}/${iconUrl}`; // 拼接完整的 URL
           return { ...user, iconUrl }; // 返回更新后的用户对象
@@ -87,7 +87,6 @@ export default {
   mounted() {
     this.load()
   },
-
 }
 </script>
 

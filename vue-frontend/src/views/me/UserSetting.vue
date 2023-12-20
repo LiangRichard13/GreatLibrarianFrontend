@@ -33,7 +33,7 @@
         </el-form-item>
       </el-form>
       <div style="text-align: center;">
-        <img style="padding-left: 150px;width: 150px; height: 150px;margin-bottom: 10px;" alt=""
+        <img style="padding-left:100px;width: 150px; height: 150px;margin-bottom: 10px;" alt=""
           :src="user.iconUrl">
         <br>
         <el-upload
@@ -42,7 +42,7 @@
     multiple
     :limit="1"
     accept=".png,.jpg">
-    <el-button size="small" type="primary">
+    <el-button size="small" type="primary" style="margin-left:50px">
       <i class="el-icon-upload2"></i> 点击上传
     </el-button>
     <div slot="tip" class="el-upload__tip">只能上传 jpg/png 文件</div>
@@ -53,8 +53,9 @@
 </template>
 
 <script>
-import { findById, updateUser,uploadAvatar } from "@/api/user";
-import { findApiKeyByUserId } from "@/api/apiConfig";
+import { updateUser,uploadAvatar } from "@/api/user";
+// import { findById} from "@/api/user";
+// import { findApiKeyByUserId } from "@/api/apiConfig";
 import config from "@/services/conf"
 
 export default {
@@ -78,24 +79,22 @@ export default {
   },
   methods: {
     load() {
-      if (localStorage.getItem("uid") !== null) {
-        const id = localStorage.getItem("uid")
-        findById(id).then(res => {
-          this.user = res.data;
-          this.checkPassword = this.user.password
-          if(!this.user.iconUrl){
+        // const id = localStorage.getItem("uid")
+        // findById(id).then(res => {
+        //   this.user = res.data;
+        //   this.checkPassword = this.user.password
+        // })
+        // findApiKeyByUserId(id).then(res => {
+        //   this.apiKeys = res.data;
+        // })
+        if(this.user.iconUrl){
           this.user.iconUrl= this.user.iconUrl.replace(/\\/g, "/");
           this.user.iconUrl = config.API_URL + '/' + this.user.iconUrl;
           }
           else
           {
-            this.iconUrl=this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+            this.user.iconUrl=this.defaultAvatar; // 如果用户没有头像，则使用默认头像
           }
-        })
-        findApiKeyByUserId(id).then(res => {
-          this.apiKeys = res.data;
-        })
-      }
     },
     onSubmit() {
       updateUser(this.user).then(res => {

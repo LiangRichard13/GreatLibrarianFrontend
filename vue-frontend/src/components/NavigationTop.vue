@@ -4,7 +4,7 @@
       <div class="header">
         <div style="height: 70px;width: 100%">
           <div class="header-logo">
-            <img style="width: 50px; height: 50px;float: left" src="../assets/logo.png" alt="" />
+            <img style="width: 45px; height: 45px;float: left" src="../assets/logo.png" alt="" />
             <div class="header-logo-text">大模型测评工具箱</div>
           </div>
           <div class="header-links">
@@ -95,7 +95,7 @@ export default {
     //     this.user = res.data;
     //     console.log(res.data)
     //   })
-    // if (!this.user.iconUrl) {
+    // if (this.user.iconUrl) {
     //   this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
     //   this.user.iconUrl = this.user.iconUrl.replace(/\\/g, "/");
     //   this.user.iconUrl = config.API_URL + '/' + this.user.iconUrl;

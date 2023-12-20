@@ -1,5 +1,6 @@
 <template lang="">
 <div style="overflow-x: hidden;">
+  <h3 style="letter-spacing: 1px;font-weight: 400;padding-bottom: 20px;text-align: center">我的好友申请</h3>
     <el-row :gutter="20">
       <el-col :span="12" v-for="(row,index) in userFriendsRequest" :key="index" class="user-card"> 
         <el-card>
@@ -67,7 +68,7 @@ export default {
 
             //设置用户头像
             this.userFriendsRequest = this.userFriendsRequest.map(user => {
-                if (!user.iconUrl) {
+                if (user.iconUrl) {
                     let iconUrl = user.iconUrl.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
                     iconUrl = `${config.API_URL}/${iconUrl}`; // 拼接完整的 URL
                     return { ...user, iconUrl }; // 返回更新后的用户对象

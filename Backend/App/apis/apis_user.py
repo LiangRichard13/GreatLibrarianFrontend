@@ -17,7 +17,8 @@ class Icon(Resource):
     def post(self):
         user = User.query.filter(User.user_id == request.args['uid'])[0]
         file = request.files.get('iconFile')  # 获取到头像图片
-        file_dir = os.path.join("App", "data", "icon")
+        # file_dir = os.path.join("App", "data", "icon")
+        file_dir = os.path.join("App","data", "icon")
         os.makedirs(file_dir, exist_ok=True)  # 创建多层文件夹
         fileName = 'icon_' + user.user_id + '.' + file.filename.split('.')[-1]  # 文件名为icon_+用户Id
         fileUrl = os.path.join(file_dir, fileName)
@@ -123,9 +124,9 @@ class Login(Resource):
                 data = {'id': user_id}
                 # print(f'需要token:{remember}')
                 if remember:
-                    data['loginToken'] = encode(user_id, 60)  # 免登录
+                    data['loginToken'] = encode(user_id, 86400)  # 免登录
                 else:
-                    data['loginToken'] = encode(user_id, 10)  # 无需免登录
+                    data['loginToken'] = encode(user_id, 3600)  # 无需免登录
                 user.user_IP = request.remote_addr  # 获取本地ip地址
                 try:
                     db.session.add(user)  # 加入数据库
@@ -197,4 +198,4 @@ class GetUserList(Resource):
         # 3、根据id进行数据封装
         data = [{'id': user.user_id, 'name': user.user_name, 'icon': user.user_iconUrl, 'ip': user.user_IP,
                  'state': userIdDict[user.user_id]} for user in User.query.filter(User.user_id.in_(userIdDict.keys()))]
-        return jsonify({'data': data})
+        return jsonify({'data': data,'success':True})

@@ -10,13 +10,11 @@ export function findApiKeyByUserId(id) {
     })
 }
 
-export function deleteById(id) {
+export function deleteById(data) {
     return service({
         url: '/APIKey',
         method: 'delete',
-        params: {
-            id: id
-        }
+        data:data
     })
 }
 

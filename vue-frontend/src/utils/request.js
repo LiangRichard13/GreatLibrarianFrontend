@@ -26,6 +26,7 @@ service.interceptors.request.use(
 //响应拦截器
 service.interceptors.response.use(
     response => {
+        console.log("响应信息:",response.data)
         const res = response.data;
         if (!res.success)
             {

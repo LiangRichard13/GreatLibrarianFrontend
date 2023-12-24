@@ -2,7 +2,7 @@ import service from "@/utils/request";
 
 export function getUserList(id) {
     return service({
-        url: '/collaborate/getUserList',
+        url: '/user/getUserList',
         method: 'get',
         params: {
             id: id
@@ -12,7 +12,7 @@ export function getUserList(id) {
 
 export function addFriend(data) {
     return service({
-        url: '/collaborate/addFriend',
+        url: '/friend',
         method: 'post',
         data: data
     })
@@ -20,7 +20,7 @@ export function addFriend(data) {
 
 export function getUserFriendsById(id) {
     return service({
-        url: '/collaborate/getUserFriendsById',
+        url: '/user/getUserList',
         method: 'get',
         params: {
             id: id

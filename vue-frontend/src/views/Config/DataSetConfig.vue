@@ -129,7 +129,7 @@ export default {
       formData.append('uid',localStorage.getItem('uid'));
       formData.append('name', this.newDataItem.name);
       formData.append('info', this.newDataItem.info);
-      formData.append('file', this.uploadedFile);
+      formData.append('dataSetFile', this.uploadedFile);
 
       // 手动上传文件
       this.uploadFileAndInfo(formData);

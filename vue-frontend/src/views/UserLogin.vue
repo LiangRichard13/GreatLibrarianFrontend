@@ -37,7 +37,8 @@
 </template>
 
 <script>
-import { Login, setUserIp } from '@/api/user.js';
+import { Login } from '@/api/user.js';
+// import setUserIp from '@/api/user.js';
 import { Notification } from "element-ui";
 
 export default {
@@ -45,8 +46,8 @@ export default {
     return {
       activeTab: "emailLogin", // 默认选中的选项卡
       phoneNumber: '',
-      email: '',
-      password: '',
+      email: 'chendanliang783@gmail.com',
+      password: '13527454780',
       remember: false,
     }
   },
@@ -79,9 +80,9 @@ export default {
           });
           localStorage.setItem("uid", res.data.id);
           console.log(res.data.token)
-          localStorage.setItem("loginToken", res.data.token);//将用户id和token存放到本地
+          localStorage.setItem("loginToken", res.data.loginToken);//将用户id和token存放到本地
           // localStorage.setItem("authToken", res.data.authToken);
-          this.handleSetUserIp()
+          // this.handleSetUserIp()
           this.$router.push({ path: '/home', replace: true })
         }
       })
@@ -89,10 +90,10 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    handleSetUserIp() {
-      const id = localStorage.getItem('uid')
-      setUserIp(id)
-    }
+    // handleSetUserIp() {
+    //   const id = localStorage.getItem('uid')
+    //   setUserIp(id)
+    // }
   }
 }
 </script>

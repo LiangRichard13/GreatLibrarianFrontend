@@ -131,7 +131,7 @@ export default {
           }
         },
         removeKey(index, row) {
-          const deleteId=row.id
+          const deleteId={id:row.id}
           deleteById(deleteId).then(res => {
             if (res.success) {
               this.apiKeys.splice(index, 1);

@@ -3,10 +3,8 @@ import service from "@/utils/request";
 export function findById(id) {
     return service({
         url: '/user/findById',
-        method: 'get',
-        params: {
-            id: id
-        }
+        method: 'post',
+        data:id
     })
 
 }
@@ -30,38 +28,55 @@ export function Register(data) {
 export function isExpired(token) {
     return service({
         url: '/user/isExpired',
-        method: 'get',
-        params: {
-            loginToken: token
-        }
+        method: 'post',
+        data:token
     })
 }
 
 export function updateUser(data) {
     return service({
         url: '/user/update',
-        method: 'put',
+        method: 'post',
         data: data
     })
 }
 
-export function uploadAvatar(data) {
+export function editPassword(data) {
+    return service({
+        url: '/user/editPassword',
+        method: 'post',
+        data: data
+    })
+}
+
+export function uploadAvatar(data,uid) {
     return service({
         url: "/user/icon",
         method: 'post',
         data: data,
+        params:{
+            uid:uid
+        },
         headers: {
             'Content-Type': 'multipart/form-data'
           },
     })
 }
 
+export function getUserIconUrl(data) {
+    return service({
+        url: "/user/icon",
+        method: 'get',
+        data: data,
+    })
+}
+
 export function removeUserIp(id) {
     return service({
-            url: "/user/removeUserIp",
+            url: "/user/loginOut",
             method: 'put',
             params:{
-                id:id
+                uid:id
             }
         }
     )

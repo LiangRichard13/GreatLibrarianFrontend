@@ -42,7 +42,6 @@ export default {
   },
   methods: {
     postLogin() {
-      // const postUrl = URL.captchaURL; // 使用基本URL,需要时可进行拼接扩展
       if (this.username.length < 6) {
         this.$message({
           message: '请输入不少于6位的用户名',

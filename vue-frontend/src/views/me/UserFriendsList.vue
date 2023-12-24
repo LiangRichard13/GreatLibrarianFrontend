@@ -2,10 +2,10 @@
   <div style="overflow-x: hidden;">
     <h3 style="letter-spacing: 1px;font-weight: 400;padding-bottom: 20px;text-align: center">我的好友</h3>
     <el-row :gutter="20">
-      <el-col :span="12" v-for="(row, index) in userFriends" :key="index"  class="user-card">
+      <el-col :span="12" v-for="(row, index) in userFriends" :key="index" class="user-card">
         <el-card>
           <div style="display: flex; align-items: center;">
-            <img :src="row.iconUrl" style="width: 50px; height: 50px; border-radius: 50%;" />
+            <img :src="row.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
             <div style="margin-left: 10px;">
               <p>用户名:{{ row.username }}</p>
               <p>用户ID:{{ row.id }}</p>
@@ -28,8 +28,8 @@
 
 
 <script>
-// import { getUserFriendsById} from "@/api/collaborate";
-import {  deleteById } from "@/api/collaborate";
+import { getUserFriendsById} from "@/api/collaborate";
+import { deleteById } from "@/api/collaborate";
 import config from "@/services/conf"
 
 export default {
@@ -60,23 +60,22 @@ export default {
   },
   methods: {
     load() {
-      // const id = localStorage.getItem('uid')
-      // getUserFriendsById(id).then(res => {
-      //   this.userFriends = res.data;
-      // })
-
-      // 更新 userFriends 列表中每个用户的 iconUrl
-      this.userFriends = this.userFriends.map(user => {
-        if(user.iconUrl){
-          let iconUrl = user.iconUrl.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
-          iconUrl = `${config.API_URL}/${iconUrl}`; // 拼接完整的 URL
-          return { ...user, iconUrl }; // 返回更新后的用户对象
-        }
-        else
-        {
-          return { ...user, iconUrl: this.defaultAvatar };
-        }
-      });
+      const id = localStorage.getItem('uid')
+      getUserFriendsById(id).then(res => {
+        this.userList = res.data.filter(user => user.state === 1||user.state===-1);
+        // 更新 userFriends 列表中每个用户的 iconUrl
+        this.userFriends = this.userFriends.map(user => {
+          if (user.icon) {
+            let icon = user.icon.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
+            icon = user.icon.replace(/App/g, '');
+            icon = `${config.API_URL}/${icon}`; // 拼接完整的 URL
+            return { ...user, icon }; // 返回更新后的用户对象
+          }
+          else {
+            return { ...user, icon: this.defaultAvatar };
+          }
+        });
+      })
     },
     handleDeleteFriend(id, index) {
       const uid = localStorage.getItem('uid')
@@ -100,7 +99,9 @@ export default {
 
 <style scoped>
 .user-card {
-  margin-top: 20px; /* 设置顶部外边距 */
-  margin-bottom: 10px; /* 设置底部外边距 */
+  margin-top: 20px;
+  /* 设置顶部外边距 */
+  margin-bottom: 10px;
+  /* 设置底部外边距 */
 }
 </style>

@@ -113,7 +113,7 @@
 <script>
 
 import { addFriendsToProject, getProjectsByUseId, deleteById } from '@/api/project'
-import { getUserFriendsById } from '@/api/collaborate'
+import { getUserList } from '@/api/collaborate'
 export default {
   name: "ProjectList",
   data() {
@@ -177,7 +177,7 @@ export default {
         getProjectsByUseId(id).then(res => {
           this.projectList = res.data;
         })
-        getUserFriendsById(id).then(res => {
+        getUserList(id).then(res => {
           this.userFriends = res.data;
         })
       }

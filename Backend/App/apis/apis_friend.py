@@ -47,3 +47,8 @@ class Friend(Resource):
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
             return jsonify({'success': False, 'massage': e})
+
+    def get(self):
+        user = User.query.filter(User.user_id == request.args['uid'])[0]
+        friendList = FriendShip.query.filter(FriendShip.friend_token == user.user_authToken)
+        return jsonify({'fid': [x.userid for x in friendList],'success':True})

@@ -57,7 +57,7 @@ class FindById(Resource):
         users = User.query.filter(User.user_id == request.json['id'])
         if list(users):
             user = users[0]
-            data = {'name': user.user_name, 'tel': user.user_tel, 'email': user.user_email,
+            data = {'id':user.user_id,'name': user.user_name, 'tel': user.user_tel, 'email': user.user_email,
                     "iconUrl": user.user_iconUrl}
             return jsonify({'success': True, 'data': data})
         else:

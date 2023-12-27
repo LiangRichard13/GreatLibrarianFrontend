@@ -12,8 +12,8 @@
               <p>IP地址:{{ row.ip }}</p>
 
               <!-- Conditional rendering for online/offline status -->
-              <p v-if="row.state===1" style="color: green;">在线</p>
-              <p v-else style="color: red;">离线</p>
+              <p v-if="row.state!==1" style="color: red;">用户已登出</p>
+              <!-- <p v-else style="color: red;">离线</p> -->
             </div>
           </div>
           <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
@@ -28,7 +28,8 @@
 
 
 <script>
-import { getUserFriendsById} from "@/api/collaborate";
+// import { getUserFriendsById} from "@/api/collaborate";
+import { getUserList } from "@/api/collaborate";
 import { deleteById } from "@/api/collaborate";
 import config from "@/services/conf"
 
@@ -37,32 +38,14 @@ export default {
   data() {
     return {
       defaultAvatar: require('@/assets/avatar.png'), // 设置默认头像路径
-      userFriends: [
-        {
-          id: '1',
-          username: "Alice",
-          iconUrl: null,
-          ip: "192.168.1.1"
-        },
-        {
-          id: '2',
-          username: "Bob",
-          iconUrl: null,
-          ip: ""
-        },
-        {
-          id: '3',
-          username: "Charlie",
-          iconUrl: null,
-          ip: "192.168.1.3"
-        },]
+      userFriends: []
     }
   },
   methods: {
     load() {
       const id = localStorage.getItem('uid')
-      getUserFriendsById(id).then(res => {
-        this.userList = res.data.filter(user => user.state === 1||user.state===-1);
+      getUserList(id).then(res => {
+        this.userList = res.data.filter(user => user.state!==0);
         // 更新 userFriends 列表中每个用户的 iconUrl
         this.userFriends = this.userFriends.map(user => {
           if (user.icon) {

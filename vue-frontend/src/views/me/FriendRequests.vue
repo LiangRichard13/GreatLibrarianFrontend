@@ -5,10 +5,10 @@
       <el-col :span="12" v-for="(row,index) in userFriendsRequest" :key="index" class="user-card"> 
         <el-card>
           <div style="display: flex; align-items: center;">
-            <img :src="row.iconUrl" style="width: 50px; height: 50px; border-radius: 50%;" />
+            <img :src="row.data.iconUrl" style="width: 50px; height: 50px; border-radius: 50%;" />
             <div style="margin-left: 10px;">
-              <p>用户名:{{ row.username }}</p>
-              <p>用户ID:{{ row.userId }}</p>
+              <p>用户名:{{ row.data.name }}</p>
+              <p>用户ID:{{ row.data.id }}</p>
             </div>
           </div>
           <el-button type="success" @click='handleAgree(row)'>同意申请</el-button>
@@ -21,39 +21,15 @@
 <script>
 import { getFriendsRequest } from '@/api/collaborate'
 import { handleFriendRequest } from '@/api/collaborate'
+import { findById } from "@/api/user"
 import config from "@/services/conf"
 export default {
   name: "FriendsRequests",
   data() {
     return {
       defaultAvatar: require('@/assets/avatar.png'), // 设置默认头像路径
-      userFriendsRequest:
-        [
-          {
-            id: '1',
-            userId: '3',
-            username: "Alice",
-            iconUrl: null,
-          },
-          {
-            id: '2',
-            userId: '4',
-            username: "Bob",
-            iconUrl: null,
-          },
-          {
-            id: '3',
-            userId: '5',
-            username: "Jack",
-            iconUrl: null,
-          },
-          {
-            id: '4',
-            userId: '6',
-            username: "Rose",
-            iconUrl: null,
-          },
-        ]
+      userFriendsRequestID: [],
+      userFriendsRequest: []
     }
   },
   mounted() {
@@ -63,19 +39,38 @@ export default {
     load() {
       const id = localStorage.getItem('uid')
       getFriendsRequest(id).then(res => {
-        this.userFriendsRequest = res.data;
-        //设置用户头像
-        this.userFriendsRequest = this.userFriendsRequest.map(user => {
-          if (user.iconUrl) {
-            let iconUrl = user.iconUrl.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
-            iconUrl = user.iconUrl.replace(/App/g, '');
-            iconUrl = `${config.API_URL}/${iconUrl}`; // 拼接完整的 URL
-            return { ...user, iconUrl }; // 返回更新后的用户对象
-          }
-          else {
-            return { ...user, iconUrl: this.defaultAvatar };
-          }
-        });
+        this.userFriendsRequestID = res.fid;
+
+        if (this.userFriendsRequestID) {
+          Promise.all(this.userFriendsRequestID.map(fid => {
+            const fidObject = { id: fid };
+            return findById(fidObject);
+          }))
+            .then(res => {
+              this.userFriendsRequest = res
+              console.log("userFriendsRequest", this.userFriendsRequest)
+            })
+          //设置用户头像
+          this.userFriendsRequest = this.userFriendsRequest.map(user => {
+            if (user.data.iconUrl) {
+
+              
+              // 替换所有反斜杠为斜杠
+              let iconUrl = user.data.iconUrl.replace(/\\/g, '/');
+
+              // 移除 'App' 字符串
+              iconUrl = iconUrl.replace(/App/g, "");
+
+              // 拼接完整的 URL
+              iconUrl = `${config.API_URL}/${iconUrl}`;
+              return { ...user.data, iconUrl }; // 返回包含更新后的 iconUrl 的用户信息对象
+            } else {
+              return { ...user.data, iconUrl: this.defaultAvatar };
+            }
+          });
+
+
+        }
       })
     },
   },

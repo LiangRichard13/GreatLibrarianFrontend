@@ -5,7 +5,7 @@ export function findDataSetByUserId(id) {
         url: '/dataSet',
         method: 'get',
            params: {
-            id: id
+            uid: id
         }
     })
 }

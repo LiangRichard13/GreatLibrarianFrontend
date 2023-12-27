@@ -84,7 +84,7 @@ export default {
   name: "ApiConfig",
   data() {
     return {
-      apiKeys: [{id: '1', name: '文心一言', value: '123',auth:'xxx'}, {id: 2, name: 'openAI', value: '12345',auth:'xxx'}],
+      apiKeys: [],
       showDialog: false,
       newApiKey: {name: '', value: '',auth:''}
     }

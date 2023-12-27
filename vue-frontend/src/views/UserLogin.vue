@@ -1,6 +1,10 @@
 <template>
   <div class="login">
     <div class="login-form">
+      <div class="login-form-header">
+        <img style="width: 75px; height: 75px;float:left;padding-right: 10px;" src="../assets/logo.png" alt="" />
+        <div class="login-form-text">大模型测评工具箱-登录</div>
+      </div>
       <div style="color: #91949c;font-weight: bolder">
         <el-tabs v-model="activeTab" @tab-click="handleClick">
           <el-tab-pane label="邮箱登录" name="emailLogin">
@@ -151,5 +155,18 @@ export default {
   color: #91949c;
   font-weight: bolder;
   font-size: 15px;
+}
+
+.login-form-text {
+  color: #000000;
+  font-weight: bold;
+  font-size: 30px;
+  padding-top: 15px;
+}
+
+.login-form-header {
+  height: 20px;
+  padding-left: 20px;
+  padding-bottom: 100px;
 }
 </style>

@@ -12,4 +12,4 @@ new Vue({
 }).$mount('#app');
 
 // 在 main.js
-Vue.prototype.$navigating = false;
+// Vue.prototype.$navigating = false;

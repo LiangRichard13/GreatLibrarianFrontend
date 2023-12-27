@@ -11,8 +11,8 @@
               <p>IP地址:{{ user.ip }}</p>
 
               <!-- Conditional rendering for online/offline status -->
-              <p v-if="user.ip" style="color: green;">在线</p>
-              <p v-else style="color: red;">离线</p>
+              <!-- <p v-if="user.ip" style="color: green;">在线</p>
+              <p v-else style="color: red;">离线</p> -->
             </div>
           </div>
           <el-button type="primary" @click="handleAddFriend(user.id)">添加好友</el-button>

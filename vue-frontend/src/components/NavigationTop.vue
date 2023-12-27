@@ -82,7 +82,8 @@ export default {
             message: '您的令牌已过期请重新登录',
             type: 'warning'
           });
-          this.handleRemoveUserIp();  //令牌过期则移除用户IP
+          const uid = localStorage.getItem("uid")
+          removeUserIp(uid)//令牌过期则移除用户IP
           localStorage.removeItem("uid");
           localStorage.removeItem("loginToken")
           this.$router.push("/login");
@@ -92,15 +93,15 @@ export default {
 
       // this.handleSetUserIp
 
-      window.addEventListener('beforeunload', this.handleRemoveUserIp);//添加事件监听，如果用户关闭浏览器则请求移除用户ip
-
-      const id = {
-        id: localStorage.getItem("uid")
-      }
+      // window.addEventListener('beforeunload', this.handleRemoveUserIp);//添加事件监听，如果用户关闭浏览器则请求移除用户ip
 
       //如果令牌没过期
       //通过取出登录后在本地存储的用户id获取用户信息
+      const id = {
+        id: localStorage.getItem("uid")
+      }
       findById(id).then(res => {
+
         this.user = res.data;
         if (!this.user.iconUrl) {
           this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
@@ -131,56 +132,56 @@ export default {
   // },
   methods: {
     handleLogout() {
-      if(localStorage.getItem("uid") !== null){
-      const uid = localStorage.getItem("uid")
-      removeUserIp(uid).then(res => {
-        if (res.success) {
-          this.$message({
-            message: '您已下线',
-            type: 'warning'
-          });
-        }
-      })
-      localStorage.removeItem("uid")
-      localStorage.removeItem("loginToken")
-      this.$router.push('/login')
-    }
-    else
-    {
-      this.$router.push("/login")
-    }
-    },
-
-    handleRemoveUserIp() {
-      if(this.$navigating){
-      const uid = localStorage.getItem("uid")
-      removeUserIp(uid).then(res => {
-        if (res.success) {
-          this.$message({
-            message: '您已下线',
-            type: 'warning'
-          });
-        }
-      })
+      if (localStorage.getItem("uid") !== null) {
+        const uid = localStorage.getItem("uid")
+        removeUserIp(uid).then(res => {
+          if (res.success) {
+            this.$message({
+              message: '您已登出',
+              type: 'warning'
+            });
+          }
+        })
+        localStorage.removeItem("uid")
+        localStorage.removeItem("loginToken")
+        this.$router.push('/login')
+      }
+      else {
+        this.$router.push("/login")
       }
     },
+
+    // handleRemoveUserIp() {
+    //   if (!this.$navigating) {
+    //     const uid = localStorage.getItem("uid")
+    //     removeUserIp(uid).then(res => {
+    //       if (res.success) {
+    //         this.$message({
+    //           message: '您已下线',
+    //           type: 'warning'
+    //         });
+    //       }
+    //     })
+    //   }
+    // },
+
     // handleSetUserIp() {
     //   const id = {
     //     id: localStorage.getItem('uid')
     //   }
     //   setUserIp(id).then(res=>{
-      // this.$message({
-      //       message: '您已上线',
-      //       type: 'success'
-      //     });
+    // this.$message({
+    //       message: '您已上线',
+    //       type: 'success'
+    //     });
     // })
     // }
 
   },
-  beforeDestroy() {
-    // 在组件销毁前移除事件监听
-    window.removeEventListener('beforeunload', this.handleRemoveUserIp);
-  },
+  // beforeDestroy() {
+  //   // 在组件销毁前移除事件监听
+  //   window.removeEventListener('beforeunload', this.handleRemoveUserIp);
+  // },
 
 }
 </script>

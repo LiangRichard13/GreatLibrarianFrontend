@@ -12,7 +12,7 @@
               <p>IP地址:{{ row.ip }}</p>
 
               <!-- Conditional rendering for online/offline status -->
-              <p v-if="row.ip" style="color: green;">在线</p>
+              <p v-if="row.state===1" style="color: green;">在线</p>
               <p v-else style="color: red;">离线</p>
             </div>
           </div>

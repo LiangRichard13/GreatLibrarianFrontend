@@ -1,6 +1,10 @@
 <template>
   <div class="login">
     <div class="login-form">
+      <div class="login-form-header">
+        <img style="width: 75px; height: 75px;float:left;padding-right: 10px;" src="../assets/logo.png" alt="" />
+        <div class="login-form-text">大模型测评工具箱-注册</div>
+      </div>
       <div style="color: #91949c;font-weight: bolder">
         <p>Username</p>
         <el-input class="login-form-input" v-model="username" placeholder="账 号"></el-input>
@@ -11,13 +15,11 @@
         <p>Password</p>
         <el-input class="login-form-input" placeholder="密 码" v-model="password" show-password></el-input>
         <p>Check Password</p>
-        <el-input class="login-form-input" placeholder="确 认 密 码" v-model="checkPassword"
-                  show-password></el-input>
+        <el-input class="login-form-input" placeholder="确 认 密 码" v-model="checkPassword" show-password></el-input>
         <el-button @click="postLogin" class="login-form-button" type="primary">SIGN UP</el-button>
       </div>
       <div class="login-form-footer">
-        <el-link href="/login" style="font-weight: bolder;font-size: 16px;color: #91949c;"
-                 :underline="false">
+        <el-link href="/login" style="font-weight: bolder;font-size: 16px;color: #91949c;" :underline="false">
           我有账号 去登录
           <i style="font-weight: bolder;font-size: 15px" class="el-icon-right"></i>
         </el-link>
@@ -27,15 +29,15 @@
 </template>
 
 <script>
-import {Register} from '@/api/user.js';
-import {Notification} from "element-ui";
+import { Register } from '@/api/user.js';
+import { Notification } from "element-ui";
 
 export default {
   data() {
     return {
       username: '',
-      tel:'',
-      email:'',
+      tel: '',
+      email: '',
       password: '',
       checkPassword: '',
     }
@@ -53,17 +55,17 @@ export default {
         this.$message({
           message: '无效的手机号',
           type: 'warning'
-      });
-         return
+        });
+        return
       }
       if (!this.isValidEmail(this.email)) {
-     this.$message({
+        this.$message({
           message: '无效的邮箱',
           type: 'warning'
-      });
-      return
-}
-       if (this.password.length < 6) {
+        });
+        return
+      }
+      if (this.password.length < 6) {
         this.$message({
           message: '请输入不少于6位的密码',
           type: 'warning'
@@ -79,38 +81,37 @@ export default {
       }
       const RegisterData = {
         username: this.username,
-        tel:this.tel,
-        email:this.email,
+        tel: this.tel,
+        email: this.email,
         password: this.password,
       };
       console.log(RegisterData);
       Register(RegisterData).then(res => {
         if (res.success) {
-           Notification.success({
-                    title: 'Success!',
-                    message:'注册成功！',
-                    type: 'success'
-                });
+          Notification.success({
+            title: 'Success!',
+            message: '注册成功！',
+            type: 'success'
+          });
           this.$router.push("/login")
         }
       })
     },
     isValidEmail(email) {
-  // 使用正则表达式匹配标准的邮箱格式
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailPattern.test(email);
-},
-   isValidPhoneNumber(phoneNumber) {
-  // 使用正则表达式匹配11位数字
-  const phonePattern = /^\d{11}$/;
-  return phonePattern.test(phoneNumber);
-}
+      // 使用正则表达式匹配标准的邮箱格式
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return emailPattern.test(email);
+    },
+    isValidPhoneNumber(phoneNumber) {
+      // 使用正则表达式匹配11位数字
+      const phonePattern = /^\d{11}$/;
+      return phonePattern.test(phoneNumber);
+    }
   }
 }
 </script>
 
 <style scoped>
-
 .login {
   width: 100%;
   height: 100%;
@@ -145,11 +146,11 @@ export default {
 .login-form-button:hover {
   color: #ffffff;
   text-shadow: 0 0 10px #ffffff,
-  0 0 20px #ffffff,
-  0 0 40px #ffffff,
-  0 0 80px #ffffff,
-  0 0 120px #ffffff,
-  0 0 160px #ffffff;
+    0 0 20px #ffffff,
+    0 0 40px #ffffff,
+    0 0 80px #ffffff,
+    0 0 120px #ffffff,
+    0 0 160px #ffffff;
 }
 
 .login-form-footer {
@@ -159,4 +160,16 @@ export default {
   text-align: center;
 }
 
+.login-form-text {
+  color: #000000;
+  font-weight: bold;
+  font-size: 30px;
+  padding-top: 15px;
+}
+
+.login-form-header {
+  height: 20px;
+  padding-left: 20px;
+  padding-bottom: 100px;
+}
 </style>

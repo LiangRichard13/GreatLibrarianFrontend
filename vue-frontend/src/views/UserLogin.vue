@@ -1,6 +1,10 @@
 <template>
   <div class="login">
     <div class="login-form">
+      <div class="login-form-header">
+        <img style="width: 75px; height: 75px;float:left;padding-right: 10px;" src="../assets/logo.png" alt="" />
+        <div class="login-form-text">大模型测评工具箱-登录</div>
+      </div>
       <div style="color: #91949c;font-weight: bolder">
         <el-tabs v-model="activeTab" @tab-click="handleClick">
           <el-tab-pane label="邮箱登录" name="emailLogin">
@@ -37,7 +41,8 @@
 </template>
 
 <script>
-import { Login, setUserIp } from '@/api/user.js';
+import { Login } from '@/api/user.js';
+// import setUserIp from '@/api/user.js';
 import { Notification } from "element-ui";
 
 export default {
@@ -45,8 +50,8 @@ export default {
     return {
       activeTab: "emailLogin", // 默认选中的选项卡
       phoneNumber: '',
-      email: '',
-      password: '',
+      email: 'chendanliang783@gmail.com',
+      password: '13527454780',
       remember: false,
     }
   },
@@ -79,9 +84,9 @@ export default {
           });
           localStorage.setItem("uid", res.data.id);
           console.log(res.data.token)
-          localStorage.setItem("loginToken", res.data.token);//将用户id和token存放到本地
+          localStorage.setItem("loginToken", res.data.loginToken);//将用户id和token存放到本地
           // localStorage.setItem("authToken", res.data.authToken);
-          this.handleSetUserIp()
+          // this.handleSetUserIp()
           this.$router.push({ path: '/home', replace: true })
         }
       })
@@ -89,10 +94,10 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    handleSetUserIp() {
-      const id = localStorage.getItem('uid')
-      setUserIp(id)
-    }
+    // handleSetUserIp() {
+    //   const id = localStorage.getItem('uid')
+    //   setUserIp(id)
+    // }
   }
 }
 </script>
@@ -150,5 +155,18 @@ export default {
   color: #91949c;
   font-weight: bolder;
   font-size: 15px;
+}
+
+.login-form-text {
+  color: #000000;
+  font-weight: bold;
+  font-size: 30px;
+  padding-top: 15px;
+}
+
+.login-form-header {
+  height: 20px;
+  padding-left: 20px;
+  padding-bottom: 100px;
 }
 </style>

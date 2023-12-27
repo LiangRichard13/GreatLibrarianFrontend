@@ -4,7 +4,7 @@
       <div class="header">
         <div style="height: 70px;width: 100%">
           <div class="header-logo">
-            <img style="width: 50px; height: 50px;float: left" src="../assets/logo.png" alt="" />
+            <img style="width: 45px; height: 45px;float: left" src="../assets/logo.png" alt="" />
             <div class="header-logo-text">大模型测评工具箱</div>
           </div>
           <div class="header-links">
@@ -16,9 +16,10 @@
 
           <el-dropdown style="float: right;padding-right: 10px">
             <el-button type="text">
-              <div class="header-name">Welcome!{{ this.user.name }}
+              <div class="header-name">Welcome!{{ user.name }}
                 <i class="el-icon-caret-bottom"></i>
               </div>
+              <!-- <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.iconUrl"> -->
               <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.iconUrl">
             </el-button>
             <el-dropdown-menu slot="dropdown">
@@ -55,91 +56,125 @@
 </template>
 
 <script>
-// import {findById, isExpired,removeUserIp,setUserIp} from '@/api/user';
-// import{config} from "@/services/conf"
+import { findById, isExpired } from '@/api/user';
+import { removeUserIp } from '@/api/user'
+// import {setUserIp} from '@/api/user'
+import config from "@/services/conf"
 
 export default {
   name: "NavigationTop",
   data() {
     return {
-      user: { name: '新用户', iconUrl: null },
+      user: {},
       defaultAvatar: require('@/assets/avatar.png'), // 设置默认头像路径
     }
   },
 
   mounted() {
-    // //如果本地有存储的用户id则说明有登录
-    // if (localStorage.getItem("uid") !== null) {
+    //如果本地有存储的用户id则说明有登录
+    if (localStorage.getItem("uid") !== null) {
 
-    //   //检查token是否过期
-    //   const token = localStorage.getItem('loginToken')
-    //   isExpired(token).then(res => {
-    //     if (!res.success) {
-    //       this.$message({
-    //         message: '您的令牌已过期请重新登录',
-    //         type: 'warning'
-    //       });
-    //       localStorage.removeItem("uid");
-    //       localStorage.removeItem("loginToken");
-    //       this.handleRemoveUserIp;  //令牌过期则移除用户IP
-    //       this.$router.push("/login");
-    //     }
-    //   });
+      //检查token是否过期
+      const loginToken = { token: localStorage.getItem('loginToken') }
+      isExpired(loginToken).then(res => {
+        if (!res.success) {
+          this.$message({
+            message: '您的令牌已过期请重新登录',
+            type: 'warning'
+          });
+          const uid = localStorage.getItem("uid")
+          removeUserIp(uid)//令牌过期则移除用户IP
+          localStorage.removeItem("uid");
+          localStorage.removeItem("loginToken")
+          this.$router.push("/login");
+        }
+      });
 
-    //   const id = localStorage.getItem("uid")
-    //   this.handleSetUserIp
-    //   window.addEventListener('beforeunload', this.handleRemoveUserIp);//添加事件监听，如果用户关闭浏览器则请求移除用户ip
-    //   //如果令牌没过期
-    //   //通过取出登录后在本地存储的用户id获取用户信息
-    //   findById(id).then(res => {
-    //     this.user = res.data;
-    //     console.log(res.data)
-    //   })
-    // if (!this.user.iconUrl) {
-    //   this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
-    //   this.user.iconUrl = this.user.iconUrl.replace(/\\/g, "/");
-    //   this.user.iconUrl = config.API_URL + '/' + this.user.iconUrl;
-    // }
-    // else {
-    //   this.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
 
-    // }
-    // }
-    // //如果本地没有存储的用户id则说明没有登录，跳转到登录页面
-    // else {
-    //   this.$message({
-    //     message: '检测到您尚未登录，请登录',
-    //     type: 'warning' // 设置消息类型为警告
-    //   });
-    //   this.$router.push("/login")
-    // }
+      // this.handleSetUserIp
+
+      // window.addEventListener('beforeunload', this.handleRemoveUserIp);//添加事件监听，如果用户关闭浏览器则请求移除用户ip
+
+      //如果令牌没过期
+      //通过取出登录后在本地存储的用户id获取用户信息
+      const id = {
+        id: localStorage.getItem("uid")
+      }
+      findById(id).then(res => {
+
+        this.user = res.data;
+        if (!this.user.iconUrl) {
+          this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+        }
+        else {
+          this.user.iconUrl = this.user.iconUrl.replace(/\\/g, "/");
+          this.user.iconUrl = this.user.iconUrl.replace(/App/g, "");
+          this.user.iconUrl = config.API_URL + this.user.iconUrl;
+        }
+
+      })
+    }
+    //如果本地没有存储的用户id则说明没有登录，跳转到登录页面
+    else {
+      this.$message({
+        message: '检测到您尚未登录，请登录',
+        type: 'warning' // 设置消息类型为警告
+      });
+      this.$router.push("/login")
+    }
   },
 
   //使用过程需要去掉，仅作为展示
-  created() {
-    if (!this.user.iconUrl) {
-      this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
-    }
-  },
+  // created() {
+  //   if (!this.user.iconUrl) {
+  //     this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+  //   }
+  // },
   methods: {
-
     handleLogout() {
-      localStorage.removeItem("uid")
-      localStorage.removeItem("loginToken")
-      // this.handleRemoveUserIp
-      this.$router.push('/login')
+      if (localStorage.getItem("uid") !== null) {
+        const uid = localStorage.getItem("uid")
+        removeUserIp(uid).then(res => {
+          if (res.success) {
+            this.$message({
+              message: '您已登出',
+              type: 'warning'
+            });
+          }
+        })
+        localStorage.removeItem("uid")
+        localStorage.removeItem("loginToken")
+        this.$router.push('/login')
+      }
+      else {
+        this.$router.push("/login")
+      }
     },
 
     // handleRemoveUserIp() {
-    //   const uid = localStorage.getItem("uid")
-    //   removeUserIp(uid)
+    //   if (!this.$navigating) {
+    //     const uid = localStorage.getItem("uid")
+    //     removeUserIp(uid).then(res => {
+    //       if (res.success) {
+    //         this.$message({
+    //           message: '您已下线',
+    //           type: 'warning'
+    //         });
+    //       }
+    //     })
+    //   }
     // },
+
     // handleSetUserIp() {
     //   const id = {
     //     id: localStorage.getItem('uid')
     //   }
-    //   setUserIp(id)
-
+    //   setUserIp(id).then(res=>{
+    // this.$message({
+    //       message: '您已上线',
+    //       type: 'success'
+    //     });
+    // })
     // }
 
   },
@@ -200,10 +235,11 @@ export default {
 .el-main {
   overflow: auto;
 }
+
 .header-logo {
   padding-top: 10px;
   padding-left: 2%;
-  float:left;
+  float: left;
   letter-spacing: 2px;
 }
 

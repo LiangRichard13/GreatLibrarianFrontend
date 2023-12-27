@@ -115,4 +115,17 @@ const router = new VueRouter({
     routes
 })
 
+// 路由守卫，检测用户是进行跳转还是关闭浏览器标签
+// 在路由配置文件中
+// router.beforeEach((to, from, next) => {
+//     Vue.prototype.$navigating = true;
+//     next();
+//   });
+  
+//   // 在路由配置文件中
+// router.afterEach(() => {
+//     Vue.prototype.$navigating = false;
+//   });
+  
+
 export default router

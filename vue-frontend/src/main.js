@@ -10,3 +10,6 @@ new Vue({
     router,
     render: h => h(App)
 }).$mount('#app');
+
+// 在 main.js
+// Vue.prototype.$navigating = false;

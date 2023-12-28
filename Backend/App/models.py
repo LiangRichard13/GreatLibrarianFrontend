@@ -59,21 +59,10 @@ class Project(db.Model):
     project_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 项目id值，自增
     project_name = db.Column(db.String(80))  # 项目名称
     project_info = db.Column(db.String(200))  # 项目描述
-    project_LLM = db.Column(db.String(200))  # 项目内可用的LLM
-    project_DataSet = db.Column(db.String(200))  # 数据集
     userId = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
 
 
-# 用户测试实验信息
-class TestProject(db.Model):
-    __tablename__ = 'tb_TestProject'
-    testProject_id = db.Column(db.String(30), primary_key=True)  # 测试实验信息ID
-    testProject_time = db.Column(db.DateTime)  # 测试时间
-    testProject_LLMs = db.Column(db.String(100))  # APIKey中的name字段【指定大模型】
-    testProject_dataSet = db.Column(db.String(100))  # 实验所用的数据集路径
-    projectId = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # 项目ID---外键
-
-
+# 数据集表
 class DataSet(db.Model):
     __tablename__ = 'tb_DataSet'
     DS_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 数据集id
@@ -81,3 +70,49 @@ class DataSet(db.Model):
     DS_info = db.Column(db.String(200))  # 数据集描述
     DS_url = db.Column(db.String(80))  # 数据集文件存储url
     userid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
+
+
+# 项目--AK关联表
+class ProjectAPIKey(db.Model):
+    __tablename__ = 'tb_ProjectAPIKey'
+    Project_APIKey_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # project项目---外键
+    AKid = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # apiKey---外键
+
+
+# 项目--数据集关联表
+class ProjectDataSet(db.Model):
+    __tablename__ = 'tb_ProjectDataSet'
+    Project_DataSet_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # project项目---外键
+    DSid = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id))  # 数据集---外键
+
+
+# 用户测试实验信息
+class TestProject(db.Model):
+    __tablename__ = 'tb_TestProject'
+    tP_id = db.Column(db.String(30), primary_key=True)  # 测试实验信息ID
+    tP_name = db.Column(db.String(30))  # 实验名称
+    tP_time = db.Column(db.DateTime)  # 测试时间
+    tP_status = db.Column(db.Integer, default=0)  # 实验状态   【0:待实验、1:正在实验、2:待审核、3:已完成】
+    tP_progress = db.Column(db.Float)  # 实验进度
+    Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # 项目ID---外键
+    AK1 = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # APIKey1---外键
+    AK2 = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # APIKey2---外键
+    DS = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id))  # 数据集---外键
+
+
+# 实验审核任务表
+class QA(db.Model):
+    __tablename__ = 'tb_QA'
+    QA_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    QA_time = db.Column(db.DateTime)  # 审核时间
+    QA_question = db.Column(db.String(80))  # 审核的问题
+    QA_answer = db.Column(db.String(200))  # 审核的回答
+    QA_score = db.Column(db.Float)  # 审核打分
+    QA_thread = db.Column(db.Integer)  # 线程号
+    TPid = db.Column(db.String(30), db.ForeignKey(TestProject.tP_id))  # 实验ID---外键
+    uid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 审核人---外键
+
+    def __str__(self):
+        return f'Q:{self.QA_question}\tA:{self.QA_answer}\tthrad:{self.QA_thread}'

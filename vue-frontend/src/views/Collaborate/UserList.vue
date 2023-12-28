@@ -1,9 +1,10 @@
 <template>
   <div style="overflow-x: hidden">
+    <template v-if="userList.length">
     <el-row :gutter="20">
-      <el-col :span="24" v-for="user in userList" :key="user.id">
+      <el-col :span="13" v-for="user in userList" :key="user.id">
         <el-card>
-          <div style="display: flex; align-items: center;">
+          <div style="display:flex; align-items: center;">
             <img :src="user.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
             <div style="margin-left: 10px;">
               <p>用户名:{{ user.name }}</p>
@@ -19,6 +20,10 @@
         </el-card>
       </el-col>
     </el-row>
+  </template>
+  <div v-else class="emptyFriendsRequests">
+    <el-empty description="暂无可添加好友"></el-empty>
+  </div>
   </div>
 </template>
 
@@ -41,12 +46,13 @@ export default {
       getUserList(id).then(res => {
         // this.userList = res.data;
         this.userList = res.data.filter(user => user.state === 0);
+        console.log('获取可添加好友列表',this.userList)
         //设置用户头像
         this.userList = this.userList.map(user => {
           if (user.icon) {
             let icon = user.icon.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
             icon = user.icon.replace(/App/g, '');
-            icon = `${config.API_URL}/${icon}`; // 拼接完整的 URL
+            icon = config.API_URL + icon; // 拼接完整的 URL
             return { ...user, icon }; // 返回更新后的用户对象
           }
           else {

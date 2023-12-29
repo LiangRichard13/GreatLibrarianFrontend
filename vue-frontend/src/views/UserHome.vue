@@ -62,6 +62,8 @@ export default {
   name: "userHome",
   data() {
     return {
+
+      defaultAvatar: require('@/assets/avatar.png'),
       userFriends: [],
       myProjects:[],
       participatedProjects:[],

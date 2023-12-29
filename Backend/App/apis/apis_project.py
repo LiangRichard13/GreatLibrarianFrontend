@@ -6,15 +6,12 @@ from flask_restful import Resource
 from App.models import *
 
 
-class ProjectOperation(Resource):
+class ProjectCRUD(Resource):
     # 增加
     def post(self):
         project = Project(
-            # project_id=creat_md5_id()[:6],
             project_name=request.json['name'],
             project_info=request.json['info'],
-            project_LLM='-'.join(request.json['LLM']),  # 获取到的是APIKey_id值  列表转化为字符串
-            project_DataSet=request.json['DSid'],
             userId=request.json['uid'])
         try:
             db.session.add(project)  # 加入数据库
@@ -34,10 +31,9 @@ class ProjectOperation(Resource):
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:
-            print(e)
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False})
+            return jsonify({'success': False, 'message': e})
 
     # 查询
     def get(self):

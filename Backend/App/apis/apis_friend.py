@@ -50,5 +50,5 @@ class Friend(Resource):
 
     def get(self):
         user = User.query.filter(User.user_id == request.args['uid'])[0]
-        friendList = FriendShip.query.filter(FriendShip.friend_token == user.user_authToken)
+        friendList = FriendShip.query.filter(FriendShip.friend_token == user.user_authToken and FriendShip.friend_state==0)
         return jsonify({'fid': [x.userid for x in friendList],'success':True})

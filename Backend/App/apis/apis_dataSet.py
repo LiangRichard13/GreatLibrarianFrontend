@@ -9,7 +9,7 @@ from flask_restful import Resource
 from App.models import *
 
 
-class DataSetOperation(Resource):
+class DataSetCRUD(Resource):
     # 查询数据集【参数:uid,返回:该uid下的所有DS列表】
     def get(self):
         return jsonify({'data': [

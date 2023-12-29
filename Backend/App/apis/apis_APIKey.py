@@ -7,15 +7,12 @@ from App.models import *
 from App.utils.MD5_ID import *
 
 
-class APIKeyOperation(Resource):
+class APIKeyCRUD(Resource):
     # 添加
     def post(self):
         apiKey = APIKey(
-            apiKey_id=creat_md5_id()[:8],
-            apiKey_name=request.json['name'],
-            apiKey_value=request.json['value'],
-            apiKey_auth=request.json['auth'],
-            userid=request.json['uid'])
+            apiKey_id=creat_md5_id()[:8], apiKey_name=request.json['name'], apiKey_value=request.json['value'],
+            apiKey_auth=request.json['auth'], userid=request.json['uid'])
         try:
             db.session.add(apiKey)  # 加入数据库
             db.session.commit()
@@ -38,13 +35,14 @@ class APIKeyOperation(Resource):
             db.session.flush()  # 刷新，清空缓存
             return jsonify({'success': False})
 
-    # 查询
+    # 查询【参数:uid,返回:【uid下的所有apikey列表】
     def get(self):
+        # if request.args['choose'] == 1:
         return jsonify({'data': [
             {'id': x.apiKey_id, 'name': x.apiKey_name, 'value': x.apiKey_value, 'auth': x.apiKey_auth}
             for x in APIKey.query.filter(APIKey.userid == request.args['uid'])], 'success': True})
-
-
-class APIKeyUpdate(Resource):
-    def post(self):
-        pass
+    # elif request.args['choose'] == 2:
+    #     x = APIKey.query.filter(APIKey.apiKey_id == request.args['AKid'])[0]
+    #     return jsonify(
+    #         {'data': {'id': x.apiKey_id, 'name': x.apiKey_name, 'value': x.apiKey_value, 'auth': x.apiKey_auth},
+    #          'success': True})

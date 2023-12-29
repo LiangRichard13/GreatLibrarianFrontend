@@ -4,10 +4,17 @@
 
 from .extensions import api
 from App.apis.apis_user import *
+from App.apis.apis_friend import *
 from App.apis.apis_APIKey import *
 from App.apis.apis_dataSet import *
-from App.apis.apis_friend import *
+
 from App.apis.apis_project import *
+from App.apis.apis_projectAPIKey import *
+from App.apis.apis_projectDataSet import *
+
+from App.apis.apis_testProject import *
+from App.apis.apis_QA import *
+from App.apis.apis_progress import *
 
 # user用户类
 api.add_resource(FindById, '/user/findById')
@@ -15,18 +22,27 @@ api.add_resource(Login, '/user/login')
 api.add_resource(LoginOut, '/user/loginOut')
 api.add_resource(LoginToken, '/user/isExpired')
 api.add_resource(Register, '/user/register')
-api.add_resource(UpdateUser, '/user/update')
+api.add_resource(UpdateUser, '/user/updateUser')
+api.add_resource(UpdatePassWord, '/user/updatePassword')
 api.add_resource(GetUserList, '/user/getUserList')
 api.add_resource(Icon, '/user/icon')
 
 # 好友关系业务处理
 api.add_resource(Friend, '/friend')
 
-# configure类  管理APIKey
-api.add_resource(APIKeyOperation, '/APIKey')
+# 管理APIKey
+api.add_resource(APIKeyCRUD, '/APIKey')
+# 管理DataSet数据集类
+api.add_resource(DataSetCRUD, '/dataSet')
 
 # Project项目类
-api.add_resource(ProjectOperation, '/project')
+api.add_resource(ProjectCRUD, '/project')
+# 项目下管理APIKey
+api.add_resource(ProjectAK, '/projectAK')
+# 项目下管理DataSet
+api.add_resource(ProjectDS, '/projectDS')
 
-# DataSet数据集类
-api.add_resource(DataSetOperation, '/dataSet')
+# testProject实验
+api.add_resource(TestProjectCRUD, '/testProject')
+# api.add_resource(QAOperation, '/QA')  # 人工审核
+api.add_resource(Progress, '/progress')  # 进度条

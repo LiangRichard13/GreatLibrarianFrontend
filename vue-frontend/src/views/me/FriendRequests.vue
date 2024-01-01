@@ -4,25 +4,21 @@
   <template v-if="userFriendsRequestID.length"> 
   <el-row :gutter="20">
       <el-col :span="12" v-for="(row,index) in userFriendsRequest" :key="index" class="user-card"> 
-        <div v-for="(item, index) in userFriendsRequestID" :key="index">
+        <!-- <div v-for="(fid, index) in userFriendsRequestID" :key="index"> -->
         <el-card>
           <div style="display: flex; align-items: center;">
             <img :src="row.data.iconUrl" style="width: 50px; height: 50px; border-radius: 50%;" />
             <div style="margin-left: 10px;">
               <p>用户名:{{ row.data.name }}</p>
-              <p>用户ID:{{ item }}</p>
+              <p>用户ID:{{ userFriendsRequestID[index] }}</p>
               <p>IP地址:{{ row.data.ip }}</p>
-              <!-- <el-descriptions title="用户信息" border>
-    <el-descriptions-item label="用户名">{{row.data.name}}</el-descriptions-item>
-    <el-descriptions-item label="用户ID">{{ item }}</el-descriptions-item>
-    <el-descriptions-item label="IP地址">{{row.data.ip}}</el-descriptions-item>
-    </el-descriptions> -->
+              <p v-if="row.data.ip==null" style="color: red;">用户已登出</p>
             </div>
           </div>
-          <el-button type="success" @click='handleAgree(row)'>同意申请</el-button>
-          <el-button type="danger" @click='handleRefuse(row,index)'>拒绝申请</el-button>
+          <el-button type="success" @click='handleAgree(userFriendsRequestID[index])'>同意申请</el-button>
+          <el-button type="danger" @click='handleRefuse(userFriendsRequestID[index],index)'>拒绝申请</el-button>
         </el-card>
-      </div>
+      <!-- </div> -->
       </el-col>
     </el-row>
   </template> 
@@ -55,6 +51,7 @@ export default {
         this.userFriendsRequestID = res.fid;
 
         if (this.userFriendsRequestID) {
+          console.log('用户好友请求的id列表',this.userFriendsRequestID)
           Promise.all(this.userFriendsRequestID.map(fid => {
             const fidObject = { id: fid };
             return findById(fidObject);
@@ -87,9 +84,10 @@ export default {
         }
       })
     },
-    handleAgree(row) {
+    handleAgree(fid) {
+      console.log('同意来自', fid, '加为好友')
       const agreedData = {
-        fid: row.id,
+        fid: fid,
         uid: localStorage.getItem('uid'),
         result: true
       }
@@ -103,9 +101,9 @@ export default {
         }
       })
     },
-    handleRefuse(row, index) {
+    handleRefuse(fid, index) {
       const refuseData = {
-        fid: row.id,
+        fid: fid,
         uid: localStorage.getItem('uid'),
         result: false
       }
@@ -116,6 +114,7 @@ export default {
             message: '已拒绝好友申请！',
             type: 'warning'
           });
+          this.load()
         }
       })
 

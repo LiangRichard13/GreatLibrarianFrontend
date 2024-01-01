@@ -4,7 +4,7 @@
     <template v-if="userFriends.length">
     <el-row :gutter="20">
       <el-col :span="12" v-for="(row, index) in userFriends" :key="index" class="user-card">
-        <div v-for="(item, index) in friendsInfo" :key="index">
+        <!-- <div v-for="(item, index) in friendsInfo" :key="index"> -->
           <el-card>
             <div style="display: flex; align-items: center;">
               <img :src="row.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
@@ -12,8 +12,8 @@
                 <p>用户名:{{ row.name }}</p>
                 <p>用户ID:{{  row.id }}</p>
                 <p>IP地址:{{ row.ip }}</p>
-                <p>电话号码:{{ item.data.tel }}</p>
-                <p>邮箱:{{ item.data.email }}</p>
+                <p>电话号码:{{ friendsInfo[index].data.tel }}</p>
+                <p>邮箱:{{ friendsInfo[index].data.email }}</p>
 
                 <!-- <el-descriptions title="用户信息">
                   <el-descriptions-item label="用户名">{{  row.name }}</el-descriptions-item>
@@ -33,7 +33,7 @@
               <el-button type="danger" slot="reference">删除好友</el-button>
             </el-popconfirm>
           </el-card>
-        </div>
+        <!-- </div> -->
       </el-col>
     </el-row>
   </template>
@@ -65,6 +65,7 @@ export default {
       const id = localStorage.getItem('uid')
       getUserList(id).then(res => {
         this.userFriends = res.data.filter(user => user.state !== 0);
+        console.log('我的好友',this.userFriends)
         // 更新 userFriends 列表中每个用户的 iconUrl
         this.userFriends = this.userFriends.map(user => {
           if (user.icon) {
@@ -96,6 +97,7 @@ export default {
             message: '好友已删除！',
             type: 'warning'
           });
+          this.load()
         }
       })
     },

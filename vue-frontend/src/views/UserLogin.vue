@@ -50,8 +50,8 @@ export default {
     return {
       activeTab: "emailLogin", // 默认选中的选项卡
       phoneNumber: '',
-      email: 'chendanliang783@gmail.com',
-      password: '13527454780',
+      email: 'chendanliang@gmail.com',
+      password: '123456',
       remember: false,
     }
   },

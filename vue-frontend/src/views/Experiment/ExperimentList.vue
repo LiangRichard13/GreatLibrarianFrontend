@@ -306,7 +306,7 @@ export default {
             const deleteId = id
             deleteById(deleteId).then(res => {
                 if (res.success) {
-                    this.dataSet.splice(index, 1);
+                    this.experimentList.splice(index, 1);
                     this.$message({
                         message: '删除成功',
                         type: 'success',

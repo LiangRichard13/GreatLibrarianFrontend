@@ -37,8 +37,9 @@
                 <span>我的好友</span>
               </div>
               <template v-if="userFriends.length">
-                <div v-for="(friend, index) in userFriends" :key="index" class="friend-card">
-                  <el-avatar :src="friend.icon"></el-avatar>
+                <div v-for="(friend, index) in userFriends" :key="index" class="friend">
+                  <!-- <el-avatar :src="friend.icon"></el-avatar> -->
+                  <img :src="friend.icon" style="width: 50px; height: 50px; border-radius: 50%;" class="friend-icon" />
                   <div class="friend-info">
                     <span>{{ friend.name }}</span>
                   </div>
@@ -56,7 +57,7 @@
 </template>
 
 <script>
-import { getUserList,getFriendsRequest } from "@/api/collaborate";
+import { getUserList, getFriendsRequest } from "@/api/collaborate";
 import config from "@/services/conf"
 export default {
   name: "userHome",
@@ -65,14 +66,14 @@ export default {
 
       defaultAvatar: require('@/assets/avatar.png'),
       userFriends: [],
-      myProjects:[],
-      participatedProjects:[],
-      friendRequestNumebr:0
+      myProjects: [],
+      participatedProjects: [],
+      friendRequestNumebr: 0
     }
   },
   methods: {
     load() {
-      const uid=localStorage.getItem('uid')
+      const uid = localStorage.getItem('uid')
       //获取好友列表
       getUserList(uid).then(res => {
         this.userFriends = res.data.filter(user => user.state !== 0)
@@ -89,20 +90,39 @@ export default {
         });
       })
       //获取好友请求信息
-      getFriendsRequest(uid).then(res=>{
-        this.friendRequestNumebr=res.length
+      getFriendsRequest(uid).then(res => {
+        // 假设 res.data 是从某个地方获得的数据
+        if(res.fid.length)
+        this.friendRequestNumebr = res.fid.length;
+    
+
       })
       //获取项目信息
-    
+
     },
     //跳转处理好友请求
-    pushToFriendRequest(){
+    pushToFriendRequest() {
       this.$router.push('/FriendRequests')
     }
   },
   mounted() {
-    this.load()
+    if (localStorage.getItem("uid") !== null)
+      this.load()
   },
 }
 </script>
-<style scoped></style>
+<style scoped>
+.friend {
+  display: flex;
+  align-items: center;
+  /* 垂直居中 */
+}
+
+.friend-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  /* 在图像和名字之间添加一些空间 */
+}
+</style>

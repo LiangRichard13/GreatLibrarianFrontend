@@ -112,7 +112,7 @@
 
 <script>
 
-import { addFriendsToProject, getProjectsByUseId, deleteById } from '@/api/project'
+import { addFriendsToProject, getProjectsByUserId, deleteById } from '@/api/project'
 import { getUserList } from '@/api/collaborate'
 export default {
   name: "ProjectList",
@@ -121,48 +121,8 @@ export default {
       showDialog: false,
       currentProjectId: '',
       currentProjectName: '',
-      projectList: [
-        {
-          id: '1',
-          name: 'FirstProject',
-          info: 'This is a test',
-          collaborators:[{id:'1',name:'Alice'},{id:'2',name:'Bob'}],
-          apiKey: [{ id: '1', name: '文心一言', value: '123', auth: 'xxx' }, { id: '2', name: 'openAI', value: '12345', auth: 'xxx' }],
-          dataSet: [
-            {
-              id: '1',
-              name: '文心一言',
-              info: '文心一言的测试数据集',
-              url: 'http://localhost:8080/dataSetFile/1'
-            },
-            {
-              id: '2',
-              name: 'chatGpt',
-              info: 'chatGPT的测试数据集',
-              url: 'http://localhost:8080/dataSetFile/2'
-            }],
-
-        }
-      ],
-      userFriends: [
-        {
-          id: '1',
-          username: "Alice",
-          iconUrl: null,
-          ip: "192.168.1.1"
-        },
-        {
-          id: '2',
-          username: "Bob",
-          iconUrl: null,
-          ip: ""
-        },
-        {
-          id: '3',
-          username: "Charlie",
-          iconUrl:null,
-          ip: "192.168.1.3"
-        },],
+      projectList: [],
+      userFriends: [],
       selectFriendsId: []
     }
   },
@@ -174,7 +134,7 @@ export default {
     load() {
       if (localStorage.getItem("uid") !== null) {
         const id = localStorage.getItem("uid")
-        getProjectsByUseId(id).then(res => {
+        getProjectsByUserId(id).then(res => {
           this.projectList = res.data;
         })
         getUserList(id).then(res => {
@@ -186,7 +146,7 @@ export default {
       const deleteId = row.id
       deleteById(deleteId).then(res => {
         if (res.success) {
-          this.dataSet.splice(index, 1);
+          this.projectList.splice(index, 1);
           this.$message({
             message: '删除成功',
             type: 'success',

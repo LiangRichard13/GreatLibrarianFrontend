@@ -43,7 +43,7 @@ export function updateUser(data) {
 
 export function editPassword(data) {
     return service({
-        url: '/user/editPassword',
+        url: '/user/updatePassword',
         method: 'post',
         data: data
     })

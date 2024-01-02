@@ -111,7 +111,8 @@ class QA(db.Model):
     QA_answer = db.Column(db.String(200))  # 审核的回答
     QA_score = db.Column(db.Float)  # 审核打分
     QA_thread = db.Column(db.Integer)  # 线程号
-    TPid = db.Column(db.String(30), db.ForeignKey(TestProject.tP_id))  # 实验ID---外键
+    QA_field = db.Column(db.String(80))  # 领域
+    TPid = db.Column(db.String(30), db.ForeignKey(TestProject.tP_id))  # 实验ID---外键【ondelete='CASCADE'】
     uid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 审核人---外键
 
     def __str__(self):

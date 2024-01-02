@@ -16,7 +16,7 @@
 
           <el-dropdown style="float: right;padding-right: 10px">
             <el-button type="text">
-              <div class="header-name">Welcome!{{ user.name }}
+              <div class="header-name">欢迎使用!{{ user.name }}
                 <i class="el-icon-caret-bottom"></i>
               </div>
               <!-- <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.iconUrl"> -->

@@ -50,16 +50,16 @@
         </el-upload>
       </div>
     </div>
-    <el-dialog title="修改密码" :visible.sync="showDialog" width="50%" @close="resetDialog">
+    <el-dialog title="修改密码" :visible.sync="showDialog" width="30%" @close="resetDialog">
       <div>
         <el-form ref="form" :model="newApiKey" label-width="100px">
 
           <el-form-item label="修改的密码">
-            <el-input v-model="password"></el-input>
+            <el-input v-model="password" show-password></el-input>
           </el-form-item>
 
           <el-form-item label="确认密码">
-            <el-input v-model="checkPassword"></el-input>
+            <el-input v-model="checkPassword" show-password></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -165,7 +165,7 @@ export default {
       });
       return
     }
-    this.handleEditPassword
+    this.handleEditPassword()
   },
   onCheck() {
     if (this.user.name.length < 6) {
@@ -199,6 +199,8 @@ export default {
           message: '你已成功修改密码！',
           type: 'success'
         });
+        this.resetDialog()
+        this.showDialog=false
       }
     })
   },

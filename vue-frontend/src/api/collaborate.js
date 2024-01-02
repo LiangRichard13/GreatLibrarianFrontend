@@ -18,22 +18,22 @@ export function addFriend(data) {
     })
 }
 
-export function getUserFriendsById(id) {
-    return service({
-        url: '/user/getUserList',
-        method: 'get',
-        params: {
-            id: id
-        }
-    })
-}
+// export function getUserFriendsById(id) {
+//     return service({
+//         url: '/friend',
+//         method: 'get',
+//         params: {
+//             uid: id
+//         }
+//     })
+// }
 
 export function getFriendsRequest(id) {
     return service({
-        url: '/collaborate/getFriendsRequest',
+        url: '/friend',
         method: 'get',
         params: {
-            id: id
+            uid: id
         }
     })
 }

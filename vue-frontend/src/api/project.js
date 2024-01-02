@@ -8,7 +8,29 @@ export function addProject(data) {
     })
 }
 
-export function getProjectsByUseId(id) {
+export function addApiKeyToProject(data)
+{
+    return service(
+        {
+            url:'/projectAK',
+            method:'post',
+            data:data
+        }
+    )
+}
+
+export function addDataSetToProject(data)
+{
+    return service(
+        {
+            url:'/projectDS',
+            method:'post',
+            data:data
+        }
+    )
+}
+
+export function getProjectsByUserId(id) {
     return service({
         url: '/project',
         method: 'get',

@@ -30,7 +30,7 @@
         <el-table-column label="操作" width="180" align="center">
           <template slot-scope="scope">
             <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
-              @confirm="removeDataSet(scope.$index, scope.row)" title="确定要删除此API_KEY吗？">
+              @confirm="removeDataSet(scope.$index, scope.row)" title="确定要删除此数据集吗？">
               <el-button style="margin-left: 8px" size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
               </el-button>
             </el-popconfirm>
@@ -53,15 +53,16 @@
           </el-form-item>
 
           <!-- Upload button added here -->
-          <el-form-item label="上传文件">
-            <el-upload class="upload-demo" accept="application/zip" :action="uploadAction" :auto-upload="false"
-              :before-upload="beforeUpload" multiple :limit="1">
-              <el-button size="small" type="primary">
-                <i class="el-icon-upload2"></i> 点击上传
-              </el-button>
-              <div class="el-upload__tip">只能上传zip文件</div>
-            </el-upload>
-          </el-form-item>
+          <template>
+            <el-form-item label="上传文件">
+              <el-upload class="upload-demo" accept="application/zip" :before-upload="beforeUpload" multiple :limit="1">
+                <el-button size="small" type="primary">
+                  <i class="el-icon-upload2"></i> 点击上传
+                </el-button>
+                <div slot="tip" class="el-upload__tip">只能上传zip文件</div>
+              </el-upload>
+            </el-form-item>
+          </template>
         </el-form>
       </div>
 
@@ -83,12 +84,7 @@ export default {
   name: "DataSetConfig",
   data() {
     return {
-      dataSet: [{ id: '1', name: '文心一言', info: '123', url: 'http://localhost:8080/dataSetFile/1' }, {
-        id: '1',
-        name: 'chatGpt',
-        info: '123',
-        url: 'http://localhost:8080/dataSetFile/2'
-      }],
+      dataSet: [],
       showDialog: false,
       newDataItem: { name: '', info: '' },
       uploadFile: null
@@ -126,7 +122,7 @@ export default {
 
       // 创建 FormData 并添加数据
       const formData = new FormData();
-      formData.append('uid',localStorage.getItem('uid'));
+      formData.append('uid', localStorage.getItem('uid'));
       formData.append('name', this.newDataItem.name);
       formData.append('info', this.newDataItem.info);
       formData.append('dataSetFile', this.uploadedFile);
@@ -136,15 +132,14 @@ export default {
     },
     uploadFileAndInfo(formData) {
       addDateSet(formData).then(res => {
-        if (res.success)
-        {
+        if (res.success) {
           this.$message({
             message: '添加成功！',
             type: 'success'
           });
           this.resetDialog
-          this.showDialog=false
-          this.load
+          this.showDialog = false
+          this.load()
         }
       })
     },
@@ -163,11 +158,15 @@ export default {
     resetDialog() {
       this.newDataItem.name = '';
       this.newDataItem.info = '';// 重置输入
-      this.uploadFile=null
+      this.uploadFile = null
     },
     beforeUpload(file) {
       // 检查文件类型等逻辑...
       this.uploadedFile = file; // 保存文件引用，但不上传
+      this.$message({
+            message: '文件添加成功',
+            type: 'success'
+          });
       return false; // 阻止自动上传
     },
 

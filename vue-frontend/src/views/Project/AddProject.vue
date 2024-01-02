@@ -11,7 +11,7 @@
         </el-form-item>
 
         <el-form-item label="API Key">
-          <el-select v-model="newProject.apiKeys" placeholder="请选择" multiple>
+          <el-select v-model="newProject.apiKey" placeholder="请选择" multiple>
             <el-option v-for="item in apiKeys" :key="item.id" :label="`${item.id} - ${item.name}`" :value="item.id">
             </el-option>
           </el-select>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { addProject } from "@/api/project";
+import { addProject,addApiKeyToProject,addDataSetToProject } from "@/api/project";
 import { findApiKeyByUserId } from "@/api/apiConfig";
 import { findDataSetByUserId } from "@/api/dataSetConfig"
 
@@ -44,27 +44,9 @@ export default {
   data() {
     return {
       newProject: { name: '', info: '', apiKey: [], dataset: [] },
-      apiKeys: [
-        { id: '1', name: '文心一言', value: '123', auth: 'xxx' },
-        {
-          id: '2',
-          name: 'openAI',
-          value: '12345',
-          auth: 'xxx'
-        }],
-      dataSet: [
-        {
-          id: '1',
-          name: '文心一言',
-          info: '文心一言的测试数据集',
-          url: 'http://localhost:8080/dataSetFile/1'
-        },
-        {
-          id: '2',
-          name: 'chatGpt',
-          info: 'chatGPT的测试数据集',
-          url: 'http://localhost:8080/dataSetFile/2'
-        }],
+      // newProject: { name: '', info: ''},
+      apiKeys: [],
+      dataSet:[],
     }
   },
   mounted() {
@@ -77,9 +59,11 @@ export default {
         const id = localStorage.getItem("uid")
         findApiKeyByUserId(id).then(res => {
           this.apiKeys = res.data;
+          console.log('获取的apikeys',this.apiKeys)
         })
         findDataSetByUserId(id).then(res => {
           this.dataSet = res.data;
+          console.log('获取的dataSet',this.dataSet)
         })
       }
     },
@@ -87,18 +71,39 @@ export default {
       if (this.newProject.name.trim() && this.newProject.info.trim()) {
         if (this.newProject.apiKey.length > 0 && this.newProject.dataset.length > 0) {
           const data = {
+            uid:localStorage.getItem('uid'),
             name: this.newProject.name,
             info: this.newProject.info,
-            LLM: this.newProject.apiKey, // 确保包括了 apiKey
-            DSid: this.newProject.dataset // 确保包括了 dataset
+            // LLM: this.newProject.apiKey, // 确保包括了 apiKey
+            // DSid: this.newProject.dataset // 确保包括了 dataset
           }
           addProject(data).then(res => {
             if (res.success) {
               this.newProject.name = '';
               this.newProject.info = ''; // 清空输入框
-              this.newProject.apiKey = [];
-              this.newProject.dataset = [];
-              this.showDialog = false; // 关闭对话框
+              let projectId=res.id
+              // this.newProject.apiKey = [];
+              // this.newProject.dataset = [];
+
+              //将用户选择的apiKeys加入到project里面
+              Promise.all(this.newProject.apiKey.map(AK_id=>{
+                const addApi={
+                  pid:projectId,
+                  AKid:AK_id
+                }
+                addApiKeyToProject(addApi)
+              }))
+              this.newProject.apiKey=[]//将用户选择的apikey列表置空
+
+              //将用户选择的dataSet加入到project里面
+              Promise.all(this.newProject.dataset.map(DS_id=>{
+                const addDS={
+                  pid:projectId,
+                  DSid:DS_id
+                }
+                addDataSetToProject(addDS)
+              }))
+              this.newProject.dataset=[]//将用户选择的dataset列表置空
               this.$message({
                 message: '添加成功',
                 type: 'success'

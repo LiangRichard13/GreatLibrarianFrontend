@@ -18,6 +18,7 @@ def getDS(DSid):
     return {'id': x.DS_id, 'name': x.DS_name, 'info': x.DS_info, 'url': x.DS_url}
 
 
+# 项目下的实验配置
 class TestProjectCRUD(Resource):
     # 添加实验
     def post(self):

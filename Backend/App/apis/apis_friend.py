@@ -23,22 +23,21 @@ class Friend(Resource):
             db.session.flush()  # 刷新，清空缓存
             return jsonify({'success': False, 'message': e})
 
-    # 好友申请审核【接收参数:接收者uid、同意/拒绝响应result(bool类型值)】
+    # 好友申请审核【接收参数:接收者uid、请求者fid、同意/拒绝响应result(bool类型值)】
     def put(self):
-        uid = request.json['uid']
-        result = request.json['result']  # 获取好友接收者的返回结果
+        uid, fid, result = request.json['uid'], request.json['fid'], request.json['result']  # 获取好友接收者的返回结果
         friend_token = User.query.filter(User.user_id == uid)[0].user_authToken  # 获取接收者的token
-        friendship = FriendShip.query.filter(FriendShip.friend_token == friend_token)[0]  # 根据authToken查询请求记录
+        friendship = FriendShip.query.filter(FriendShip.friend_token == friend_token, FriendShip.userid == fid,
+                                             FriendShip.friend_state == 0)[0]  # 根据authToken查询请求记录
         try:
             if result:  # 同意添加好友
                 friendship.friend_state = 1
-                friend_next = FriendShip(
-                    userid=uid,  # 接收者id
-                    friend_token=User.query.filter(User.user_id == friendship.userid)[0].user_authToken,  # 获取好友的id
-                    friend_state=1,
-                    createTime=datetime.now()
-                )
-                db.session.add(friend_next)
+                # friend_next = FriendShip(
+                #     userid=uid,  # 接收者id
+                #     friend_token=User.query.filter(User.user_id == friendship.userid)[0].user_authToken,  # 获取好友的id
+                #     friend_state=1,
+                #     createTime=datetime.now())
+                # db.session.add(friend_next)
             else:  # 拒绝添加好友
                 db.session.delete(friendship)
             db.session.commit()  # 提交数据库
@@ -48,7 +47,8 @@ class Friend(Resource):
             db.session.flush()  # 刷新，清空缓存
             return jsonify({'success': False, 'massage': e})
 
+    # 获取收到好友申请的列表【接收参数：用户uid】
     def get(self):
-        user = User.query.filter(User.user_id == request.args['uid'])[0]
-        friendList = FriendShip.query.filter(FriendShip.friend_token == user.user_authToken and FriendShip.friend_state==0)
-        return jsonify({'fid': [x.userid for x in friendList],'success':True})
+        user = User.query.filter(User.user_id == request.args['uid'], FriendShip.friend_state == 0)[0]
+        friendList = FriendShip.query.filter(FriendShip.friend_token == user.user_authToken)
+        return jsonify({'fid': [x.userid for x in friendList], 'success': True})

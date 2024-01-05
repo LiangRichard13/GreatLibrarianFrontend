@@ -6,6 +6,7 @@ from flask_restful import Resource
 from App.models import *
 
 
+# 项目的CRUD配置
 class ProjectCRUD(Resource):
     # 增加
     def post(self):

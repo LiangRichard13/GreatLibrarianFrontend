@@ -69,8 +69,6 @@ class FindById(Resource):
         users = User.query.filter(User.user_id == request.json['id'])
         if list(users):
             user = users[0]
-            # data = {'id':user.user_id,'name': user.user_name, 'tel': user.user_tel, 'email': user.user_email,
-            #         "iconUrl": user.user_iconUrl}
             data = {'name': user.user_name, 'tel': user.user_tel, 'email': user.user_email,
                     "iconUrl": user.user_iconUrl}
             return jsonify({'success': True, 'data': data})
@@ -192,15 +190,16 @@ def getFriends(user_id, ip):
     :return: userIdDict
     '''
     global userIdDict
-    #通过uid找authtoken对应的用户
-    for friend in FriendShip.query.filter(FriendShip.userid == user_id and FriendShip.friend_state==1):
+    # 通过uid找authtoken对应的用户
+    for friend in FriendShip.query.filter(FriendShip.userid == user_id, FriendShip.friend_state == 1):
         user = User.query.filter(User.user_authToken == friend.friend_token)[0]
         userIdDict[user.user_id] = 1 if user.user_IP == ip else -1
 
-    #通过authtoken找uid对应的用户
-    auth_token_user=User.query.filter(User.user_id==user_id)[0]
-    for friend in FriendShip.query.filter(FriendShip.friend_token==auth_token_user.user_authToken and FriendShip.friend_state==1):
-        user=User.query.filter(User.user_id==friend.userid)[0]
+    # 通过authtoken找uid对应的用户
+    auth_token_user = User.query.filter(User.user_id == user_id)[0]
+    for friend in FriendShip.query.filter(FriendShip.friend_token == auth_token_user.user_authToken,
+                                          FriendShip.friend_state == 1):
+        user = User.query.filter(User.user_id == friend.userid)[0]
         userIdDict[user.user_id] = 1 if user.user_IP == ip else -1
 
 
@@ -216,4 +215,4 @@ class GetUserList(Resource):
         # 3、根据id进行数据封装
         data = [{'id': user.user_id, 'name': user.user_name, 'icon': user.user_iconUrl, 'ip': user.user_IP,
                  'state': userIdDict[user.user_id]} for user in User.query.filter(User.user_id.in_(userIdDict.keys()))]
-        return jsonify({'data': data})
+        return jsonify({'data': data, 'success': True})

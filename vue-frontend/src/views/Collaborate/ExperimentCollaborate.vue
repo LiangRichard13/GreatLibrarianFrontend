@@ -106,8 +106,13 @@ export default {
         }
     },
     mounted() {
-        this.thisProject = this.$route.query
-        this.load()
+        let storedProject = localStorage.getItem('thisProject');
+        if (storedProject) {
+            this.thisProject = JSON.parse(storedProject);
+        } else {
+            this.$router.push("/myCollaborate")
+        }
+        this.load();
     },
     methods:
     {

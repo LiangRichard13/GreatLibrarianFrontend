@@ -62,7 +62,13 @@ export default {
     }
   },
   mounted() {
-    this.thisExperiment = this.$route.query
+    let storedExperiment = localStorage.getItem('thisExperiment');
+        if (storedExperiment) {
+            this.thisExperiment = JSON.parse(storedExperiment);
+        } else {
+            // 处理没有数据的情况，可能是跳转到此页面或刷新页面
+            this.$router.push("/projectsList")
+        }
     // this.load()
     this.updatePagedQAList(); // 初始加载
   },

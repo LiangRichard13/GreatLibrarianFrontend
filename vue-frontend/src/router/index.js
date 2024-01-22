@@ -45,8 +45,8 @@ const routes = [
                 component: () => import("@/views/Experiment/ExperimentList.vue")
             },
             {
-                path: '/experienceCollaborate',
-                component: () => import('@/views/Collaborate/ExperienceCollaborate.vue')
+                path: '/experimentCollaborate',
+                component: () => import('@/views/Collaborate/ExperimentCollaborate.vue')
             },
             {
                 path: '/review',

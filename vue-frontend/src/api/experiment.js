@@ -2,27 +2,25 @@ import service from "@/utils/request";
 
 export function getExperimentByProjectId(id) {
     return service({
-        url: '/project/getExperimentByProjectId',
+        url: '/testProject',
         method: 'get',
         params: {
-            id: id
+            pid: id
         }
     })
 }
 
-export function deleteById(id) {
+export function deleteById(data) {
     return service({
-        url: '/project/deleteById',
+        url: '/testProject',
         method: 'delete',
-        params: {
-            id: id
-        }
+        data:data
     })
 }
 
 export function addExpirement(data) {
     return service({
-        url: '/project/addExpirement',
+        url: '/testProject',
         method: 'post',
         data: data
     })

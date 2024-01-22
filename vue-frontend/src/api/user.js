@@ -35,7 +35,7 @@ export function isExpired(token) {
 
 export function updateUser(data) {
     return service({
-        url: '/user/update',
+        url: '/user/updateUser',
         method: 'post',
         data: data
     })

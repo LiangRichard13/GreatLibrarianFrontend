@@ -7,6 +7,9 @@
         <el-form-item style="padding: 0" label="用户名">
           <el-input v-model="user.name"></el-input>
         </el-form-item>
+        <el-form-item style="padding-top: 20px">
+          <el-button size="small" type="primary" icon="el-icon-edit" @click="onCheck">修改用户名</el-button>
+        </el-form-item>
         <!-- <el-form-item style="padding: 0" label="修改密码">
           <el-input type="password" v-model="password" show-password></el-input>
         </el-form-item>
@@ -34,9 +37,6 @@
           </div>
 
           <el-button @click="goToKeyConfig" type="success">配置我的API_KEY</el-button>
-        </el-form-item>
-        <el-form-item style="padding-top: 20px">
-          <el-button type="primary" icon="el-icon-edit" @click="onCheck">更新基本信息</el-button>
         </el-form-item>
       </el-form>
       <div style="text-align: center;">

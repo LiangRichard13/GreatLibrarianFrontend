@@ -40,13 +40,11 @@ export function getProjectsByUserId(id) {
     })
 }
 
-export function deleteById(id) {
+export function deleteById(data) {
     return service({
         url: '/project',
         method: 'delete',
-        params: {
-            id: id
-        }
+        data:data
     })
 }
 

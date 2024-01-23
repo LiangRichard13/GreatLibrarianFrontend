@@ -10,13 +10,13 @@
         <el-table-column label="测试说明" prop="info"></el-table-column>
 
          <!-- 协作者 列 -->
-         <el-table-column label="协作者">
+         <!-- <el-table-column label="协作者">
           <template slot-scope="scope">
             <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
               {{collaborator.name}}
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <!-- LLM 列 -->
         <el-table-column label="LLM">
@@ -51,31 +51,36 @@
             实验列表
           </el-button>
         </el-dropdown-item>
-        <el-dropdown-item>
+        <!-- <el-dropdown-item>
           <el-button
             size="mini"
             type="success"
-            @click.stop="setCurrentProjectID(scope.row.id, scope.row.name)"> <!-- 阻止冒泡 -->
+            @click.stop="setCurrentProjectID(scope.row.id, scope.row.name)">
             好友协作
           </el-button>
-        </el-dropdown-item>
+        </el-dropdown-item> -->
         <el-dropdown-item>
-          <el-popconfirm
+          <!-- <el-popconfirm
             confirm-button-text="确定"
             cancel-button-text="不用了"
             icon="el-icon-info"
             icon-color="red"
-            @confirm.stop="removeDataSet(scope.$index, scope.row)"
+            @confirm.stop="removeProject(scope.$index, scope.row)"
             title="确定要删除此项目吗？">
             <el-button
             icon="el-icon-delete"
               size="mini"
               type="danger"
               slot="reference"
-              @click.stop> <!-- 阻止冒泡 -->
+              @click.stop>
               删除
             </el-button>
-          </el-popconfirm>
+          </el-popconfirm> -->
+          <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
+              @confirm="removeProject(scope.$index, scope.row)" title="确定要删除此项目吗？">
+              <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+              </el-button>
+            </el-popconfirm>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -83,28 +88,27 @@
 </el-table-column>
       </el-table>
     </div>
-    <template>
-      <!-- 对话框 -->
+    <!-- 将好友加入到项目协作的对话框 -->
+    <!-- <template>
+  
       <el-dialog title="请为当前项目添加协作者" :visible.sync="showDialog" @close="handleDialogClose">
 
         <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
           <h4>当前项目：{{ currentProjectId }} - {{ currentProjectName }}</h4>
         </div>
 
-        <!-- 复选框列表 -->
         <el-checkbox-group v-model="selectFriendsId">
           <el-checkbox v-for="friend in userFriends" :label="friend.id" :key="friend.id">
             {{ friend.id }} - {{ friend.username }}
           </el-checkbox>
         </el-checkbox-group>
 
-        <!-- 操作按钮 -->
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleDialogClose">取消</el-button>
           <el-button type="primary" @click="friendsToProject">确定</el-button>
         </span>
       </el-dialog>
-    </template>
+    </template> -->
 
   </div>
 </template>
@@ -112,8 +116,9 @@
 
 <script>
 
-import { addFriendsToProject, getProjectsByUserId, deleteById } from '@/api/project'
-import { getUserList } from '@/api/collaborate'
+import {getProjectsByUserId, deleteById } from '@/api/project'
+// import {addFriendsToProject} from '@/api/project' 
+// import { getUserList } from '@/api/collaborate'
 export default {
   name: "ProjectList",
   data() {
@@ -122,8 +127,8 @@ export default {
       currentProjectId: '',
       currentProjectName: '',
       projectList: [],
-      userFriends: [],
-      selectFriendsId: []
+      // userFriends: [],
+      // selectFriendsId: []
     }
   },
   mounted() {
@@ -137,14 +142,17 @@ export default {
         getProjectsByUserId(id).then(res => {
           this.projectList = res.data;
         })
-        getUserList(id).then(res => {
-          this.userFriends = res.data;
-        })
+        //获取用户列表
+        // getUserList(id).then(res => {
+        //   this.userFriends = res.data;
+        // })
       }
     },
     removeProject(index, row) {
-      const deleteId = row.id
-      deleteById(deleteId).then(res => {
+      const data={
+        id:row.id
+      }
+      deleteById(data).then(res => {
         if (res.success) {
           this.projectList.splice(index, 1);
           this.$message({
@@ -163,21 +171,24 @@ export default {
       this.selectFriendsId = []; // 清除选择
       this.showDialog = false; // 关闭对话框
     },
-    friendsToProject() {
-      const data = { id: this.currentProjectId, uid: this.selectFriendsId }
-      addFriendsToProject(data).then(res => {
-        if (res.success) {
-          this.$message({
-            message: '已为项目添加协作者！',
-            type: 'success',
-          });
-          this.load()
-        }
-      })
-      this.handleDialogClose(); // 关闭对话框
-    },
+
+    //将好友加入到项目协作
+    // friendsToProject() {
+    //   const data = { id: this.currentProjectId, uid: this.selectFriendsId }
+    //   addFriendsToProject(data).then(res => {
+    //     if (res.success) {
+    //       this.$message({
+    //         message: '已为项目添加协作者！',
+    //         type: 'success',
+    //       });
+    //       this.load()
+    //     }
+    //   })
+    //   this.handleDialogClose(); // 关闭对话框
+    // },
     handleExperiment(project){
-      this.$router.push({ path: `/experimentList`,query: project});
+      localStorage.setItem('thisProject', JSON.stringify(project));
+      this.$router.push("/experimentList")
     }
   }
 }

@@ -12,7 +12,9 @@
                   <span>我的项目</span>
                 </div>
                 <el-table :data="myProjects">
-                  <!-- 表格内容 -->
+                  <el-table-column label="项目 ID" prop="id"></el-table-column>
+                  <el-table-column label="项目名称" prop="name"></el-table-column>
+                  <el-table-column label="测试说明" prop="info"></el-table-column>
                 </el-table>
               </el-card>
 
@@ -58,6 +60,7 @@
 
 <script>
 import { getUserList, getFriendsRequest } from "@/api/collaborate";
+import { getProjectsByUserId } from "@/api/project"
 import config from "@/services/conf"
 export default {
   name: "userHome",
@@ -89,15 +92,18 @@ export default {
           }
         });
       })
-      //获取好友请求信息
+      //获取好友请求信息个数
       getFriendsRequest(uid).then(res => {
         // 假设 res.data 是从某个地方获得的数据
-        if(res.fid.length)
-        this.friendRequestNumebr = res.fid.length;
-    
+        if (res.fid.length)
+          this.friendRequestNumebr = res.fid.length;
+
 
       })
       //获取项目信息
+      getProjectsByUserId(uid).then(res => {
+        this.myProjects = res.data
+      })
 
     },
     //跳转处理好友请求

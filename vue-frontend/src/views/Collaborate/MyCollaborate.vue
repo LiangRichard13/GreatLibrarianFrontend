@@ -98,8 +98,8 @@ export default {
       }
     },
     InCollaboration(project){
-      localStorage.setItem('thisProject', JSON.stringify(project));
-      this.$router.push("experimentCollaborate")
+      localStorage.setItem('thisCoProject', JSON.stringify(project));
+      this.$router.push("/experimentCollaborate")
     }
   }
 }

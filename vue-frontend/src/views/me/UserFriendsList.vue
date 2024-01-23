@@ -11,7 +11,9 @@
               <div style="margin-left: 10px;">
                 <p>用户名:{{ row.name }}</p>
                 <p>用户ID:{{  row.id }}</p>
-                <p>IP地址:{{ row.ip }}</p>
+                <p>IP地址:{{ row.ip }}
+                  <sapn v-if="row.state !== 1" style="color: red;">用户已登出</sapn>
+                </p>
                 <p>电话号码:{{ friendsInfo[index].data.tel }}</p>
                 <p>邮箱:{{ friendsInfo[index].data.email }}</p>
 
@@ -24,7 +26,6 @@
                 </el-descriptions> -->
 
                 <!-- Conditional rendering for online/offline status -->
-                <p v-if="row.state !== 1" style="color: red;">用户已登出</p>
                 <!-- <p v-else style="color: red;">离线</p> -->
               </div>
             </div>

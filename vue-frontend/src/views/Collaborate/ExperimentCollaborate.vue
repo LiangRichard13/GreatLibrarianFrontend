@@ -106,7 +106,7 @@ export default {
         }
     },
     mounted() {
-        let storedProject = localStorage.getItem('thisProject');
+        let storedProject = localStorage.getItem('thisCoProject');
         if (storedProject) {
             this.thisProject = JSON.parse(storedProject);
         } else {

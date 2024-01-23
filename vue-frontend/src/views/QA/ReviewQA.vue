@@ -17,6 +17,14 @@
           </template>
         </el-table-column>
 
+<el-table-column>
+  <template slot-scope="scope">
+    <div>
+      <el-button size="small" type="primary" @click="submitRate(scope.row,scope.$index)">提交打分</el-button>
+    </div>
+  </template>
+</el-table-column>
+
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -34,9 +42,9 @@
         layout="total, sizes, prev, pager, next, jumper">
       </el-pagination>
     </div>
-    <div class="button-container" style="text-align: right; margin-top: 20px;">
+    <!-- <div class="button-container" style="text-align: right; margin-top: 20px;">
       <el-button type="primary" @click="submitRate()">提交打分</el-button>
-    </div>
+    </div> -->
   </div>
 </template>
    
@@ -65,10 +73,11 @@ export default {
     let storedExperiment = localStorage.getItem('thisExperiment');
         if (storedExperiment) {
             this.thisExperiment = JSON.parse(storedExperiment);
-        } else {
-            // 处理没有数据的情况，可能是跳转到此页面或刷新页面
-            this.$router.push("/projectsList")
-        }
+        } 
+        // else {
+        //     // 处理没有数据的情况，可能是跳转到此页面或刷新页面
+        //     this.$router.push("/projectsList")
+        // }
     // this.load()
     this.updatePagedQAList(); // 初始加载
   },
@@ -81,14 +90,15 @@ export default {
     goBack() {
       this.$router.go(-1); // 返回上一个页面
     },
-    submitRate() {
-      rateQA(this.QAList).then(res => {
+    submitRate(row,index) {
+      rateQA(row).then(res => {
         if (res.success) {
           this.$message({
             message: '打分成功!',
             type: 'success'
           });
-          this.load()
+          this.QAList.splice(index,1)
+          // this.load()
         }
       })
     },

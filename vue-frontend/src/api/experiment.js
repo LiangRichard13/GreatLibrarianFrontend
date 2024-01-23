@@ -22,6 +22,17 @@ export function addExpirement(data) {
     return service({
         url: '/testProject',
         method: 'post',
+        data: data,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+    })
+}
+
+export function editExpirement(data) {
+    return service({
+        url: '/testProject',
+        method: 'put',
         data: data
     })
 }

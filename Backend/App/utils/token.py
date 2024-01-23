@@ -32,12 +32,14 @@ def encode(user_id, token_time):
 def decode(token):
     try:
         decoded = jwt.decode(token, secret_key, algorithms=[algorithm])
-        # print(f"token解码信息的id:{decoded['data']['id']}")
+        print(f"token解码信息的id:{decoded['data']['id']}")
         return True, decoded['data']['id']
     except Exception as e:
         # print(f'token过期-----{e}')
         return False
 
-# code = encode('123456', 30)
+
+# code = encode('123456', 30*60*60)
+# print(code)
 # time.sleep(1)
 # decode(code)

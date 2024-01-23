@@ -53,15 +53,6 @@ class APIKey(db.Model):
     userid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
 
 
-# 项目数据表
-class Project(db.Model):
-    __tablename__ = 'tb_Project'
-    project_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 项目id值，自增
-    project_name = db.Column(db.String(80))  # 项目名称
-    project_info = db.Column(db.String(200))  # 项目描述
-    userId = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
-
-
 # 数据集表
 class DataSet(db.Model):
     __tablename__ = 'tb_DataSet'
@@ -72,12 +63,24 @@ class DataSet(db.Model):
     userid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
 
 
+# 项目数据表
+class Project(db.Model):
+    __tablename__ = 'tb_Project'
+    project_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 项目id值，自增
+    project_name = db.Column(db.String(80))  # 项目名称
+    project_info = db.Column(db.String(200))  # 项目描述
+    userId = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
+
+    APIKeys = db.relationship('ProjectAPIKey', backref='projectAK', cascade='all, delete-orphan')  # 1:m=project:AK
+    DataSets = db.relationship('ProjectDataSet', backref='projectDS', cascade='all, delete-orphan')  # 1:m=project:DS
+
+
 # 项目--AK关联表
 class ProjectAPIKey(db.Model):
     __tablename__ = 'tb_ProjectAPIKey'
     Project_APIKey_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # project项目---外键
-    AKid = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # apiKey---外键
+    AKid = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id, ondelete='CASCADE'))  # apiKey---外键
 
 
 # 项目--数据集关联表
@@ -85,7 +88,7 @@ class ProjectDataSet(db.Model):
     __tablename__ = 'tb_ProjectDataSet'
     Project_DataSet_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # project项目---外键
-    DSid = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id))  # 数据集---外键
+    DSid = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id, ondelete='CASCADE'))  # 数据集---外键
 
 
 # 用户测试实验信息
@@ -96,6 +99,7 @@ class TestProject(db.Model):
     tP_time = db.Column(db.DateTime)  # 测试时间
     tP_status = db.Column(db.Integer, default=0)  # 实验状态   【0:待实验、1:正在实验、2:待审核、3:已完成】
     tP_progress = db.Column(db.Float)  # 实验进度
+    tP_config = db.Column(db.String(80))  # 实验配置文件Url
     Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # 项目ID---外键
     AK1 = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # APIKey1---外键
     AK2 = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # APIKey2---外键

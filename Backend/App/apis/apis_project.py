@@ -39,10 +39,20 @@ class ProjectCRUD(Resource):
     # 查询
     def get(self):
         data = []
-        for x in Project.query.filter(Project.userId == request.args['uid']):
-            LLM = []
-            for y in x.project_LLM.split('-'):
-                aK = APIKey.query.filter(APIKey.apiKey_id == y)[0]
-                LLM.append({'id': y, 'name': aK.apiKey_name, 'value': aK.apiKey_value, 'auth': aK.apiKey_auth})
-            data.append({'id': x.project_id, 'name': x.project_name, 'info': x.project_info, 'LLM': LLM})
+        for project in Project.query.filter(Project.userId == request.args['uid']):
+            print(project.project_id)
+            # 查找该项目下的apikey
+            project_apikey = []
+            for item in ProjectAPIKey.query.filter(ProjectAPIKey.Pid == project.project_id):
+                aK = APIKey.query.filter(APIKey.apiKey_id == item.AKid)[0]
+                project_apikey.append({'id': aK.apiKey_id, 'name': aK.apiKey_name})
+
+            # 查找该项目下的dataset
+            project_dataset = []
+            for item in ProjectDataSet.query.filter(ProjectDataSet.Pid == project.project_id):
+                dS = DataSet.query.filter(DataSet.DS_id == item.DSid)[0]
+                project_dataset.append({'id': dS.DS_id, 'name': dS.DS_name})
+
+            data.append({'id': project.project_id, 'name': project.project_name, 'info': project.project_info,
+                         'apiKey': project_apikey, 'dataSet': project_dataset})
         return jsonify({'data': data, 'success': True})

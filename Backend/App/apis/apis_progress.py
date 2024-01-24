@@ -43,7 +43,7 @@ class Progress(Resource):
                 except Exception as e:  # 数据库操作异常处理
                     db.session.rollback()  # 回滚
                     db.session.flush()  # 刷新，清空缓存
-                    return jsonify({'success': False, 'message': e})
+                    return jsonify({'success': False, 'message': str(e)})
             else:
                 return jsonify({'success': False, 'message': 'not find'})
         else:

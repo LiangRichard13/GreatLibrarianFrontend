@@ -33,7 +33,7 @@ class testProjectOperation(Resource):
         except Exception as e:  # 数据库操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'message': e})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 更新报告
     def put(self):
@@ -46,13 +46,4 @@ class testProjectOperation(Resource):
         # result = subprocess.run(command, shell=True, capture_output=True, text=True)
         # print(result.stdout)
 
-    # 接收配置文件
-    def get(self):
-        testProject = TestProject.query.filter(TestProject.tP_id == request.args['TPid'])[0]
-        file = request.files.get('configFile')  # 获取到头像图片
-        try:
-            file.save('APP/data/' + testProject.tP_id + '/')
-            db.session.commit()
-            return jsonify({'success': True})
-        except OSError as oe:  # 文件处理异常
-            return jsonify({'success': False, 'message': oe})
+

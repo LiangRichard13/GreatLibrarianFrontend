@@ -23,7 +23,8 @@ class TestProjectCRUD(Resource):
     # 添加实验
     def post(self):
         tP = TestProject(tP_id=creat_md5_id()[:9], tP_name=request.json['name'], tP_time=datetime.now(),
-                         AK1=request.json['AK1'], AK2=request.json['AK2'], DS=request.json['DS'])
+                         Pid=request.json['pid'], AK1=request.json['AK1'], AK2=request.json['AK2'],
+                         DS=request.json['DS'])
         try:
             db.session.add(tP)
             db.session.commit()
@@ -47,10 +48,11 @@ class TestProjectCRUD(Resource):
     # 查看实验
     def get(self):
         test = []
-        for x in TestProject.query.filter(TestProject.tP_id == request.args['pid']):
+        for x in TestProject.query.filter(TestProject.Pid == request.args['pid']):
             test.append({'id': x.tP_id, 'name': x.tP_name, 'time': x.tP_time,
                          'status': x.tP_status, 'progress': x.tP_progress,
                          'AK1': getAK(x.AK1), 'AK2': getAK(x.AK2), 'dataSet': getDS(x.DS)})
+        return jsonify({'data': test, 'success': True})
 
     # 实验修改
     def put(self):

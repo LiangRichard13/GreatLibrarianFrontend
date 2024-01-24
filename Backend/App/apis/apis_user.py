@@ -1,12 +1,12 @@
 # @Author: LiXiang
 # @Time: 2023/11/2 14:57
 # @version: 1.0
+import os
 from flask import jsonify, request
 from flask_restful import Resource
 from App.models import *
 from App.utils.token import encode, decode
 from App.utils.MD5_ID import creat_md5_id
-import os
 
 
 # 用户头像文件操作
@@ -27,11 +27,11 @@ class Icon(Resource):
             db.session.commit()
             return jsonify({'success': True, 'url': fileUrl})
         except OSError as oe:  # 文件处理异常
-            return jsonify({'success': False, 'message': oe})
+            return jsonify({'success': False, 'message': str(oe)})
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'message': e})
+            return jsonify({'success': False, 'message': str(e)})
 
 
 # 用户修改个人信息
@@ -39,14 +39,13 @@ class UpdateUser(Resource):
     def post(self):
         user = User.query.filter(User.user_id == request.json['id'])[0]  # 通过ID值查找user
         user.user_name = request.json['name']
-        user.user_name = request.json['password']
         try:
             db.session.commit()  # 提交数据库
             return jsonify({'success': True})
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'massage': e})
+            return jsonify({'success': False, 'message': str(e)})
 
 
 # 用户更新密码
@@ -60,7 +59,7 @@ class UpdatePassWord(Resource):
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'massage': e})
+            return jsonify({'success': False, 'message': str(e)})
 
 
 # 通过用户id获取信息
@@ -88,7 +87,7 @@ class LoginToken(Resource):
             except Exception as e:  # 数据库插入操作异常处理
                 db.session.rollback()  # 回滚
                 db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'message': e})
+            return jsonify({'success': False, 'message': str(e)})
         else:
             return jsonify({'success': False})
 
@@ -162,7 +161,7 @@ class LoginOut(Resource):
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
             print(e)
-            return jsonify({'success': False, 'massage': e})
+            return jsonify({'success': False, 'message': str(e)})
 
 
 # 定义全局 用户列表字典集合【key:uid,value:用户状态（0:同一局域网,1:好友在线,-1:好友非在线）】

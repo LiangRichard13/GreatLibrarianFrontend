@@ -5,7 +5,6 @@ import re
 import pandas as pd
 from flask import jsonify, request
 from flask_restful import Resource
-from collections import Counter
 from datetime import datetime
 from App.models import *
 
@@ -37,12 +36,12 @@ class QAOperation(Resource):
             except Exception as e:  # 数据库操作异常处理
                 db.session.rollback()  # 回滚
                 db.session.flush()  # 刷新，清空缓存
-                return jsonify({'success': False, 'message': e})
+                return jsonify({'success': False, 'message': str(e)})
         return jsonify({'success': True})
 
     # 查询审核任务  接收参数【url追加  审核人:uid】
     def get(self):
-        qaList = QA.query.filter(QA.uid == request.args['uid'])
+        qaList = QA.query.filter(QA.uid == request.args['uid'],QA.TPid == request.args['tpid'])
         data = [{'QAid': qa.QA_id, 'Q': qa.QA_question, 'A': qa.QA_answer} for qa in qaList]
         return jsonify({'data': data, 'success': True})
 
@@ -56,7 +55,7 @@ class QAOperation(Resource):
         except Exception as e:  # 数据库操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'message': e})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 提交打分结果(一条一条)   接收参数【url追加  审核id值:QAid， 分数:score】
     def delete(self):
@@ -81,4 +80,4 @@ class QAOperation(Resource):
         except Exception as e:  # 数据库操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'message': e})
+            return jsonify({'success': False, 'message': str(e)})

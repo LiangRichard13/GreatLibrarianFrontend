@@ -22,7 +22,7 @@ class ProjectDS(Resource):
         except Exception as e:  # 数据库插入操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False})
+            return jsonify({'success': False,'message': str(e)})
 
     # 项目下删除DataSet
     def delete(self):
@@ -34,7 +34,7 @@ class ProjectDS(Resource):
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'message': e})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 项目下修改DataSet
     def put(self):
@@ -46,7 +46,7 @@ class ProjectDS(Resource):
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'massage': e})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 查询项目下的DataSet【参数:DSid,返回:该项目下的所有DS列表】
     def get(self):

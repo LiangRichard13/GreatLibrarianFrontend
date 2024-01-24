@@ -35,13 +35,6 @@ class FriendShip(db.Model):
     friend_state = db.Column(db.Integer, default=0, nullable=False)  # 好友状态【0:未审核;1:同意;-1:拒绝】
     createTime = db.Column(db.DateTime, nullable=False)  # 好友创建的时间
 
-    # __tablename__ = 'tb_friendship'
-    # fsId = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 好友关系id值，自增
-    # userId = db.Column(db.String(30), db.ForeignKey(User.user_id), nullable=False)  # 用户ID---外键
-    # friend_token = db.Column(db.String(30), nullable=False)  # 好友的token密钥
-    # friend_state = db.Column(db.Integer, default=0, nullable=False)  # 好友状态【0:未审核;1:同意;-1:拒绝】
-    # createTime = db.Column(db.DateTime, nullable=False)  # 好友创建的时间
-
 
 # APIKey信息表
 class APIKey(db.Model):
@@ -98,12 +91,23 @@ class TestProject(db.Model):
     tP_name = db.Column(db.String(30))  # 实验名称
     tP_time = db.Column(db.DateTime)  # 测试时间
     tP_status = db.Column(db.Integer, default=0)  # 实验状态   【0:待实验、1:正在实验、2:待审核、3:已完成】
-    tP_progress = db.Column(db.Float)  # 实验进度
-    tP_config = db.Column(db.String(80))  # 实验配置文件Url
+    tP_progress = db.Column(db.Float, default=0)  # 实验进度
+    tP_configURL = db.Column(db.String(80))  # 实验配置文件Url
     Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # 项目ID---外键
     AK1 = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # APIKey1---外键
     AK2 = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # APIKey2---外键
     DS = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id))  # 数据集---外键
+
+    # 该实验下的协作者
+    collaborators = db.relationship('TestProjectUser', backref='testProject', cascade='all, delete-orphan')
+
+
+# 实验--协作者
+class TestProjectUser(db.Model):
+    __tablename__ = 'tb_TestProjectUser'
+    tPU_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    TPid = db.Column(db.String(30), db.ForeignKey(TestProject.tP_id, ondelete='CASCADE'))  # 实验ID---外键
+    uid = db.Column(db.String(30), db.ForeignKey(User.user_id, ondelete='CASCADE'))  # 协助者-用户ID---外键
 
 
 # 实验审核任务表

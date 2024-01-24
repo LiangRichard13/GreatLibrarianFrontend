@@ -22,7 +22,7 @@ class ProjectAK(Resource):
         except Exception as e:  # 数据库插入操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 项目下删除APIKey
     def delete(self):
@@ -33,7 +33,7 @@ class ProjectAK(Resource):
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 项目下修改APIKey
     def put(self):
@@ -45,7 +45,7 @@ class ProjectAK(Resource):
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'massage': e})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 查询项目下的AK【参数:Pid,返回:该项目下的所有ak列表】
     def get(self):

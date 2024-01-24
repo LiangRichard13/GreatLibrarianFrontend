@@ -36,8 +36,7 @@ def decode(token):
         return True, decoded['data']['id']
     except Exception as e:
         # print(f'token过期-----{e}')
-        return False
-
+        return False, None
 
 # code = encode('123456', 30*60*60)
 # print(code)

@@ -5,7 +5,7 @@ export function getQAByExpirenceId(expId,uid) {
         url: '/project/getQAByExpirenceId',
         method: 'get',
         params: {
-            expId: expId,
+            TPid: expId,
             uid:uid
         }
     })
@@ -14,15 +14,18 @@ export function getQAByExpirenceId(expId,uid) {
 export function distributeToOthers(data) {
     return service({
         url: '/project/distributeToOthers',
-        method: 'post',
+        method: 'put',
         data:data
     })
 }
 
-export function rateQA(data) {
+export function rateQA(QAid,score) {
     return service({
         url: '/project/rateQA',
-        method: 'put',
-        data:data
+        method: 'delete',
+        params:{
+            QAid:QAid,
+            score:score
+        }
     })
 }

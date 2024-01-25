@@ -7,19 +7,20 @@
         {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 实验的QA记录
       </h3>
     </div>
+    <template  v-if="QAList.length">
     <div class="table-container">
       <el-table :data="pagedQAList" style="width: 100%" ref="multipleTable" tooltip-effect="dark"
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
-        <el-table-column label="QA ID" prop="id"></el-table-column>
-        <el-table-column label="问题" prop="question"></el-table-column>
+        <el-table-column label="QA ID" prop="QAid"></el-table-column>
+        <el-table-column label="问题" prop="Q"></el-table-column>
 
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item label="回答:">
-                <span>{{ props.row.answer }}</span>
+                <span>{{ props.row.A }}</span>
               </el-form-item>
             </el-form>
           </template>
@@ -58,26 +59,29 @@
         <el-button type="primary" @click="distributeToCollaborators">确 定</el-button>
       </span>
     </el-dialog>
-
+  </template>
+  <div v-else class="emptyQAList">
+    <el-empty description="暂无审核任务"></el-empty>
+  </div>
   </div>
 </template>
      
 <script>
 import { getQAByExpirenceId, distributeToOthers } from '@/api/qa'
-import { getCollaboratorsByProjectId, getProjectByExpirementId } from "@/api/project"
+// import { getCollaboratorsByProjectId, getProjectByExpirementId } from "@/api/project"
+import {getFriendsByExperimentId} from "@/api/collaborate"
 export default {
   name: "AssignmentQA",
   data() {
     return {
       showDialog: false,
-      QAList: [{ id: '1', question: '世界上最高的峰是哪个峰 ?', answer: '世界上最高的山峰是珠穆朗玛峰（Mount Everest），它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。', rate: 0 },
-      { id: '2', question: '世界上最深的湖是哪个?', answer: '世界上最深的湖是贝加尔湖，位于俄罗斯。', rate: 3 },
-      { id: '3', question: '世界上最长的山脉是什么?', answer: '世界上最长的山脉是安第斯山脉，延伸南美西部海岸线。', rate: 4 },
-      { id: '4', question: '世界上最大的热带雨林是哪里?', answer: '世界上最大的热带雨林是亚马孙雨林，覆盖多个南美国家。', rate: 5 },
-      { id: '5', question: '世界上最大的岛屿是哪个?', answer: '世界上最大的岛屿是格陵兰岛，属于丹麦。', rate: 2 }
+      QAList: [{ QAid: '1', Q: '世界上最高的峰是哪个峰 ?', A: '世界上最高的山峰是珠穆朗玛峰（Mount Everest），它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。', score: 0 },
+      { QAid: '2', Q: '世界上最深的湖是哪个?', A: '世界上最深的湖是贝加尔湖，位于俄罗斯。', score: 3 },
+      { QAid: '3', Q: '世界上最长的山脉是什么?', A: '世界上最长的山脉是安第斯山脉，延伸南美西部海岸线。', score: 4 },
+      { QAid: '4', Q: '世界上最大的热带雨林是哪里?', A: '世界上最大的热带雨林是亚马孙雨林，覆盖多个南美国家。', score: 5 },
+      { QAid: '5', Q: '世界上最大的岛屿是哪个?', A: '世界上最大的岛屿是格陵兰岛，属于丹麦。', score: 2 }
       ],
       thisExperiment: {},
-      thisProjejctId: '',
       thisCollaborators: [{ id: '1', name: 'Alice' }, { id: '2', name: 'Bob' }],
       selectedIds: [],
       distributeUserId: '',
@@ -91,15 +95,15 @@ export default {
     let storedExperiment = localStorage.getItem('thisExperiment');
         if (storedExperiment) {
             this.thisExperiment = JSON.parse(storedExperiment);
-        } else {
-            // 处理没有数据的情况，可能是跳转到此页面或刷新页面
-            this.$router.push("/projectsList")
-        }
+        } 
+        // else {
+        //     // 处理没有数据的情况，可能是跳转到此页面或刷新页面
+        //     this.$router.push("/projectsList")
+        // }
     this.load();
     // this.thisExperiment = this.$route.query;
     this.updatePagedQAList(); // 初始加载
 
-    console.log(this.thisProjejctId)
   },
   methods: {
     load() {
@@ -108,13 +112,13 @@ export default {
       })
 
       //用于获取当前实验的项目
-      getProjectByExpirementId(this.thisExperiment.id).then(res => {
-        this.thisProjejctId = res.data
-      })
+      // getProjectByExpirementId(this.thisExperiment.id).then(res => {
+      //   this.thisProjejctId = res.data
+      // })
 
       // 获取当前项目的协作者以便分发
-      getCollaboratorsByProjectId(this.thisProjejctId).then(res => {
-        this.thisCollaborators = res.data
+      getFriendsByExperimentId(this.thisExperiment.id).then(res=>{
+        this.thisCollaborators=res.data
       })
     },
     goBack() {
@@ -133,22 +137,35 @@ export default {
       this.selectedIds = selectedRows.map(row => row.id);
     },
     distributeToCollaborators() {
-      const data = {
-        uid: this.distributeUserId,
-        distributeIds: this.selectedIds
+  // 遍历 selectedIds 数组
+  this.selectedIds.forEach(id => {
+    const data = {
+      uid: this.distributeUserId,
+      QAid: id
+    };
+    // 对每个 id 发起请求
+    distributeToOthers(data).then(res => {
+      if (res.success) {
+        // 请求成功的处理
+        this.$message({
+          message: '分发成功！',
+          type: 'success'
+        });
+      } else {
+        // 请求失败的处理（可选）
+        this.$message({
+          message: '分发失败',
+          type: 'error'
+        });
       }
-      distributeToOthers(data).then(res => {
-        if (res.success) {
-          this.resetDialog
-          this.showDialog = false
-          this.$message({
-            message: '分发成功！',
-            type: 'success'
-          });
-          this.load()
-        }
-      })
-    },
+    });
+  });
+
+  // 重置对话框和重新加载数据
+  this.resetDialog();
+  this.showDialog = false;
+  this.load();
+},
     resetDialog() {
       this.distributeUserId = ''
     },

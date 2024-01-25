@@ -20,8 +20,7 @@ class APIKeyCRUD(Resource):
         except Exception as e:  # 数据库插入操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            print(e)
-            return jsonify({'success': False})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 删除
     def delete(self):
@@ -30,10 +29,9 @@ class APIKeyCRUD(Resource):
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:
-            print(e)
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False})
+            return jsonify({'success': False ,'message': str(e)})
 
     # 查询【参数:uid,返回:【uid下的所有apikey列表】
     def get(self):

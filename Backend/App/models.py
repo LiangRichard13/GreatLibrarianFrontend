@@ -35,13 +35,6 @@ class FriendShip(db.Model):
     friend_state = db.Column(db.Integer, default=0, nullable=False)  # 好友状态【0:未审核;1:同意;-1:拒绝】
     createTime = db.Column(db.DateTime, nullable=False)  # 好友创建的时间
 
-    # __tablename__ = 'tb_friendship'
-    # fsId = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 好友关系id值，自增
-    # userId = db.Column(db.String(30), db.ForeignKey(User.user_id), nullable=False)  # 用户ID---外键
-    # friend_token = db.Column(db.String(30), nullable=False)  # 好友的token密钥
-    # friend_state = db.Column(db.Integer, default=0, nullable=False)  # 好友状态【0:未审核;1:同意;-1:拒绝】
-    # createTime = db.Column(db.DateTime, nullable=False)  # 好友创建的时间
-
 
 # APIKey信息表
 class APIKey(db.Model):
@@ -51,15 +44,6 @@ class APIKey(db.Model):
     apiKey_value = db.Column(db.String(30))  # APIKey值
     apiKey_auth = db.Column(db.String(30))  # 鉴权秘钥
     userid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
-
-
-# 项目数据表
-class Project(db.Model):
-    __tablename__ = 'tb_Project'
-    project_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 项目id值，自增
-    project_name = db.Column(db.String(80))  # 项目名称
-    project_info = db.Column(db.String(200))  # 项目描述
-    userId = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
 
 
 # 数据集表
@@ -72,12 +56,24 @@ class DataSet(db.Model):
     userid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
 
 
+# 项目数据表
+class Project(db.Model):
+    __tablename__ = 'tb_Project'
+    project_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 项目id值，自增
+    project_name = db.Column(db.String(80))  # 项目名称
+    project_info = db.Column(db.String(200))  # 项目描述
+    userId = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 用户ID---外键
+
+    APIKeys = db.relationship('ProjectAPIKey', backref='projectAK', cascade='all, delete-orphan')  # 1:m=project:AK
+    DataSets = db.relationship('ProjectDataSet', backref='projectDS', cascade='all, delete-orphan')  # 1:m=project:DS
+
+
 # 项目--AK关联表
 class ProjectAPIKey(db.Model):
     __tablename__ = 'tb_ProjectAPIKey'
     Project_APIKey_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # project项目---外键
-    AKid = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # apiKey---外键
+    AKid = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id, ondelete='CASCADE'))  # apiKey---外键
 
 
 # 项目--数据集关联表
@@ -85,7 +81,7 @@ class ProjectDataSet(db.Model):
     __tablename__ = 'tb_ProjectDataSet'
     Project_DataSet_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # project项目---外键
-    DSid = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id))  # 数据集---外键
+    DSid = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id, ondelete='CASCADE'))  # 数据集---外键
 
 
 # 用户测试实验信息
@@ -95,11 +91,23 @@ class TestProject(db.Model):
     tP_name = db.Column(db.String(30))  # 实验名称
     tP_time = db.Column(db.DateTime)  # 测试时间
     tP_status = db.Column(db.Integer, default=0)  # 实验状态   【0:待实验、1:正在实验、2:待审核、3:已完成】
-    tP_progress = db.Column(db.Float)  # 实验进度
+    tP_progress = db.Column(db.Float, default=0)  # 实验进度
+    tP_configURL = db.Column(db.String(80))  # 实验配置文件Url
     Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # 项目ID---外键
     AK1 = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # APIKey1---外键
     AK2 = db.Column(db.String(30), db.ForeignKey(APIKey.apiKey_id))  # APIKey2---外键
     DS = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id))  # 数据集---外键
+
+    # 该实验下的协作者
+    collaborators = db.relationship('TestProjectUser', backref='testProject', cascade='all, delete-orphan')
+
+
+# 实验--协作者
+class TestProjectUser(db.Model):
+    __tablename__ = 'tb_TestProjectUser'
+    tPU_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    TPid = db.Column(db.String(30), db.ForeignKey(TestProject.tP_id, ondelete='CASCADE'))  # 实验ID---外键
+    uid = db.Column(db.String(30), db.ForeignKey(User.user_id, ondelete='CASCADE'))  # 协助者-用户ID---外键
 
 
 # 实验审核任务表

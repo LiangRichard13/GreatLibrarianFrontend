@@ -10,18 +10,15 @@ from App.models import *
 class ProjectCRUD(Resource):
     # 增加
     def post(self):
-        project = Project(
-            project_name=request.json['name'],
-            project_info=request.json['info'],
-            userId=request.json['uid'])
+        project = Project(project_name=request.json['name'], project_info=request.json['info'],
+                          userId=request.json['uid'])
         try:
             db.session.add(project)  # 加入数据库
             db.session.commit()
-            return jsonify({'success': True})
+            return jsonify({'success': True, 'id': project.project_id})
         except Exception as e:  # 数据库插入操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            print(e)
             return jsonify({'success': False})
 
     # 删除
@@ -34,15 +31,24 @@ class ProjectCRUD(Resource):
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'message': e})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 查询
     def get(self):
         data = []
-        for x in Project.query.filter(Project.userId == request.args['uid']):
-            LLM = []
-            for y in x.project_LLM.split('-'):
-                aK = APIKey.query.filter(APIKey.apiKey_id == y)[0]
-                LLM.append({'id': y, 'name': aK.apiKey_name, 'value': aK.apiKey_value, 'auth': aK.apiKey_auth})
-            data.append({'id': x.project_id, 'name': x.project_name, 'info': x.project_info, 'LLM': LLM})
+        for project in Project.query.filter(Project.userId == request.args['uid']):
+            # 查找该项目下的apikey
+            project_apikey = []
+            for item in ProjectAPIKey.query.filter(ProjectAPIKey.Pid == project.project_id):
+                aK = APIKey.query.filter(APIKey.apiKey_id == item.AKid)[0]
+                project_apikey.append({'id': aK.apiKey_id, 'name': aK.apiKey_name})
+
+            # 查找该项目下的dataset
+            project_dataset = []
+            for item in ProjectDataSet.query.filter(ProjectDataSet.Pid == project.project_id):
+                dS = DataSet.query.filter(DataSet.DS_id == item.DSid)[0]
+                project_dataset.append({'id': dS.DS_id, 'name': dS.DS_name})
+
+            data.append({'id': project.project_id, 'name': project.project_name, 'info': project.project_info,
+                         'apiKey': project_apikey, 'dataSet': project_dataset})
         return jsonify({'data': data, 'success': True})

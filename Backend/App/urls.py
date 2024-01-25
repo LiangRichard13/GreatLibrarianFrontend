@@ -13,6 +13,7 @@ from App.apis.apis_projectAPIKey import *
 from App.apis.apis_projectDataSet import *
 
 from App.apis.apis_testProject import *
+from App.apis.apis_testProjectUser import *
 from App.apis.apis_QA import *
 from App.apis.apis_progress import *
 
@@ -44,5 +45,9 @@ api.add_resource(ProjectDS, '/projectDS')
 
 # testProject实验
 api.add_resource(TestProjectCRUD, '/testProject')
-# api.add_resource(QAOperation, '/QA')  # 人工审核
-api.add_resource(Progress, '/progress')  # 进度条
+# 实现--协作者
+api.add_resource(TestProjectUserCRUD, '/testProjectUser')
+# 人工审核
+api.add_resource(QAOperation, '/QA')
+# 进度条
+api.add_resource(Progress, '/progress')

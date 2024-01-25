@@ -20,18 +20,12 @@ def readLog(logURL):
     return pd.DataFrame({'Q': question, 'A': answer, 'field': field, 'thread': thread})
 
 
-# df = readLog('../data/log/dialog_init.log')
-# # 使用iterrows()遍历行
-# for index, row in df.iterrows():
-#     print(f"Index: {index}, Q: {row['Q']}, A: {row['A']}, field: {row['field']},thread: {row['thread']}")
-
-
 # 人工审核
 class QAOperation(Resource):
     # 实验完成，进入到人工审核      接收参数【json格式  用户:uid，实验:TPid】
     def post(self):
         uid, TPid = request.json['uid'], request.json['TPid']
-        url = 'APP/data/log/dialog_init.log'
+        url = 'APP/data/Logs/' + TPid + '/dialog_init.log'
         for index, row in readLog(url).iterrows():
             print(f"Index: {index}, Q: {row['Q']}, A: {row['A']}, field: {row['field']},thread: {row['thread']}")
             qa = QA(uid=uid, TPid=TPid, QA_time=datetime.now(),
@@ -42,12 +36,12 @@ class QAOperation(Resource):
             except Exception as e:  # 数据库操作异常处理
                 db.session.rollback()  # 回滚
                 db.session.flush()  # 刷新，清空缓存
-                return jsonify({'success': False, 'message': e})
+                return jsonify({'success': False, 'message': str(e)})
         return jsonify({'success': True})
 
     # 查询审核任务  接收参数【url追加  审核人:uid】
     def get(self):
-        qaList = QA.query.filter(QA.uid == request.args['uid'])
+        qaList = QA.query.filter(QA.uid == request.args['uid'],QA.TPid == request.args['tpid'])
         data = [{'QAid': qa.QA_id, 'Q': qa.QA_question, 'A': qa.QA_answer} for qa in qaList]
         return jsonify({'data': data, 'success': True})
 
@@ -61,16 +55,23 @@ class QAOperation(Resource):
         except Exception as e:  # 数据库操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'message': e})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 提交打分结果(一条一条)   接收参数【url追加  审核id值:QAid， 分数:score】
     def delete(self):
         qa = QA.query.filter(QA.QA_id == request.args['QAid'])[0]
-        logData = 'To LLM:' + qa.QA_question + 'from thread ' + str(qa.QA_thread) + '\n' + \
-                  'To User:"' + qa.QA_answer + '"from thread ' + str(qa.QA_thread) + '\n' + \
-                  'The final score of this testcase is ' + request.args['score'] + \
+        # 判断该审核是否为实验的最后一条提交结果
+        if QA.query.filter(QA.TPid == qa.TPid).count() == 1:
+            testProject = TestProject.query.filter(TestProject.tP_id == qa.TPid)[0]
+            testProject.tP_status = 3
+
+        nowTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        logData = nowTime + ' - INFO - To LLM:' + qa.QA_question + 'from thread ' + str(qa.QA_thread) + '\n' + \
+                  nowTime + ' - INFO - To User:"' + qa.QA_answer + '"from thread ' + str(qa.QA_thread) + '\n' + \
+                  nowTime + ' - INFO - The final score of this testcase is ' + request.args['score'] + \
                   ', in ' + qa.QA_field + ' field.from thread ' + str(qa.QA_thread) + '\n'
-        with open('APP/data/log/new.log', "a", encoding="utf-8") as file:
+
+        with open('APP/data/Logs/' + qa.TPid + '/human_evaluation.log', "a", encoding="utf-8") as file:
             file.write(logData)
         try:
             db.session.delete(qa)
@@ -79,4 +80,4 @@ class QAOperation(Resource):
         except Exception as e:  # 数据库操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'message': e})
+            return jsonify({'success': False, 'message': str(e)})

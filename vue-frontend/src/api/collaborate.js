@@ -49,28 +49,30 @@ export function handleFriendRequest(data) {
 
 export function addFriendsToExperiment(data) {
     return service({
-        url: '/testProject_friends',
+        url: '/testProjectUser',
         method: 'post',
         data: data
     })
 }
 
-export function getFriendsByExperimentId(eid) {
+export function getFriendsByExperimentId(TPid) {
     return service({
-        url: '/testProject_friends',
+        url: '/testProjectUser',
         method: 'get',
-        params:{
-            eid:eid
+        params: {
+            TPid: TPid,
+            choose: 1
         }
     })
 }
 
 export function getExperimentsByUserId(uid) {
     return service({
-        url: '/testProject_friends',
+        url: '/testProjectUser',
         method: 'get',
-        params:{
-            uid:uid
+        params: {
+            uid: uid,
+            choose:2
         }
     })
 }

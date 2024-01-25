@@ -20,10 +20,12 @@
 
               <el-card class="box-card" style="margin-top: 20px;">
                 <div slot="header" class="clearfix">
-                  <span>我参与的项目</span>
+                  <span>我协助的实验</span>
                 </div>
-                <el-table :data="participatedProjects">
+                <el-table :data="participatedExp">
                   <!-- 表格内容 -->
+                  <el-table-column label="实验 ID" prop="id"></el-table-column>
+                  <el-table-column label="实验名称" prop="name"></el-table-column>
                 </el-table>
               </el-card>
             </div>
@@ -60,6 +62,7 @@
 
 <script>
 import { getUserList, getFriendsRequest } from "@/api/collaborate";
+import {getExperimentsByUserId} from "@/api/collaborate"
 import { getProjectsByUserId } from "@/api/project"
 import config from "@/services/conf"
 export default {
@@ -70,7 +73,7 @@ export default {
       defaultAvatar: require('@/assets/avatar.png'),
       userFriends: [],
       myProjects: [],
-      participatedProjects: [],
+      participatedExp: [],
       friendRequestNumebr: 0
     }
   },
@@ -104,7 +107,13 @@ export default {
       getProjectsByUserId(uid).then(res => {
         this.myProjects = res.data
       })
-
+      //获取参与的实验
+      if (localStorage.getItem("uid") !== null) {
+                const id = localStorage.getItem("uid")
+                getExperimentsByUserId(id).then(res => {
+                    this.participatedExp = res.data;
+                })
+            }
     },
     //跳转处理好友请求
     pushToFriendRequest() {

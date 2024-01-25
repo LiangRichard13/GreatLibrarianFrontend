@@ -7,69 +7,69 @@
         {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 实验的QA记录
       </h3>
     </div>
-    <template  v-if="QAList.length">
-    <div class="table-container">
-      <el-table :data="pagedQAList" style="width: 100%" ref="multipleTable" tooltip-effect="dark"
-        @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55">
-        </el-table-column>
-        <el-table-column label="QA ID" prop="QAid"></el-table-column>
-        <el-table-column label="问题" prop="Q"></el-table-column>
+    <template v-if="QAList.length">
+      <div class="table-container">
+        <el-table :data="pagedQAList" :row-key="row => row.QAid" style="width: 100%" ref="multipleTable"
+          tooltip-effect="dark" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55">
+          </el-table-column>
+          <el-table-column label="QA ID" prop="QAid"></el-table-column>
+          <el-table-column label="问题" prop="Q"></el-table-column>
 
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="回答:">
-                <span>{{ props.row.A }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination-container" style="margin-top: 20px;">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
-          layout="total, sizes, prev, pager, next, jumper">
-        </el-pagination>
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="回答:">
+                  <span>{{ props.row.A }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="pagination-container" style="margin-top: 20px;">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+            :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
+            layout="total, sizes, prev, pager, next, jumper">
+          </el-pagination>
+        </div>
+        <div style="margin-top: 20px">
+          <el-button @click="toggleSelection()">取消选择</el-button>
+        </div>
       </div>
-      <div style="margin-top: 20px">
-        <el-button @click="toggleSelection()">取消选择</el-button>
+      <div class="button-container" style="text-align: right; margin-top: 20px;">
+        <el-button type="primary" @click="showDialog = true">分发给协作者</el-button>
       </div>
+
+      <!-- 添加API_KEY的对话框 -->
+      <el-dialog title="选择分发协作者" :visible.sync="showDialog" width="30%" @close="resetDialog">
+        <div>
+          <el-form ref="form" label-width="100px">
+            <el-form-item label="选择协作者">
+              <el-select v-model="distributeUserId" placeholder="请选择">
+                <el-option v-for="item in this.thisCollaborators" :key="item.id" :label="`${item.id} - ${item.name}`"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="showDialog = false">取 消</el-button>
+          <el-button type="primary" @click="distributeToCollaborators">确 定</el-button>
+        </span>
+      </el-dialog>
+    </template>
+    <div v-else class="emptyQAList">
+      <el-empty description="暂无审核任务"></el-empty>
     </div>
-    <div class="button-container" style="text-align: right; margin-top: 20px;">
-      <el-button type="primary" @click="showDialog = true">分发给协作者</el-button>
-    </div>
-
-    <!-- 添加API_KEY的对话框 -->
-    <el-dialog title="选择分发协作者" :visible.sync="showDialog" width="30%" @close="resetDialog">
-      <div>
-        <el-form ref="form" label-width="100px">
-          <el-form-item label="选择协作者">
-            <el-select v-model="distributeUserId" placeholder="请选择">
-              <el-option v-for="item in this.thisCollaborators" :key="item.id" :label="`${item.id} - ${item.name}`"
-                :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </div>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="showDialog = false">取 消</el-button>
-        <el-button type="primary" @click="distributeToCollaborators">确 定</el-button>
-      </span>
-    </el-dialog>
-  </template>
-  <div v-else class="emptyQAList">
-    <el-empty description="暂无审核任务"></el-empty>
-  </div>
   </div>
 </template>
      
 <script>
 import { getQAByExpirenceId, distributeToOthers } from '@/api/qa'
 // import { getCollaboratorsByProjectId, getProjectByExpirementId } from "@/api/project"
-import {getFriendsByExperimentId} from "@/api/collaborate"
+import { getFriendsByExperimentId } from "@/api/collaborate"
 export default {
   name: "AssignmentQA",
   data() {
@@ -84,7 +84,7 @@ export default {
       thisExperiment: {},
       thisCollaborators: [{ id: '1', name: 'Alice' }, { id: '2', name: 'Bob' }],
       selectedIds: [],
-      distributeUserId: '',
+      distributeUserId: null,
       currentPage: 1,
       pageSize: 10,
       pagedQAList: [] // 用于显示当前页的数据
@@ -93,22 +93,22 @@ export default {
   mounted() {
 
     let storedExperiment = localStorage.getItem('thisExperiment');
-        if (storedExperiment) {
-            this.thisExperiment = JSON.parse(storedExperiment);
-        } 
-        // else {
-        //     // 处理没有数据的情况，可能是跳转到此页面或刷新页面
-        //     this.$router.push("/projectsList")
-        // }
+    if (storedExperiment) {
+      this.thisExperiment = JSON.parse(storedExperiment);
+    }
+    // else {
+    //     // 处理没有数据的情况，可能是跳转到此页面或刷新页面
+    //     this.$router.push("/projectsList")
+    // }
     this.load();
     // this.thisExperiment = this.$route.query;
-    this.updatePagedQAList(); // 初始加载
 
   },
   methods: {
     load() {
       getQAByExpirenceId(this.thisExperiment.id, localStorage.getItem('uid')).then(res => {
         this.QAList = res.data
+        this.updatePagedQAList(); // 初始加载
       })
 
       //用于获取当前实验的项目
@@ -117,8 +117,9 @@ export default {
       // })
 
       // 获取当前项目的协作者以便分发
-      getFriendsByExperimentId(this.thisExperiment.id).then(res=>{
-        this.thisCollaborators=res.data
+      getFriendsByExperimentId(this.thisExperiment.id).then(res => {
+        this.thisCollaborators = res.data
+        console.log(this.thisCollaborators)
       })
     },
     goBack() {
@@ -134,40 +135,60 @@ export default {
       }
     },
     handleSelectionChange(selectedRows) {
-      this.selectedIds = selectedRows.map(row => row.id);
+      this.$nextTick(() => {
+        this.selectedIds = selectedRows.map(row => row.QAid);
+        console.log(this.selectedIds); // 现在应该显示正确的数据
+      });
     },
     distributeToCollaborators() {
-  // 遍历 selectedIds 数组
-  this.selectedIds.forEach(id => {
-    const data = {
-      uid: this.distributeUserId,
-      QAid: id
-    };
-    // 对每个 id 发起请求
-    distributeToOthers(data).then(res => {
-      if (res.success) {
-        // 请求成功的处理
+      if (this.distributeUserId === null) {
         this.$message({
-          message: '分发成功！',
-          type: 'success'
-        });
-      } else {
-        // 请求失败的处理（可选）
-        this.$message({
-          message: '分发失败',
-          type: 'error'
+          message: '请选择分发的对象！',
+          type: 'warning'
         });
       }
-    });
-  });
+      else {
+        if (this.selectedIds.length === 0) {
+          this.$message({
+            message: '还未选择审核记录！',
+            type: 'warning'
+          });
+        }
+        else {
+          // 遍历 selectedIds 数组
+          console.log('选择的QAid', this.selectedIds)
+          this.selectedIds.forEach(id => {
+            const data = {
+              uid: this.distributeUserId,
+              QAid: id
+            };
+            // 对每个 id 发起请求
+            distributeToOthers(data).then(res => {
+              if (res.success) {
+                // 请求成功的处理
+                this.$message({
+                  message: '分发成功！',
+                  type: 'success'
+                });
+              } else {
+                // 请求失败的处理（可选）
+                this.$message({
+                  message: '分发失败',
+                  type: 'error'
+                });
+              }
+            });
+          });
 
-  // 重置对话框和重新加载数据
-  this.resetDialog();
-  this.showDialog = false;
-  this.load();
-},
+          // 重置对话框和重新加载数据
+          this.resetDialog();
+          this.showDialog = false;
+          this.load();
+        }
+      }
+    },
     resetDialog() {
-      this.distributeUserId = ''
+      this.distributeUserId = null
     },
     // 用于处理每页显示条目数变化
     handleSizeChange(newSize) {

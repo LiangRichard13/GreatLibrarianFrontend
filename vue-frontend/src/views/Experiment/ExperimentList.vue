@@ -47,7 +47,7 @@
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
                                         <el-button size="mini" type="primary"
-                                            @click="handleAddFriendsToExp(scope.row.id, scope.row.name)">
+                                            @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
                                             添加审核协作者
                                         </el-button>
                                     </el-dropdown-item>
@@ -59,7 +59,7 @@
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-button size="mini" type="warning" icon="el-icon-edit"
-                                            @click="editDialog = true, initialEdit(scope.row, scoe.$index)">
+                                            @click="editDialog = true, initialEdit(scope.row, scope.$index)">
                                             修改实验
                                         </el-button>
                                     </el-dropdown-item>
@@ -329,7 +329,7 @@
             <el-dialog title="请为当前实验添加协作者" :visible.sync="friendsToExp" @close="handleDialogClose">
 
                 <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                    <h4>当前实验{{ currentExpName }} - {{ currentExpId }}</h4>
+                    <h4>当前实验:{{ currentExpName }} - {{ currentExpId }}</h4>
                 </div>
 
                 <el-checkbox-group v-model="selectFriendsId">
@@ -383,7 +383,9 @@ export default {
             userFriends: [],
             selectFriendsId: [],
             currentExpName: '',
-            currentExpId: ''
+            currentExpId: '',
+            currentExpIndex: '',
+            thisRowCollaborators: []
         }
     },
     mounted() {
@@ -403,42 +405,45 @@ export default {
             const id = this.thisProject.id
             getExperimentByProjectId(id).then(res => {
                 this.experimentList = res.data;
+                console.log('获取的所有实验数据', this.experimentList)
                 // 遍历 experimentList 并发起所有请求
-                const collaboratorsRequests = this.experimentList.map(experiment => {
-                    return getFriendsByExperimentId(experiment.id).then(collaborators => {
-                        // 将 collaborators 数组添加到对应的实验记录中
-                        return {
-                            ...experiment,
-                            collaborators: collaborators
-                        };
+                if (this.experimentList.length !== 0) {
+                    const collaboratorsRequests = this.experimentList.map(experiment => {
+                        return getFriendsByExperimentId(experiment.id).then(res => {
+                            // 将 collaborators 数组添加到对应的实验记录中
+                            console.log('获取实验协作者响应信息', res)
+                            return {
+                                ...experiment,
+                                collaborators: res.data
+                            };
+                        });
                     });
-                });
-                // 等待所有请求完成
-                Promise.all(collaboratorsRequests).then(updatedExperimentList => {
-                    // 更新 experimentList
-                    this.experimentList = updatedExperimentList;
-                    this.experimentList.forEach(exp => {
-                        switch (exp.status) {
-                            case 0:
-                                this.expList.push(exp);
-                                break;
-                            case 1:
-                                this.proceeding.push(exp);
-                                break;
-                            case 2:
-                                this.reviewList.push(exp);
-                                break;
-                            case 3:
-                                this.doneList.push(exp);
-                                break;
-                            // 你可以根据需要添加更多的状态分类
-                        }
+                    // 等待所有请求完成
+                    Promise.all(collaboratorsRequests).then(updatedExperimentList => {
+                        // 更新 experimentList
+                        this.experimentList = updatedExperimentList;
+                        this.experimentList.forEach(exp => {
+                            switch (exp.status) {
+                                case 0:
+                                    this.expList.push(exp);
+                                    break;
+                                case 1:
+                                    this.proceeding.push(exp);
+                                    break;
+                                case 2:
+                                    this.reviewList.push(exp);
+                                    break;
+                                case 3:
+                                    this.doneList.push(exp);
+                                    break;
+                                // 你可以根据需要添加更多的状态分类
+                            }
+                        });
+                    }).catch(error => {
+                        // 处理可能出现的错误
+                        console.error("Error fetching collaborators: ", error);
                     });
-                }).catch(error => {
-                    // 处理可能出现的错误
-                    console.error("Error fetching collaborators: ", error);
-                });
-
+                }
             })
             getUserList(localStorage.getItem('uid')).then(res => {
                 this.userFriends = res.data.filter(user => user.state !== 0);
@@ -499,12 +504,22 @@ export default {
             const deleteData = { tPid: row.id }
             deleteById(deleteData).then(res => {
                 if (res.success) {
-                    this.load()
                     this.$message({
                         message: '删除成功',
                         type: 'success',
                     });
-                    this.load()
+                    switch (row.status) {
+                        case 0:
+                            this.expList.splice(index,1);
+                            break;
+                        case 2:
+                            this.reviewList.splice(index,1);
+                            break;
+                        case 3:
+                            this.doneList.splice(index,1);
+                            break;
+                        // 你可以根据需要添加更多的状态分类
+                    }
                 }
             })
         },
@@ -554,6 +569,7 @@ export default {
                         DS: this.editExperiment.DS,
                         tPid: this.editExperiment.tPid
                     }
+                    console.log('进行修改的实验数据：', data)
                     editExpirement(data).then(res => {
                         if (res.success) {
                             this.resetEditDialog
@@ -563,6 +579,7 @@ export default {
                                 type: 'success'
                             });
                             this.expList.splice(this.editExperiment.index, 1)
+                            this.load()
                         }
                     })
                 }
@@ -584,6 +601,7 @@ export default {
             this.editExperiment.name = row.name
             this.editExperiment.tPid = row.id
             this.editExperiment.index = index
+            console.log('当前进行修改的实验id', this.editExperiment.tPid)
 
         },
         resetCodeEditor() {
@@ -621,17 +639,26 @@ export default {
             this.showCodeEditorDialog = false;
         },
         loadTemplate() {
-            fetch('./codeTemplate.txt')
+            fetch('/codeTemplate.txt')
                 .then(response => response.text())
                 .then(data => {
                     this.initPythonEditor(data);
                 })
-                .catch(error => console.error('Error loading the template:', error));
+                .catch(error => {
+                    console.error('Error loading the template:', error)
+                    this.$message({
+                        message: '无法加载模板文件',
+                        type: 'error'
+                    });
+                }
+                );
         },
-        handleAddFriendsToExp(id, name) {
+        handleAddFriendsToExp(id, name, collaborators, index) {
             this.currentExpId = id,
                 this.currentExpName = name
-            this.friendsToExp = true
+            this.currentExpIndex = index
+            this.friendsToExp = true,
+                this.thisRowCollaborators = collaborators
         },
         handleDialogClose() {
             this.selectFriendsId = [],
@@ -639,25 +666,37 @@ export default {
         },
         handlefriendsToExp() {
             this.selectFriendsId.forEach(id => {
-                const data = { expId: this.currentExpId, fid: id };
-                addFriendsToExperiment(data).then(res => {
-                    if (res.success) {
-                        // 请求成功的处理
-                        this.$message({
-                            message: '加入成功！',
-                            type: 'success'
-                        });
-                    } else {
-                        // 请求失败的处理（可选）
-                        this.$message({
-                            message: '加入失败',
-                            type: 'error'
-                        });
-                    }
-                })
+                //检查id是否在thisRowCollabortors里
+                const findExistOne = this.thisRowCollaborators.find(collab => collab.id === id);
+                if (!findExistOne) {
+                    const data = { TPid: this.currentExpId, uid: id };
+                    addFriendsToExperiment(data).then(res => {
+                        if (res.success) {
+                            // 请求成功的处理
+                            this.$message({
+                                message: '加入成功！',
+                                type: 'success'
+                            });
+
+                        } else {
+                            // 请求失败的处理（可选）
+                            this.$message({
+                                message: '加入失败',
+                                type: 'error'
+                            });
+                        }
+                    })
+                }
+                else {
+                    this.$message({
+                        message: '加入失败' + findExistOne.name + '已经在该项目中',
+                        type: 'error'
+                    });
+                }
+                this.expList.splice(this.currentExpIndex,1)
+                this.load()
             })
             this.handleDialogClose()
-            this.load()
         }
     }
 }

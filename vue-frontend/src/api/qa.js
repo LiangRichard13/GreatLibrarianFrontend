@@ -2,10 +2,10 @@ import service from "@/utils/request";
 
 export function getQAByExpirenceId(expId,uid) {
     return service({
-        url: '/project/getQAByExpirenceId',
+        url: '/QA',
         method: 'get',
         params: {
-            TPid: expId,
+            tpid: expId,
             uid:uid
         }
     })
@@ -13,7 +13,7 @@ export function getQAByExpirenceId(expId,uid) {
 
 export function distributeToOthers(data) {
     return service({
-        url: '/project/distributeToOthers',
+        url: '/QA',
         method: 'put',
         data:data
     })
@@ -21,7 +21,7 @@ export function distributeToOthers(data) {
 
 export function rateQA(QAid,score) {
     return service({
-        url: '/project/rateQA',
+        url: '/testProjectUser',
         method: 'delete',
         params:{
             QAid:QAid,

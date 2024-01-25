@@ -8,18 +8,17 @@
             </h3>
             <div class="section">
                 <h4>待审核</h4>
-                <el-table :data="reviewList" style="width: 100%">
+                <el-table :data="experimentList" style="width: 100%">
                     <el-table-column label="实验 ID" prop="id"></el-table-column>
                     <el-table-column label="名称" prop="name"></el-table-column>
-                    <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
+                    <!-- <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
                     <el-table-column label="时间" prop="time">
                         <template slot-scope="scope">
-                            <!-- 格式化时间 -->
                             <div>{{ formatDate(scope.row.time) }}</div>
                         </template>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
                             <el-button size="mini" type="warning" @click.stop="handleReviewExpirement(scope.row)">
@@ -43,9 +42,9 @@ export default {
     name: "ExperimentList",
     data() {
         return {
-            showDialog: false,
+            // showDialog: false,
             experimentList: [],
-            reviewList: [], // 待审核列表数据
+            // reviewList: [], // 待审核列表数据
             // thisProject: {}
         }
     },
@@ -67,13 +66,13 @@ export default {
                     this.experimentList = res.data;
                 })
             }
-            this.experimentList.forEach(exp => {
-                switch (exp.status) {
-                    case '待审核':
-                        this.reviewList.push(exp);
-                        break;
-                }
-            });
+            // this.experimentList.forEach(exp => {
+            //     switch (exp.status) {
+            //         case '待审核':
+            //             this.reviewList.push(exp);
+            //             break;
+            //     }
+            // });
         },
         handleReviewExpirement(experiment) {
             // this.$router.push({ path: `/review`, query: experiment });

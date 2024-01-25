@@ -24,8 +24,7 @@ def upgrade():
     sa.Column('uid', sa.String(length=30), nullable=True),
     sa.ForeignKeyConstraint(['TPid'], ['tb_TestProject.tP_id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['uid'], ['tb_user.user_id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('tPU_id')
-    )
+    sa.PrimaryKeyConstraint('tPU_id'))
     # ### end Alembic commands ###
 
 

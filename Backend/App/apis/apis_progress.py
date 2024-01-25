@@ -35,8 +35,8 @@ class Progress(Resource):
             process = readTemp('APP/data/Logs/' + tP.tP_id + '/process.temp')
             if process >= 0:
                 tP.tP_progress = process
-                if process == 100:
-                    tP.tP_status = 2
+                # if process == 100:  # 已经完成实验，进行实验状态修改
+                #     tP.tP_status = 2
                 try:
                     db.session.commit()  # 提交数据库
                     return jsonify({'success': True, 'process': process})

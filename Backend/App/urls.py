@@ -3,51 +3,31 @@
 # @version: 1.0
 
 from .extensions import api
-from App.apis.apis_user import *
-from App.apis.apis_friend import *
-from App.apis.apis_APIKey import *
-from App.apis.apis_dataSet import *
 
-from App.apis.apis_project import *
-from App.apis.apis_projectAPIKey import *
-from App.apis.apis_projectDataSet import *
+from App.apis import (user, friend, APIKey, dataSet, project, projectAPIKey, projectDataSet, testProject,
+                      testProjectOperation, testProjectUser, QA, progress)
 
-from App.apis.apis_testProject import *
-from App.apis.apis_testProjectUser import *
-from App.apis.apis_QA import *
-from App.apis.apis_progress import *
+resources = [
+    (user.UserCRUD, '/user'),  # user用户类
+    (user.Login, '/user/login'),  # 登录操作
+    (user.GetUserList, '/user/getUserList'),  # 获取用户列表
+    (user.Icon, '/user/icon'),  # icon操作
 
-# user用户类
-api.add_resource(FindById, '/user/findById')
-api.add_resource(Login, '/user/login')
-api.add_resource(LoginOut, '/user/loginOut')
-api.add_resource(LoginToken, '/user/isExpired')
-api.add_resource(Register, '/user/register')
-api.add_resource(UpdateUser, '/user/updateUser')
-api.add_resource(UpdatePassWord, '/user/updatePassword')
-api.add_resource(GetUserList, '/user/getUserList')
-api.add_resource(Icon, '/user/icon')
+    (friend.Friend, '/friend'),  # 好友关系业务处理
 
-# 好友关系业务处理
-api.add_resource(Friend, '/friend')
+    (APIKey.APIKeyCRUD, '/APIKey'),  # 管理APIKey
+    (dataSet.DataSetCRUD, '/dataSet'),  # 管理DataSet数据集类
 
-# 管理APIKey
-api.add_resource(APIKeyCRUD, '/APIKey')
-# 管理DataSet数据集类
-api.add_resource(DataSetCRUD, '/dataSet')
+    (project.ProjectCRUD, '/project'),  # Project项目类
+    (projectAPIKey.ProjectAK, '/projectAK'),  # 项目下管理APIKey
+    (projectDataSet.ProjectDS, '/projectDS'),  # 项目下管理DataSet
 
-# Project项目类
-api.add_resource(ProjectCRUD, '/project')
-# 项目下管理APIKey
-api.add_resource(ProjectAK, '/projectAK')
-# 项目下管理DataSet
-api.add_resource(ProjectDS, '/projectDS')
+    (testProject.TestProjectCRUD, '/testProject'),  # testProject实验
+    (testProjectOperation.TPOperation, '/testProjectOperation'),  # 实验操作
+    (testProjectUser.TestProjectUserCRUD, '/testProjectUser'),  # 实现--协作者
+    (QA.QAOperation, '/QA'),  # 人工审核
+    (progress.Progress, '/progress')  # 进度条
+]
 
-# testProject实验
-api.add_resource(TestProjectCRUD, '/testProject')
-# 实现--协作者
-api.add_resource(TestProjectUserCRUD, '/testProjectUser')
-# 人工审核
-api.add_resource(QAOperation, '/QA')
-# 进度条
-api.add_resource(Progress, '/progress')
+for resource, url in resources:
+    api.add_resource(resource, url)

@@ -6,7 +6,7 @@ import pandas as pd
 from flask import jsonify, request
 from flask_restful import Resource
 from datetime import datetime
-from App.models import *
+from App.models import db, QA, TestProject
 
 
 # 采用正则化，进行log日志内容的读取
@@ -25,9 +25,12 @@ class QAOperation(Resource):
     # 实验完成，进入到人工审核      接收参数【json格式  用户:uid，实验:TPid】
     def post(self):
         uid, TPid = request.json['uid'], request.json['TPid']
+        # 已经完成实验
+        tP = TestProject.query.filter(TestProject.tP_id == TPid).first()
+        tP.tP_status = 2  # 进行实验状态修改
         url = 'APP/data/Logs/' + TPid + '/dialog_init.log'
         for index, row in readLog(url).iterrows():
-            print(f"Index: {index}, Q: {row['Q']}, A: {row['A']}, field: {row['field']},thread: {row['thread']}")
+            # print(f"Index: {index}, Q: {row['Q']}, A: {row['A']}, field: {row['field']},thread: {row['thread']}")
             qa = QA(uid=uid, TPid=TPid, QA_time=datetime.now(),
                     QA_question=row['Q'], QA_answer=row['A'], QA_field=row['field'], QA_thread=row['thread'])
             try:
@@ -41,13 +44,13 @@ class QAOperation(Resource):
 
     # 查询审核任务  接收参数【url追加  审核人:uid】
     def get(self):
-        qaList = QA.query.filter(QA.uid == request.args['uid'],QA.TPid == request.args['tpid'])
+        qaList = QA.query.filter(QA.uid == request.args['uid'], QA.TPid == request.args['tpid'])
         data = [{'QAid': qa.QA_id, 'Q': qa.QA_question, 'A': qa.QA_answer} for qa in qaList]
         return jsonify({'data': data, 'success': True})
 
     # 修改审核人  接收参数【json格式  审核id值:QAid， 目标审核人:uid】
     def put(self):
-        qa = QA.query.filter(QA.QA_id == request.json['QAid'])[0]
+        qa = QA.query.filter(QA.QA_id == request.json['QAid']).first()
         qa.uid = request.json['uid']
         try:
             db.session.commit()
@@ -59,10 +62,10 @@ class QAOperation(Resource):
 
     # 提交打分结果(一条一条)   接收参数【url追加  审核id值:QAid， 分数:score】
     def delete(self):
-        qa = QA.query.filter(QA.QA_id == request.args['QAid'])[0]
+        qa = QA.query.filter(QA.QA_id == request.args['QAid']).first()
         # 判断该审核是否为实验的最后一条提交结果
         if QA.query.filter(QA.TPid == qa.TPid).count() == 1:
-            testProject = TestProject.query.filter(TestProject.tP_id == qa.TPid)[0]
+            testProject = TestProject.query.filter(TestProject.tP_id == qa.TPid).first()
             testProject.tP_status = 3
 
         nowTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间

@@ -4,18 +4,18 @@
 import os
 from flask import jsonify, request
 from flask_restful import Resource
-from App.models import *
+from App.models import db, APIKey, DataSet, TestProject
 from datetime import datetime
 from App.utils.MD5_ID import *
 
 
 def getAK(AKid):
-    x = APIKey.query.filter(APIKey.apiKey_id == AKid)[0]
+    x = APIKey.query.filter(APIKey.apiKey_id == AKid).first()
     return {'id': x.apiKey_id, 'name': x.apiKey_name, 'value': x.apiKey_value, 'auth': x.apiKey_auth}
 
 
 def getDS(DSid):
-    x = DataSet.query.filter(DataSet.DS_id == DSid)[0]
+    x = DataSet.query.filter(DataSet.DS_id == DSid).first()
     return {'id': x.DS_id, 'name': x.DS_name, 'info': x.DS_info, 'url': x.DS_url}
 
 
@@ -48,7 +48,7 @@ class TestProjectCRUD(Resource):
     # 删除实验
     def delete(self):
         try:
-            db.session.delete(TestProject.query.filter(TestProject.tP_id == request.json['tPid'])[0])
+            db.session.delete(TestProject.query.filter(TestProject.tP_id == request.json['tPid']).first())
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:
@@ -67,7 +67,7 @@ class TestProjectCRUD(Resource):
 
     # 实验修改
     def put(self):
-        tP = TestProject.query.filter(TestProject.tP_id == request.json['tPid'])[0]
+        tP = TestProject.query.filter(TestProject.tP_id == request.json['tPid']).first()
         tP.tP_name = request.json['name']
         tP.AK1, tP.AK2, tP.DS = request.json['AK1'], request.json['AK2'], request.json['DS']
         try:

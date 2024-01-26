@@ -33,43 +33,54 @@
                     <!-- 协作者 列 -->
                     <el-table-column label="协作者">
                         <template slot-scope="scope">
-                            <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
-                                {{ collaborator.name }}
+                            <div v-if="scope.row.collaborators && scope.row.collaborators.length > 0">
+                                <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
+                                    {{ collaborator.name }}
+                                </div>
                             </div>
+                            <el-tag v-else type="danger">还没有协作者！</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
+                            <el-link type="primary" style="margin-right: 10px;"
+                                @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators)">添加协作者</el-link>
+                            <!-- <el-button size="mini" type="primary"
+                                            @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
+                                            添加审核协作者
+                                        </el-button> -->
                             <el-dropdown>
                                 <el-button size="mini" type="primary">
                                     操作<i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
                                 <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item>
+                                    <!-- <el-dropdown-item>
                                         <el-button size="mini" type="primary"
                                             @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
                                             添加审核协作者
                                         </el-button>
-                                    </el-dropdown-item>
+                                    </el-dropdown-item> -->
                                     <el-dropdown-item>
                                         <el-button size="mini" type="success"
-                                            @click="handleStartExpirement(scope.$index, scope.row.id)">
+                                            @click="confirmStart(scope.$index, scope.row)">
                                             开始实验
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="warning" icon="el-icon-edit"
-                                            @click="editDialog = true, initialEdit(scope.row, scope.$index)">
-                                            修改实验
+                                        <el-button size="mini" type="warning" @click="initialEdit(scope.row)">
+                                            修改配置
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
+                                        <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                             icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                             title="确定要删除此实验吗？">
                                             <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                             </el-button>
-                                        </el-popconfirm>
+                                        </el-popconfirm> -->
+                                        <el-button size="mini" icon="el-icon-delete" type="danger"
+                                            @click="confirmDelete(scope.$index, scope.row)">删除
+                                        </el-button>
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -95,31 +106,6 @@
                     <el-table-column label="进度" prop="progress">
                         <template slot-scope="scope">
                             <el-progress :percentage="scope.row.progress"></el-progress>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="180" align="center">
-                        <template slot-scope="scope">
-                            <el-dropdown>
-                                <el-button size="mini" type="primary">
-                                    操作<i class="el-icon-arrow-down el-icon--right"></i>
-                                </el-button>
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item>
-                                        <el-button size="mini" type="success"
-                                            @click.stop="handleStartExpirement(scope.$index, scope.row.id)">
-                                            开始实验
-                                        </el-button>
-                                    </el-dropdown-item>
-                                    <el-dropdown-item>
-                                        <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
-                                            icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
-                                            title="确定要删除此实验吗？">
-                                            <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
-                                            </el-button>
-                                        </el-popconfirm>
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                            </el-dropdown>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -151,6 +137,11 @@
                             </div>
                         </template>
                     </el-table-column>
+                    <el-table-column label="总待审核条数" prop="thisExpQA">
+                        <template slot-scope="scope">
+                            <el-tag type="warning">{{ scope.row.thisExpQA }}</el-tag>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
                             <el-dropdown>
@@ -171,12 +162,15 @@
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
+                                        <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                             icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                             title="确定要删除此实验吗？">
                                             <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                             </el-button>
-                                        </el-popconfirm>
+                                        </el-popconfirm> -->
+                                        <el-button size="mini" icon="el-icon-delete" type="danger"
+                                            @click="confirmDelete(scope.$index, scope.row)">删除
+                                        </el-button>
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -211,12 +205,15 @@
                             <el-button size="mini" type="primary" slot="reference" @click.stop> <!-- 阻止冒泡 -->
                                 查看记录
                             </el-button>
-                            <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
+                            <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                 icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                 title="确定要删除此实验吗？">
                                 <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                 </el-button>
-                            </el-popconfirm>
+                            </el-popconfirm> -->
+                            <el-button size="mini" icon="el-icon-delete" type="danger"
+                                @click="confirmDelete(scope.$index, scope.row)">删除
+                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -353,6 +350,9 @@
 import { getExperimentByProjectId } from '@/api/experiment'
 import { deleteById, addExpirement, editExpirement } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
+import { getQACount } from '@/api/qa'
+// import { getExperimentProgress, updateExperimentStatus, startExp } from '@/api/expOperation'
+import{startExp}from '@/api/expOperation'
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-chrome';
@@ -376,7 +376,7 @@ export default {
             reviewList: [], // 待审核列表数据
             doneList: [], // 已完成列表数据
             thisProject: {},
-            editExperiment: { name: '', AK1: '', AK2: '', DS: '', tPid: '', index: '' },
+            editExperiment: { name: '', AK1: '', AK2: '', DS: '', tPid: '' },
             pythonCode: '',
             pythonFile: null,
             editor: null, // 存储编辑器实例
@@ -384,7 +384,6 @@ export default {
             selectFriendsId: [],
             currentExpName: '',
             currentExpId: '',
-            currentExpIndex: '',
             thisRowCollaborators: []
         }
     },
@@ -394,6 +393,7 @@ export default {
             this.thisProject = JSON.parse(storedProject);
         }
         else {
+            // 处理没有数据的情况，可能是跳转到此页面或刷新页面
             this.$router.push("/projectsList")
         }
         this.load();
@@ -439,14 +439,34 @@ export default {
                                 // 你可以根据需要添加更多的状态分类
                             }
                         });
+                        //获取每个待审核实验的审核记录条数
+                        Promise.all(this.reviewList.map(exp => {
+                            // 对每个exp调用getQAByExpirenceId函数
+                            return getQACount(exp.id).then(res => {
+                                // 将结果合并回exp对象
+                                return {
+                                    ...exp,
+                                    thisExpQA: res.data
+                                };
+                            });
+                        })).then(updatedExperimentList => {
+                            // 这里的updatedExperimentList包含了修改后的experimentList
+                            // 可以在这里处理或更新状态
+                            this.reviewList = updatedExperimentList;
+                        }).catch(error => {
+                            // 处理任何在Promise链中发生的错误
+                            console.error("Error while updating experiment list:", error);
+                        });
                     }).catch(error => {
                         // 处理可能出现的错误
                         console.error("Error fetching collaborators: ", error);
                     });
+                    //如果有待实验则开始轮询
+                    this.proceedingExp()
                 }
             })
             getUserList(localStorage.getItem('uid')).then(res => {
-                this.userFriends = res.data.filter(user => user.state !== 0);
+                this.userFriends = res.data.filter(user => user.state === 1 || user.state === -1);
             })
         },
         handleAddNewExpirement() {
@@ -475,6 +495,7 @@ export default {
                                     message: '添加成功',
                                     type: 'success'
                                 });
+                                this.setExpEmpty()
                                 this.load()
                             }
                         })
@@ -510,21 +531,31 @@ export default {
                     });
                     switch (row.status) {
                         case 0:
-                            this.expList.splice(index,1);
+                            this.expList.splice(index, 1);
                             break;
                         case 2:
-                            this.reviewList.splice(index,1);
+                            this.reviewList.splice(index, 1);
                             break;
                         case 3:
-                            this.doneList.splice(index,1);
+                            this.doneList.splice(index, 1);
                             break;
                         // 你可以根据需要添加更多的状态分类
                     }
                 }
             })
         },
-        handleStartExpirement(index, id) {
-            console.log(index, id)
+        handleStartExpirement(index, row) {
+            const id = { tPid: row.id }
+            startExp(id).then(res => {
+                if (res.success) {
+                    this.$message({
+                        message: row.id + '-' + row.name + '开始执行',
+                        type: 'info'
+                    });
+                    this.setExpEmpty()
+                    this.load()
+                }
+            })
         },
         handleAssignExpirement(experiment) {
             // 保存到 LocalStorage
@@ -550,8 +581,7 @@ export default {
             this.editExperiment.name = '',
                 this.editExperiment.AK1 = '',
                 this.editExperiment.Ak2 = '',
-                this.editExperiment.DS = '',
-                this.editExperiment.index = ''
+                this.editExperiment.DS = ''
         },
         formatDate(dateStr) {
             // 使用 JavaScript 的 Date 对象进行解析和格式化
@@ -578,7 +608,7 @@ export default {
                                 message: '修改成功',
                                 type: 'success'
                             });
-                            this.expList.splice(this.editExperiment.index, 1)
+                            this.setExpEmpty()
                             this.load()
                         }
                     })
@@ -597,11 +627,11 @@ export default {
                 });
             }
         },
-        initialEdit(row, index) {
+        initialEdit(row) {
             this.editExperiment.name = row.name
             this.editExperiment.tPid = row.id
-            this.editExperiment.index = index
             console.log('当前进行修改的实验id', this.editExperiment.tPid)
+            this.editDialog = true
 
         },
         resetCodeEditor() {
@@ -653,10 +683,9 @@ export default {
                 }
                 );
         },
-        handleAddFriendsToExp(id, name, collaborators, index) {
+        handleAddFriendsToExp(id, name, collaborators) {
             this.currentExpId = id,
                 this.currentExpName = name
-            this.currentExpIndex = index
             this.friendsToExp = true,
                 this.thisRowCollaborators = collaborators
         },
@@ -693,10 +722,108 @@ export default {
                         type: 'error'
                     });
                 }
-                this.expList.splice(this.currentExpIndex,1)
+                this.setExpEmpty()
                 this.load()
             })
             this.handleDialogClose()
+        },
+        setExpEmpty() {
+            this.reviewList = []
+            this.proceeding = []
+            this.doneList = []
+            this.expList = []
+        },
+        confirmDelete(index, row) {
+            this.$confirm('是否删除该实验？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.handleRemoveExpirement(index, row)
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });
+            });
+        },
+        confirmStart(index, row) {
+            this.$confirm('确定执行该实验吗？一旦执行将直至结束', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.handleStartExpirement(index, row)
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消执行'
+                });
+            });
+        },
+        // proceedingExp() {
+        //     const interval = setInterval(() => {
+        //         // 如果 this.proceeding 为空，则停止轮询
+        //         if (!this.proceeding.length) {
+        //             clearInterval(interval);
+        //             return;
+        //         }
+
+        //         // 遍历 this.proceeding 中的每个实验
+        //         this.proceeding.forEach((experiment, index) => {
+
+        //             getExperimentProgress(experiment.id).then(res => {
+
+        //                 this.proceeding[index].progress = res.process
+
+
+        //                 if (this.proceeding[index].progress === 100) {
+        //                     // 更新实验状态
+        //                     const updateExp = { TPid: experiment.id, uid: localStorage.getItem('uid') }
+        //                     updateExperimentStatus(updateExp).then(res => {
+        //                         if (res.success) {
+        //                             this.$message({
+        //                                 type: 'info',
+        //                                 message: experiment.id + '-' + experiment.name + '执行完成'
+        //                             });
+        //                             this.setExpEmpty()
+        //                             this.load()
+        //                         }
+        //                     });
+        //                 }
+
+
+        //             });
+        //         });
+        //     }, 5000); // 设置轮询间隔为 5 秒
+        // }
+        proceedingExp() {
+            const interval = setInterval(() => {
+                // 如果 this.proceeding 为空，则停止轮询
+                if (!this.proceeding.length) {
+                    clearInterval(interval);
+                    return;
+                }
+
+                // 遍历 this.proceeding 中的每个实验
+                this.proceeding.forEach((experiment, index) => {
+
+                        this.proceeding[index].progress = this.proceeding[index].progress+20
+
+
+                        if (this.proceeding[index].progress === 100) {
+
+                                    this.$message({
+                                        type: 'info',
+                                        message: experiment.id + '-' + experiment.name + '执行完成'
+                                    });
+                                    this.proceeding[index].progress = 0
+                        }
+
+
+                   
+                });
+            }, 5000); // 设置轮询间隔为 5 秒
         }
     }
 }

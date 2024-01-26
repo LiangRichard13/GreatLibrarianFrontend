@@ -2,8 +2,8 @@
   <el-container>
     <el-header style="padding: 0">
       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-        <el-menu-item index="/userList">添加好友</el-menu-item>
         <el-menu-item index="/experimentCollaborate">我的协作实验</el-menu-item>
+        <el-menu-item index="/userList">添加好友</el-menu-item>
       </el-menu>
     </el-header>
     <el-main style="padding: 0">

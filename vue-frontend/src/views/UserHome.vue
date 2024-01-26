@@ -9,7 +9,8 @@
             <div class="project-section">
               <el-card class="box-card">
                 <div slot="header" class="clearfix">
-                  <span>我的项目</span>
+                  <span style="float: left;">我的项目</span>
+                  <el-button style="float: right;" @click="pushToProject()">我的项目列表</el-button>
                 </div>
                 <el-table :data="myProjects">
                   <el-table-column label="项目 ID" prop="id"></el-table-column>
@@ -26,6 +27,13 @@
                   <!-- 表格内容 -->
                   <el-table-column label="实验 ID" prop="id"></el-table-column>
                   <el-table-column label="实验名称" prop="name"></el-table-column>
+                  <el-table-column label="待审核条数" prop="thisExpQA">
+                    <template slot-scope="scope">
+                      <el-tag type="warning">{{ scope.row.thisExpQA }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="" prop=""><el-link href="/experimentCollaborate"
+                      type="primary">去审核</el-link></el-table-column>
                 </el-table>
               </el-card>
             </div>
@@ -62,8 +70,9 @@
 
 <script>
 import { getUserList, getFriendsRequest } from "@/api/collaborate";
-import {getExperimentsByUserId} from "@/api/collaborate"
+import { getExperimentsByUserId } from "@/api/collaborate"
 import { getProjectsByUserId } from "@/api/project"
+import { getQAByExpirenceId } from "@/api/qa"
 import config from "@/services/conf"
 export default {
   name: "userHome",
@@ -82,7 +91,7 @@ export default {
       const uid = localStorage.getItem('uid')
       //获取好友列表
       getUserList(uid).then(res => {
-        this.userFriends = res.data.filter(user => user.state !== 0)
+        this.userFriends = res.data.filter(user => user.state === 1 || user.state === -1)
         this.userFriends = this.userFriends.map(user => {
           if (user.icon) {
             let icon = user.icon.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
@@ -109,15 +118,36 @@ export default {
       })
       //获取参与的实验
       if (localStorage.getItem("uid") !== null) {
-                const id = localStorage.getItem("uid")
-                getExperimentsByUserId(id).then(res => {
-                    this.participatedExp = res.data;
-                })
-            }
+        const id = localStorage.getItem("uid")
+        getExperimentsByUserId(id).then(res => {
+          this.participatedExp = res.data;
+          Promise.all(this.participatedExp.map(exp => {
+            // 对每个exp调用getQAByExpirenceId函数
+            return getQAByExpirenceId(exp.id, localStorage.getItem('uid')).then(res => {
+              // 将结果合并回exp对象
+              return {
+                ...exp,
+                thisExpQA: res.data.length
+              };
+            });
+          })).then(updatedExperimentList => {
+            // 这里的updatedExperimentList包含了修改后的experimentList
+            // 可以在这里处理或更新状态
+            this.participatedExp = updatedExperimentList;
+            console.log('我参与的实验', this.participatedExp)
+          }).catch(error => {
+            // 处理任何在Promise链中发生的错误
+            console.error("Error while updating experiment list:", error);
+          });
+        })
+      }
     },
     //跳转处理好友请求
     pushToFriendRequest() {
       this.$router.push('/FriendRequests')
+    },
+    pushToProject(){
+      this.$router.push('/projectsList')
     }
   },
   mounted() {

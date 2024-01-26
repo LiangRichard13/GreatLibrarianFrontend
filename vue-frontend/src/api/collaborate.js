@@ -18,16 +18,6 @@ export function addFriend(data) {
     })
 }
 
-// export function getUserFriendsById(id) {
-//     return service({
-//         url: '/friend',
-//         method: 'get',
-//         params: {
-//             uid: id
-//         }
-//     })
-// }
-
 export function getFriendsRequest(id) {
     return service({
         url: '/friend',
@@ -40,10 +30,10 @@ export function getFriendsRequest(id) {
 
 export function deleteById(id, uid) {
     return service({
-        url: '/collaborate/deleteById',
+        url: '/friend',
         method: 'delete',
         params: {
-            id: id,
+            fid: id,
             uid: uid
         }
     })
@@ -57,12 +47,32 @@ export function handleFriendRequest(data) {
     })
 }
 
-// export function refuseToAdd(id) {
-//     return service({
-//         url: '/collaborate/getFriendsRequest',
-//         method: 'put',
-//         params: {
-//             id: id
-//         }
-//     })
-// }
+export function addFriendsToExperiment(data) {
+    return service({
+        url: '/testProjectUser',
+        method: 'post',
+        data: data
+    })
+}
+
+export function getFriendsByExperimentId(TPid) {
+    return service({
+        url: '/testProjectUser',
+        method: 'get',
+        params: {
+            TPid: TPid,
+            choose: 1
+        }
+    })
+}
+
+export function getExperimentsByUserId(uid) {
+    return service({
+        url: '/testProjectUser',
+        method: 'get',
+        params: {
+            uid: uid,
+            choose:2
+        }
+    })
+}

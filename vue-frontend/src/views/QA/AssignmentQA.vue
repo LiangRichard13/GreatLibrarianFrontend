@@ -7,80 +7,84 @@
         {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 实验的QA记录
       </h3>
     </div>
-    <div class="table-container">
-      <el-table :data="pagedQAList" style="width: 100%" ref="multipleTable" tooltip-effect="dark"
-        @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55">
-        </el-table-column>
-        <el-table-column label="QA ID" prop="id"></el-table-column>
-        <el-table-column label="问题" prop="question"></el-table-column>
+    <template v-if="QAList.length">
+      <div class="table-container">
+        <el-table :data="pagedQAList" :row-key="row => row.QAid" style="width: 100%" ref="multipleTable"
+          tooltip-effect="dark" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55">
+          </el-table-column>
+          <el-table-column label="QA ID" prop="QAid"></el-table-column>
+          <el-table-column label="问题" prop="Q"></el-table-column>
 
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="回答:">
-                <span>{{ props.row.answer }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination-container" style="margin-top: 20px;">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
-          layout="total, sizes, prev, pager, next, jumper">
-        </el-pagination>
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="回答:">
+                  <span>{{ props.row.A }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="pagination-container" style="margin-top: 20px;">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+            :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
+            layout="total, sizes, prev, pager, next, jumper">
+          </el-pagination>
+        </div>
+        <div style="margin-top: 20px">
+          <el-button @click="toggleSelection()">取消选择</el-button>
+        </div>
       </div>
-      <div style="margin-top: 20px">
-        <el-button @click="toggleSelection()">取消选择</el-button>
+      <div class="button-container" style="text-align: right; margin-top: 20px;">
+        <el-button type="primary" @click="showDialog = true">分发给协作者</el-button>
       </div>
+
+      <!-- 添加API_KEY的对话框 -->
+      <el-dialog title="选择分发协作者" :visible.sync="showDialog" width="30%" @close="resetDialog">
+        <div>
+          <el-form ref="form" label-width="100px">
+            <el-form-item label="选择协作者">
+              <el-select v-model="distributeUserId" placeholder="请选择">
+                <el-option v-for="item in this.thisCollaborators" :key="item.id" :label="`${item.id} - ${item.name}`"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="showDialog = false">取 消</el-button>
+          <el-button type="primary" @click="distributeToCollaborators">确 定</el-button>
+        </span>
+      </el-dialog>
+    </template>
+    <div v-else class="emptyQAList">
+      <el-empty description="暂无审核任务"></el-empty>
     </div>
-    <div class="button-container" style="text-align: right; margin-top: 20px;">
-      <el-button type="primary" @click="showDialog = true">分发给协作者</el-button>
-    </div>
-
-    <!-- 添加API_KEY的对话框 -->
-    <el-dialog title="选择分发协作者" :visible.sync="showDialog" width="30%" @close="resetDialog">
-      <div>
-        <el-form ref="form" label-width="100px">
-          <el-form-item label="选择协作者">
-            <el-select v-model="distributeUserId" placeholder="请选择">
-              <el-option v-for="item in this.thisCollaborators" :key="item.id" :label="`${item.id} - ${item.name}`"
-                :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </div>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="showDialog = false">取 消</el-button>
-        <el-button type="primary" @click="distributeToCollaborators">确 定</el-button>
-      </span>
-    </el-dialog>
-
   </div>
 </template>
      
 <script>
 import { getQAByExpirenceId, distributeToOthers } from '@/api/qa'
-import { getCollaboratorsByProjectId, getProjectByExpirementId } from "@/api/project"
+// import { getCollaboratorsByProjectId, getProjectByExpirementId } from "@/api/project"
+import { getFriendsByExperimentId } from "@/api/collaborate"
 export default {
   name: "AssignmentQA",
   data() {
     return {
       showDialog: false,
-      QAList: [{ id: '1', question: '世界上最高的峰是哪个峰 ?', answer: '世界上最高的山峰是珠穆朗玛峰（Mount Everest），它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。', rate: 0 },
-      { id: '2', question: '世界上最深的湖是哪个?', answer: '世界上最深的湖是贝加尔湖，位于俄罗斯。', rate: 3 },
-      { id: '3', question: '世界上最长的山脉是什么?', answer: '世界上最长的山脉是安第斯山脉，延伸南美西部海岸线。', rate: 4 },
-      { id: '4', question: '世界上最大的热带雨林是哪里?', answer: '世界上最大的热带雨林是亚马孙雨林，覆盖多个南美国家。', rate: 5 },
-      { id: '5', question: '世界上最大的岛屿是哪个?', answer: '世界上最大的岛屿是格陵兰岛，属于丹麦。', rate: 2 }
+      QAList: [{ QAid: '1', Q: '世界上最高的峰是哪个峰 ?', A: '世界上最高的山峰是珠穆朗玛峰（Mount Everest），它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。', score: 0 },
+      { QAid: '2', Q: '世界上最深的湖是哪个?', A: '世界上最深的湖是贝加尔湖，位于俄罗斯。', score: 3 },
+      { QAid: '3', Q: '世界上最长的山脉是什么?', A: '世界上最长的山脉是安第斯山脉，延伸南美西部海岸线。', score: 4 },
+      { QAid: '4', Q: '世界上最大的热带雨林是哪里?', A: '世界上最大的热带雨林是亚马孙雨林，覆盖多个南美国家。', score: 5 },
+      { QAid: '5', Q: '世界上最大的岛屿是哪个?', A: '世界上最大的岛屿是格陵兰岛，属于丹麦。', score: 2 }
       ],
       thisExperiment: {},
-      thisProjejctId: '',
       thisCollaborators: [{ id: '1', name: 'Alice' }, { id: '2', name: 'Bob' }],
       selectedIds: [],
-      distributeUserId: '',
+      distributeUserId: null,
       currentPage: 1,
       pageSize: 10,
       pagedQAList: [] // 用于显示当前页的数据
@@ -89,32 +93,33 @@ export default {
   mounted() {
 
     let storedExperiment = localStorage.getItem('thisExperiment');
-        if (storedExperiment) {
-            this.thisExperiment = JSON.parse(storedExperiment);
-        } else {
-            // 处理没有数据的情况，可能是跳转到此页面或刷新页面
-            this.$router.push("/projectsList")
-        }
+    if (storedExperiment) {
+      this.thisExperiment = JSON.parse(storedExperiment);
+    }
+    // else {
+    //     // 处理没有数据的情况，可能是跳转到此页面或刷新页面
+    //     this.$router.push("/projectsList")
+    // }
     this.load();
     // this.thisExperiment = this.$route.query;
-    this.updatePagedQAList(); // 初始加载
 
-    console.log(this.thisProjejctId)
   },
   methods: {
     load() {
       getQAByExpirenceId(this.thisExperiment.id, localStorage.getItem('uid')).then(res => {
         this.QAList = res.data
+        this.updatePagedQAList(); // 初始加载
       })
 
       //用于获取当前实验的项目
-      getProjectByExpirementId(this.thisExperiment.id).then(res => {
-        this.thisProjejctId = res.data
-      })
+      // getProjectByExpirementId(this.thisExperiment.id).then(res => {
+      //   this.thisProjejctId = res.data
+      // })
 
       // 获取当前项目的协作者以便分发
-      getCollaboratorsByProjectId(this.thisProjejctId).then(res => {
+      getFriendsByExperimentId(this.thisExperiment.id).then(res => {
         this.thisCollaborators = res.data
+        console.log(this.thisCollaborators)
       })
     },
     goBack() {
@@ -130,27 +135,60 @@ export default {
       }
     },
     handleSelectionChange(selectedRows) {
-      this.selectedIds = selectedRows.map(row => row.id);
+      this.$nextTick(() => {
+        this.selectedIds = selectedRows.map(row => row.QAid);
+        console.log(this.selectedIds); // 现在应该显示正确的数据
+      });
     },
     distributeToCollaborators() {
-      const data = {
-        uid: this.distributeUserId,
-        distributeIds: this.selectedIds
+      if (this.distributeUserId === null) {
+        this.$message({
+          message: '请选择分发的对象！',
+          type: 'warning'
+        });
       }
-      distributeToOthers(data).then(res => {
-        if (res.success) {
-          this.resetDialog
-          this.showDialog = false
+      else {
+        if (this.selectedIds.length === 0) {
           this.$message({
-            message: '分发成功！',
-            type: 'success'
+            message: '还未选择审核记录！',
+            type: 'warning'
           });
-          this.load()
         }
-      })
+        else {
+          // 遍历 selectedIds 数组
+          console.log('选择的QAid', this.selectedIds)
+          this.selectedIds.forEach(id => {
+            const data = {
+              uid: this.distributeUserId,
+              QAid: id
+            };
+            // 对每个 id 发起请求
+            distributeToOthers(data).then(res => {
+              if (res.success) {
+                // 请求成功的处理
+                this.$message({
+                  message: '分发成功！',
+                  type: 'success'
+                });
+              } else {
+                // 请求失败的处理（可选）
+                this.$message({
+                  message: '分发失败',
+                  type: 'error'
+                });
+              }
+            });
+          });
+
+          // 重置对话框和重新加载数据
+          this.resetDialog();
+          this.showDialog = false;
+          this.load();
+        }
+      }
     },
     resetDialog() {
-      this.distributeUserId = ''
+      this.distributeUserId = null
     },
     // 用于处理每页显示条目数变化
     handleSizeChange(newSize) {

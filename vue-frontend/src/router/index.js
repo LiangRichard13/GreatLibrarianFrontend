@@ -45,10 +45,6 @@ const routes = [
                 component: () => import("@/views/Experiment/ExperimentList.vue")
             },
             {
-                path: '/experimentCollaborate',
-                component: () => import('@/views/Collaborate/ExperimentCollaborate.vue')
-            },
-            {
                 path: '/review',
                 component: () => import("@/views/QA/ReviewQA.vue")
             },
@@ -75,12 +71,12 @@ const routes = [
                 component: () => import("../components/CollaborateNavigation.vue"),
                 children: [
                     {
-                        path: '/myCollaborate',
-                        component: () => import("@/views/Collaborate/MyCollaborate.vue")
-                    },
-                    {
                         path: '/userList',
                         component: () => import("@/views/Collaborate/UserList.vue")
+                    },
+                    {
+                        path:'/experimentCollaborate',
+                        component:()=>import("@/views/Collaborate/ExperimentCollaborate.vue")
                     }
                 ]
             },

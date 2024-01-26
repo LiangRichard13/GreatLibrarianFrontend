@@ -7,60 +7,70 @@
         {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 实验的QA记录
       </h3>
     </div>
-    <div class="table-container">
-      <el-table :data="pagedQAList" style="width: 100%">
-        <el-table-column label="QA ID" prop="id"></el-table-column>
-        <el-table-column label="问题" prop="question"></el-table-column>
-        <el-table-column label="打分" prop="rate">
-          <template slot-scope="scope">
-            <el-rate v-model="scope.row.rate"></el-rate>
-          </template>
-        </el-table-column>
+    <template v-if="QAList.length">
+      <div class="table-container">
+        <el-table :data="pagedQAList" style="width: 100%">
+          <el-table-column label="QA ID" prop="QAid"></el-table-column>
+          <el-table-column label="问题" prop="Q"></el-table-column>
+          <el-table-column label="打分" prop="score">
+            <template slot-scope="scope">
+              <el-rate v-model="scope.row.score"></el-rate>
+            </template>
+          </el-table-column>
 
-<el-table-column>
-  <template slot-scope="scope">
-    <div>
-      <el-button size="small" type="primary" @click="submitRate(scope.row,scope.$index)">提交打分</el-button>
-    </div>
-  </template>
-</el-table-column>
+          <el-table-column>
+            <template slot-scope="scope">
+              <div>
+                <!-- 使用 el-popconfirm 包裹您的按钮 -->
+                <el-popconfirm title="确定要提交打分吗？" @confirm="submitRate(scope.row, scope.$index)">
+                  <!-- slot 中是触发弹出的元素 -->
+                  <el-button slot="reference" size="small" type="primary">提交打分</el-button>
+                </el-popconfirm>
+              </div>
+            </template>
+          </el-table-column>
 
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="回答:">
-                <span>{{ props.row.answer }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="pagination-container" style="margin-top: 20px;">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-        :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
-        layout="total, sizes, prev, pager, next, jumper">
-      </el-pagination>
-    </div>
+
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="回答:">
+                  <span>{{ props.row.A }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="pagination-container" style="margin-top: 20px;">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
+          layout="total, sizes, prev, pager, next, jumper">
+        </el-pagination>
+      </div>
+    </template>
     <!-- <div class="button-container" style="text-align: right; margin-top: 20px;">
       <el-button type="primary" @click="submitRate()">提交打分</el-button>
     </div> -->
+    <div v-else class="emptyQAList">
+      <el-empty description="暂无审核任务"></el-empty>
+    </div>
   </div>
 </template>
    
 <script>
-import { getQAByExpirenceId, rateQA } from '@/api/qa'
+import { getQAByExpirenceId,rateQA } from '@/api/qa'
 export default {
   name: "ReviewQA",
   data() {
     return {
       showDialog: false,
       QAList: [
-        { id: '1', question: '世界上最高的峰是哪个峰 ?', answer: '世界上最高的山峰是珠穆朗玛峰,它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。', rate: 4 },
-        { id: '2', question: '世界上最深的湖是哪个?', answer: '世界上最深的湖是贝加尔湖，位于俄罗斯。', rate: 3 },
-        { id: '3', question: '世界上最长的山脉是什么?', answer: '世界上最长的山脉是安第斯山脉，延伸南美西部海岸线。', rate: 4 },
-        { id: '4', question: '世界上最大的热带雨林是哪里?', answer: '世界上最大的热带雨林是亚马孙雨林，覆盖多个南美国家。', rate: 5 },
-        { id: '5', question: '世界上最大的岛屿是哪个?', answer: '世界上最大的岛屿是格陵兰岛，属于丹麦。', rate: 2 }
+        // { QAid: '1', Q: '世界上最高的峰是哪个峰 ?', A: '世界上最高的山峰是珠穆朗玛峰（Mount Everest），它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。' },
+        // { QAid: '2', Q: '世界上最深的湖是哪个?', A: '世界上最深的湖是贝加尔湖，位于俄罗斯。' },
+        // { QAid: '3', Q: '世界上最长的山脉是什么?', A: '世界上最长的山脉是安第斯山脉，延伸南美西部海岸线。' },
+        // { QAid: '4', Q: '世界上最大的热带雨林是哪里?', A: '世界上最大的热带雨林是亚马孙雨林，覆盖多个南美国家。' },
+        // { QAid: '5', Q: '世界上最大的岛屿是哪个?', A: '世界上最大的岛屿是格陵兰岛，属于丹麦。' }
       ],
       thisExperiment: {},
       selectedIds: [],
@@ -71,33 +81,34 @@ export default {
   },
   mounted() {
     let storedExperiment = localStorage.getItem('thisExperiment');
-        if (storedExperiment) {
-            this.thisExperiment = JSON.parse(storedExperiment);
-        } 
-        // else {
-        //     // 处理没有数据的情况，可能是跳转到此页面或刷新页面
-        //     this.$router.push("/projectsList")
-        // }
-    // this.load()
-    this.updatePagedQAList(); // 初始加载
+    if (storedExperiment) {
+      this.thisExperiment = JSON.parse(storedExperiment);
+    }
+    else {
+        // 处理没有数据的情况，可能是跳转到此页面或刷新页面
+        this.$router.push("/projectsList")
+    }
+    this.load()
   },
   methods: {
     load() {
       getQAByExpirenceId(this.thisExperiment.id, localStorage.getItem('uid')).then(res => {
         this.QAList = res.data
+        // console.log('该实验下的QA',this.QAList)
+        this.updatePagedQAList(); // 初始加载
       })
     },
     goBack() {
       this.$router.go(-1); // 返回上一个页面
     },
-    submitRate(row,index) {
-      rateQA(row).then(res => {
+    submitRate(row, index) {
+      rateQA(row.QAid, row.score).then(res => {
         if (res.success) {
           this.$message({
             message: '打分成功!',
             type: 'success'
           });
-          this.QAList.splice(index,1)
+          this.QAList.splice(index, 1)
           // this.load()
         }
       })

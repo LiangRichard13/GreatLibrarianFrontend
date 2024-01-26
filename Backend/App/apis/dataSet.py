@@ -6,7 +6,7 @@ import os
 import shutil
 from flask import jsonify, request
 from flask_restful import Resource
-from App.models import *
+from App.models import db, DataSet
 
 
 class DataSetCRUD(Resource):
@@ -43,7 +43,7 @@ class DataSetCRUD(Resource):
     # 删除数据集
     def delete(self):
         try:
-            db.session.delete(DataSet.query.filter(DataSet.DS_id == request.args['id'])[0])
+            db.session.delete(DataSet.query.filter(DataSet.DS_id == request.args['id']).first())
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:

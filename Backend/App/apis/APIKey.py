@@ -3,7 +3,7 @@
 # @version: 1.0
 from flask import jsonify, request
 from flask_restful import Resource
-from App.models import *
+from App.models import db, APIKey
 from App.utils.MD5_ID import *
 
 
@@ -25,13 +25,13 @@ class APIKeyCRUD(Resource):
     # 删除
     def delete(self):
         try:
-            db.session.delete(APIKey.query.filter(APIKey.apiKey_id == request.json['id'])[0])
+            db.session.delete(APIKey.query.filter(APIKey.apiKey_id == request.json['id']).first)
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False ,'message': str(e)})
+            return jsonify({'success': False, 'message': str(e)})
 
     # 查询【参数:uid,返回:【uid下的所有apikey列表】
     def get(self):
@@ -39,8 +39,3 @@ class APIKeyCRUD(Resource):
         return jsonify({'data': [
             {'id': x.apiKey_id, 'name': x.apiKey_name, 'value': x.apiKey_value, 'auth': x.apiKey_auth}
             for x in APIKey.query.filter(APIKey.userid == request.args['uid'])], 'success': True})
-    # elif request.args['choose'] == 2:
-    #     x = APIKey.query.filter(APIKey.apiKey_id == request.args['AKid'])[0]
-    #     return jsonify(
-    #         {'data': {'id': x.apiKey_id, 'name': x.apiKey_name, 'value': x.apiKey_value, 'auth': x.apiKey_auth},
-    #          'success': True})

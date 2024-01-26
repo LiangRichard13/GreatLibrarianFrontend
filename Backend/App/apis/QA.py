@@ -6,7 +6,7 @@ import pandas as pd
 from flask import jsonify, request
 from flask_restful import Resource
 from datetime import datetime
-from App.models import *
+from App.models import db, QA, TestProject
 
 
 # 采用正则化，进行log日志内容的读取
@@ -50,7 +50,7 @@ class QAOperation(Resource):
 
     # 修改审核人  接收参数【json格式  审核id值:QAid， 目标审核人:uid】
     def put(self):
-        qa = QA.query.filter(QA.QA_id == request.json['QAid'])[0]
+        qa = QA.query.filter(QA.QA_id == request.json['QAid']).first()
         qa.uid = request.json['uid']
         try:
             db.session.commit()
@@ -62,10 +62,10 @@ class QAOperation(Resource):
 
     # 提交打分结果(一条一条)   接收参数【url追加  审核id值:QAid， 分数:score】
     def delete(self):
-        qa = QA.query.filter(QA.QA_id == request.args['QAid'])[0]
+        qa = QA.query.filter(QA.QA_id == request.args['QAid']).first()
         # 判断该审核是否为实验的最后一条提交结果
         if QA.query.filter(QA.TPid == qa.TPid).count() == 1:
-            testProject = TestProject.query.filter(TestProject.tP_id == qa.TPid)[0]
+            testProject = TestProject.query.filter(TestProject.tP_id == qa.TPid).first()
             testProject.tP_status = 3
 
         nowTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间

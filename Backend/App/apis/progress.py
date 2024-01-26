@@ -3,7 +3,7 @@
 # @version: 1.0
 from flask import jsonify, request
 from flask_restful import Resource
-from App.models import *
+from App.models import db,TestProject
 import re
 
 
@@ -30,7 +30,7 @@ class Progress(Resource):
         #           state=1 正在实验【去查实验的进度】
         #           state=2 待审核【直接返回100】
         #           state=3 已完成【直接返回100】
-        tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid'])[0]
+        tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         if tP.tP_status == 1:
             process = readTemp('APP/data/Logs/' + tP.tP_id + '/process.temp')
             if process >= 0:

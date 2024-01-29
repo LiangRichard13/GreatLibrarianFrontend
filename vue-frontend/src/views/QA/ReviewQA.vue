@@ -59,7 +59,7 @@
 </template>
    
 <script>
-import { getQAByExpirenceId,rateQA } from '@/api/qa'
+import { getQAByExpirenceId, rateQA } from '@/api/qa'
 export default {
   name: "ReviewQA",
   data() {
@@ -85,8 +85,8 @@ export default {
       this.thisExperiment = JSON.parse(storedExperiment);
     }
     else {
-        // 处理没有数据的情况，可能是跳转到此页面或刷新页面
-        this.$router.push("/projectsList")
+      // 处理没有数据的情况，可能是跳转到此页面或刷新页面
+      this.$router.push("/projectsList")
     }
     this.load()
   },
@@ -94,7 +94,13 @@ export default {
     load() {
       getQAByExpirenceId(this.thisExperiment.id, localStorage.getItem('uid')).then(res => {
         this.QAList = res.data
-        // console.log('该实验下的QA',this.QAList)
+        this.QAList = this.QAList.map(QA => {
+          return {
+            ...QA, // 复制原有的对象
+            score: 0 // 添加新的字段score，并设其值为0
+          };
+        });
+        console.log('该实验下的QA',this.QAList)
         this.updatePagedQAList(); // 初始加载
       })
     },

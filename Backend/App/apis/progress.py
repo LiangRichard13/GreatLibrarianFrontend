@@ -47,4 +47,4 @@ class Progress(Resource):
             else:
                 return jsonify({'success': False, 'message': 'not find'})
         else:
-            return tP.tP_progress
+            return jsonify({'success': True, 'process': tP.tP_progress})

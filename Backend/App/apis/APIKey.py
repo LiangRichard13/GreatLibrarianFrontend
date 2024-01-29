@@ -11,8 +11,8 @@ class APIKeyCRUD(Resource):
     # 添加
     def post(self):
         apiKey = APIKey(
-            apiKey_id=creat_md5_id()[:8], apiKey_name=request.json['name'], apiKey_value=request.json['value'],
-            apiKey_auth=request.json['auth'], userid=request.json['uid'])
+            AK_id=creat_md5_id()[:8], AK_name=request.json['name'], AK_value=request.json['value'],
+            AK_auth=request.json['auth'], userid=request.json['uid'])
         try:
             db.session.add(apiKey)  # 加入数据库
             db.session.commit()
@@ -25,7 +25,7 @@ class APIKeyCRUD(Resource):
     # 删除
     def delete(self):
         try:
-            db.session.delete(APIKey.query.filter(APIKey.apiKey_id == request.json['id']).first)
+            db.session.delete(APIKey.query.filter(APIKey.AK_id == request.json['id']).first)
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:
@@ -37,5 +37,5 @@ class APIKeyCRUD(Resource):
     def get(self):
         # if request.args['choose'] == 1:
         return jsonify({'data': [
-            {'id': x.apiKey_id, 'name': x.apiKey_name, 'value': x.apiKey_value, 'auth': x.apiKey_auth}
+            {'id': x.AK_id, 'name': x.AK_name, 'value': x.AK_value, 'auth': x.AK_auth}
             for x in APIKey.query.filter(APIKey.userid == request.args['uid'])], 'success': True})

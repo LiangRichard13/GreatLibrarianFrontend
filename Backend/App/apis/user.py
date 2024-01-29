@@ -12,7 +12,7 @@ from App.utils.MD5_ID import creat_md5_id
 # 用户头像文件操作
 class Icon(Resource):
     def get(self):
-        return jsonify({'url': User.query.filter(User.user_id == request.json['uid']).first().user_iconUrl})
+        return jsonify({'url': User.query.filter(User.user_id == request.args['uid']).first().user_iconUrl})
 
     def post(self):
         user = User.query.filter(User.user_id == request.args['uid']).first()
@@ -53,7 +53,7 @@ class UserCRUD(Resource):
 
     # 通过用户id获取信息
     def get(self):
-        u = User.query.filter(User.user_id == request.json['id']).first()
+        u = User.query.filter(User.user_id == request.args['id']).first()
         if u:
             data = {'name': u.user_name, 'tel': u.user_tel, 'email': u.user_email, "iconUrl": u.user_iconUrl}
             return jsonify({'success': True, 'data': data})
@@ -114,7 +114,7 @@ class Login(Resource):
                 return jsonify({'success': False, 'data': None, 'message': 'password is wrong'})
 
     # 用户通过Token登录
-    def get(self):
+    def put(self):
         if decode(request.json['token'])[0]:
             try:
                 user = User.query.filter(User.user_id == decode(request.json['token'])[1])[0]
@@ -129,7 +129,7 @@ class Login(Resource):
             return jsonify({'success': False})
 
     # 修改用户ip地址，用户登出
-    def put(self):
+    def get(self):
         try:
             user = User.query.filter(User.user_id == request.args['uid']).first()
             user.user_IP = None

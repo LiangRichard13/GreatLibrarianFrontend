@@ -10,8 +10,8 @@ from App.utils.MD5_ID import *
 
 
 def getAK(AKid):
-    x = APIKey.query.filter(APIKey.apiKey_id == AKid).first()
-    return {'id': x.apiKey_id, 'name': x.apiKey_name, 'value': x.apiKey_value, 'auth': x.apiKey_auth}
+    x = APIKey.query.filter(APIKey.AK_id == AKid).first()
+    return {'id': x.AK_id, 'name': x.AK_name, 'value': x.AK_value, 'auth': x.AK_auth}
 
 
 def getDS(DSid):

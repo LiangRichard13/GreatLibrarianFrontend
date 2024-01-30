@@ -96,10 +96,10 @@ export default {
     if (storedExperiment) {
       this.thisExperiment = JSON.parse(storedExperiment);
     }
-    // else {
-    //     // 处理没有数据的情况，可能是跳转到此页面或刷新页面
-    //     this.$router.push("/projectsList")
-    // }
+    else {
+        // 处理没有数据的情况，可能是跳转到此页面或刷新页面
+        this.$router.push("/projectsList")
+    }
     this.load();
     // this.thisExperiment = this.$route.query;
 
@@ -170,6 +170,7 @@ export default {
                   message: '分发成功！',
                   type: 'success'
                 });
+                this.load()
               } else {
                 // 请求失败的处理（可选）
                 this.$message({

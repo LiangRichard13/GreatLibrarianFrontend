@@ -19,11 +19,16 @@
                             <div>{{ formatDate(scope.row.time) }}</div>
                         </template>
                     </el-table-column> -->
+                    <el-table-column label="待审核条数" prop="thisExpQA">
+                        <template slot-scope="scope">
+                        <el-tag type="warning">{{scope.row.thisExpQA}}</el-tag>
+                    </template>
+                    </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="warning" @click.stop="handleReviewExpirement(scope.row)">
-                                开始审核
-                            </el-button>
+                                <el-button size="mini" type="warning" @click.stop="handleReviewExpirement(scope.row)">
+                                    开始审核
+                                </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -35,7 +40,8 @@
   
 <script>
 // import { getExperimentByProjectId } from '@/api/experiment'
-import {getExperimentsByUserId} from "@/api/collaborate"
+import { getExperimentsByUserId } from "@/api/collaborate"
+import { getQAByExpirenceId } from "@/api/qa"
 
 
 export default {
@@ -64,6 +70,23 @@ export default {
                 const id = localStorage.getItem("uid")
                 getExperimentsByUserId(id).then(res => {
                     this.experimentList = res.data;
+                    Promise.all(this.experimentList.map(exp => {
+                    // 对每个exp调用getQAByExpirenceId函数
+                    return getQAByExpirenceId(exp.id, localStorage.getItem('uid')).then(res => {
+                            // 将结果合并回exp对象
+                            return {
+                                ...exp,
+                                thisExpQA: res.data.length
+                            };
+                        });
+                })).then(updatedExperimentList => {
+                        // 这里的updatedExperimentList包含了修改后的experimentList
+                        // 可以在这里处理或更新状态
+                        this.experimentList = updatedExperimentList;
+                    }).catch(error => {
+                        // 处理任何在Promise链中发生的错误
+                        console.error("Error while updating experiment list:", error);
+                    });
                 })
             }
             // this.experimentList.forEach(exp => {

@@ -2,17 +2,18 @@
   <div style="overflow-x: hidden;">
     <h3 style="letter-spacing: 1px;font-weight: 400;padding-bottom: 20px;text-align: center">我的好友</h3>
     <template v-if="userFriends.length">
-    <el-row :gutter="20">
-      <el-col :span="12" v-for="(row, index) in userFriends" :key="index" class="user-card">
-        <!-- <div v-for="(item, index) in friendsInfo" :key="index"> -->
+      <el-row :gutter="20">
+        <el-col :span="12" v-for="(row, index) in userFriends" :key="index" class="user-card">
+          <!-- <div v-for="(item, index) in friendsInfo" :key="index"> -->
           <el-card>
             <div style="display: flex; align-items: center;">
               <img :src="row.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
               <div style="margin-left: 10px;">
                 <p>用户名:{{ row.name }}</p>
-                <p>用户ID:{{  row.id }}</p>
+                <p>用户ID:{{ row.id }}</p>
                 <p>IP地址:{{ row.ip }}
-                  <sapn v-if="row.state !== 1" style="color: red;">用户已登出</sapn>
+                  <span v-if="row.ip == null" style="color: red; margin-right: 10px;">用户已登出</span>
+                  <span v-else-if="row.ip != null && row.state == -1" style="color: red;">用户不在同一局域网下</span>
                 </p>
                 <p>电话号码:{{ friendsInfo[index].data.tel }}</p>
                 <p>邮箱:{{ friendsInfo[index].data.email }}</p>
@@ -34,13 +35,13 @@
               <el-button type="danger" slot="reference">删除好友</el-button>
             </el-popconfirm>
           </el-card>
-        <!-- </div> -->
-      </el-col>
-    </el-row>
-  </template>
-  <div v-else class="emptyFriendsRequests">
-    <el-empty description="暂无好友"></el-empty>
-  </div>
+          <!-- </div> -->
+        </el-col>
+      </el-row>
+    </template>
+    <div v-else class="emptyFriendsRequests">
+      <el-empty description="暂无好友"></el-empty>
+    </div>
   </div>
 </template>
 
@@ -65,8 +66,8 @@ export default {
     load() {
       const id = localStorage.getItem('uid')
       getUserList(id).then(res => {
-        this.userFriends = res.data.filter(user => user.state !== 0);
-        console.log('我的好友',this.userFriends)
+        this.userFriends = res.data.filter(user => user.state === 1||user.state === -1);
+        console.log('我的好友', this.userFriends)
         // 更新 userFriends 列表中每个用户的 iconUrl
         this.userFriends = this.userFriends.map(user => {
           if (user.icon) {

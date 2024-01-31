@@ -9,9 +9,9 @@
           </div>
           <div class="header-links">
             <el-link style="color: white" href="/Home" class="header-link" :underline="false">主页</el-link>
-            <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">配置</el-link>
-            <el-link style="color: white" href="/userList" class="header-link" :underline="false">合作</el-link>
             <el-link style="color: white" href="/addProject" class="header-link" :underline="false">项目</el-link>
+            <el-link style="color: white" href="/experimentCollaborate" class="header-link" :underline="false">合作</el-link>
+            <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">配置</el-link>
           </div>
 
           <el-dropdown style="float: right;padding-right: 10px">
@@ -86,6 +86,8 @@ export default {
           removeUserIp(uid)//令牌过期则移除用户IP
           localStorage.removeItem("uid");
           localStorage.removeItem("loginToken")
+          localStorage.removeItem("thisProject")
+          localStorage.removeItem("thisExperiment")
           this.$router.push("/login");
         }
       });
@@ -144,6 +146,8 @@ export default {
         })
         localStorage.removeItem("uid")
         localStorage.removeItem("loginToken")
+        localStorage.removeItem("thisProject")
+        localStorage.removeItem("thisExperiment")
         this.$router.push('/login')
       }
       else {
@@ -192,15 +196,22 @@ export default {
   transform: scale(1.0, 1.0);
 }
 
+.header-link {
+  color: initial; /* 初始颜色 */
+  text-shadow: none; /* 初始阴影 */
+  transition: color 0.3s ease, text-shadow 0.3s ease; /* 动画效果 */
+}
+
 .header-link:hover {
   color: #ffffff;
   text-shadow: 0 0 10px #ffffff,
-    0 0 20px #ffffff,
-    0 0 40px #ffffff,
-    0 0 80px #ffffff,
-    0 0 120px #ffffff,
-    0 0 160px #ffffff;
+               0 0 20px #ffffff,
+               0 0 40px #ffffff,
+               0 0 80px #ffffff,
+               0 0 120px #ffffff,
+               0 0 160px #ffffff;
 }
+
 
 .header {
   height: 70px;

@@ -11,6 +11,16 @@ export function getQAByExpirenceId(expId,uid) {
     })
 }
 
+export function getQACount(expId) {
+    return service({
+        url: '/QA',
+        method: 'get',
+        params: {
+            tpid: expId,
+        }
+    })
+}
+
 export function distributeToOthers(data) {
     return service({
         url: '/QA',

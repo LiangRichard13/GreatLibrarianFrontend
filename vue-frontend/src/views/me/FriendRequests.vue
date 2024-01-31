@@ -11,10 +11,10 @@
             <div style="margin-left: 10px;">
               <p>用户名:{{ row.data.name }}</p>
               <p>用户ID:{{ userFriendsRequestID[index] }}</p>
-              <p>
+              <!-- <p>
                 IP地址:{{ row.data.ip }}
-                <span v-if="row.data.ip == null" style="color: red; margin-left: 10px;">用户已登出</span>
-              </p>
+                <span v-if="row.data.ip == null" style="color: red; margin-right: 10px;">用户已登出</span>
+              </p> -->
             </div>
           </div>
           <el-button type="success" @click='handleAgree(userFriendsRequestID[index])'>同意申请</el-button>
@@ -60,6 +60,7 @@ export default {
           }))
             .then(res => {
               this.userFriendsRequest = res
+              console.log('好友请求列表的用户信息',this.userFriendsRequest)
 
               //设置用户头像
               this.userFriendsRequest = this.userFriendsRequest.map(user => {

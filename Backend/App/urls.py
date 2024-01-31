@@ -23,6 +23,7 @@ resources = [
     (projectDataSet.ProjectDS, '/projectDS'),  # 项目下管理DataSet
 
     (testProject.TestProjectCRUD, '/testProject'),  # testProject实验
+    (testProject.ConfigCRUD, '/testProjectConfig'),  # 实验配置文件管理
     (testProjectOperation.TPOperation, '/testProjectOperation'),  # 实验操作
     (testProjectUser.TestProjectUserCRUD, '/testProjectUser'),  # 实现--协作者
     (QA.QAOperation, '/QA'),  # 人工审核

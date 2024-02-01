@@ -21,17 +21,17 @@ class new_llm1(LLMs):
     def get_name(self) -> str:
         return self.name
 
-    def __call__(self, prompt: str, history=None) -> str:
-        dashscope.api_key = self.apikey
-        response = dashscope.Generation.call(
-            model=dashscope.Generation.Models.qwen_turbo, prompt=prompt, history=history
-        )
-
-        if response:
-            if response["output"]:
-                if response["output"]["text"]:
-                    return response["output"]["text"]
-        return "API Problem"
+    # def __call__(self, prompt: str, history=None) -> str:
+    #     dashscope.api_key = self.apikey
+    #     response = dashscope.Generation.call(
+    #         model=dashscope.Generation.Models.qwen_turbo, prompt=prompt, history=history
+    #     )
+    #
+    #     if response:
+    #         if response["output"]:
+    #             if response["output"]["text"]:
+    #                 return response["output"]["text"]
+    #     return "API Problem"
 
 
 @LLM_base.register_module("wenxin")

@@ -30,7 +30,6 @@ class QAOperation(Resource):
         tP.tP_status = 2  # 进行实验状态修改
         url = 'APP/data/Logs/' + TPid + '/dialog_init.log'
         for index, row in readLog(url).iterrows():
-            # print(f"Index: {index}, Q: {row['Q']}, A: {row['A']}, field: {row['field']},thread: {row['thread']}")
             qa = QA(uid=uid, TPid=TPid, QA_time=datetime.now(),
                     QA_question=row['Q'], QA_answer=row['A'], QA_field=row['field'], QA_thread=row['thread'])
             try:
@@ -44,9 +43,15 @@ class QAOperation(Resource):
 
     # 查询审核任务  接收参数【url追加  审核人:uid】
     def get(self):
-        qaList = QA.query.filter(QA.uid == request.args['uid'], QA.TPid == request.args['tpid'])
-        data = [{'QAid': qa.QA_id, 'Q': qa.QA_question, 'A': qa.QA_answer} for qa in qaList]
-        return jsonify({'data': data, 'success': True})
+        global qaList
+        choose = request.args['choose']  # 查询选项
+        if choose == 1:  # 实验审核人的查询
+            qaList = QA.query.filter(QA.uid == request.args['uid'], QA.TPid == request.args['tpid'])
+            data = [{'QAid': qa.QA_id, 'Q': qa.QA_question, 'A': qa.QA_answer} for qa in qaList]
+            return jsonify({'data': data, 'success': True})
+        elif choose == 2:  # 实验创建者的查询
+            count = QA.query.filter(QA.TPid == request.args['tpid']).count()
+            return jsonify({'count': count, 'success': True})
 
     # 修改审核人  接收参数【json格式  审核id值:QAid， 目标审核人:uid】
     def put(self):

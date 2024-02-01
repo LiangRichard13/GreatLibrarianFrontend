@@ -40,8 +40,8 @@ class ProjectCRUD(Resource):
             # 查找该项目下的apikey
             project_apikey = []
             for item in ProjectAPIKey.query.filter(ProjectAPIKey.Pid == project.project_id):
-                aK = APIKey.query.filter(APIKey.apiKey_id == item.AKid).first()
-                project_apikey.append({'id': aK.apiKey_id, 'name': aK.apiKey_name})
+                aK = APIKey.query.filter(APIKey.AK_id == item.AKid).first()
+                project_apikey.append({'id': aK.AK_id, 'name': aK.AK_name})
 
             # 查找该项目下的dataset
             project_dataset = []

@@ -33,7 +33,7 @@ class TestProjectUserCRUD(Resource):
             tPUList = TestProjectUser.query.filter(TestProjectUser.TPid == request.args['uid'])
             testProjects = []
             for tPU in tPUList:
-                testProject = TestProject.query.filter(TestProject.TPid == tPU.TPid).first()
+                testProject = TestProject.query.filter(TestProject.tP_id == tPU.TPid).first()
                 testProjects.append({'id': tPU.TPid, 'name': testProject.tP_name})
             return jsonify({'success': True, 'data': testProjects})  # 返回实验ID列表
 

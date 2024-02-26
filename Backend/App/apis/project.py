@@ -3,7 +3,7 @@
 # @version: 1.0
 from flask import jsonify, request
 from flask_restful import Resource
-from App.models import *
+from App.models import db, APIKey, DataSet, Project, ProjectAPIKey, ProjectDataSet
 
 
 # 项目的CRUD配置
@@ -23,7 +23,7 @@ class ProjectCRUD(Resource):
 
     # 删除
     def delete(self):
-        project = Project.query.filter(Project.project_id == request.json['id'])[0]
+        project = Project.query.filter(Project.project_id == request.json['id']).first()
         try:
             db.session.delete(project)
             db.session.commit()
@@ -40,13 +40,13 @@ class ProjectCRUD(Resource):
             # 查找该项目下的apikey
             project_apikey = []
             for item in ProjectAPIKey.query.filter(ProjectAPIKey.Pid == project.project_id):
-                aK = APIKey.query.filter(APIKey.apiKey_id == item.AKid)[0]
-                project_apikey.append({'id': aK.apiKey_id, 'name': aK.apiKey_name})
+                aK = APIKey.query.filter(APIKey.AK_id == item.AKid).first()
+                project_apikey.append({'id': aK.AK_id, 'name': aK.AK_name})
 
             # 查找该项目下的dataset
             project_dataset = []
             for item in ProjectDataSet.query.filter(ProjectDataSet.Pid == project.project_id):
-                dS = DataSet.query.filter(DataSet.DS_id == item.DSid)[0]
+                dS = DataSet.query.filter(DataSet.DS_id == item.DSid).first()
                 project_dataset.append({'id': dS.DS_id, 'name': dS.DS_name})
 
             data.append({'id': project.project_id, 'name': project.project_name, 'info': project.project_info,

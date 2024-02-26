@@ -3,7 +3,7 @@
 # @version: 1.0
 from flask import jsonify, request
 from flask_restful import Resource
-from App.models import *
+from App.models import db, FriendShip, User
 from datetime import datetime
 
 

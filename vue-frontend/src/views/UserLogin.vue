@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       activeTab: "emailLogin", // 默认选中的选项卡
-      phoneNumber: '13527454780',
+      phoneNumber: '18457891496',
       email: '',
       password: '123456',
       remember: false,

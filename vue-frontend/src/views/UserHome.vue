@@ -10,7 +10,7 @@
               <el-card class="box-card">
                 <div slot="header" class="clearfix">
                   <span style="float: left;">我的项目</span>
-                  <el-button style="float: right;" @click="pushToProject()">我的项目列表</el-button>
+                  <el-link style="float: right;" @click="pushToProject()">我的项目列表</el-link>
                 </div>
                 <el-table :data="myProjects">
                   <el-table-column label="项目 ID" prop="id"></el-table-column>

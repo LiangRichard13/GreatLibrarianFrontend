@@ -134,9 +134,9 @@ class Login(Resource):
                 user_id = user.user_id
                 data = {'id': user_id}
                 if remember:
-                    data['loginToken'] = encode(user_id, 60)  # 免登录
+                    data['loginToken'] = encode(user_id,86400 )  # 免登录
                 else:
-                    data['loginToken'] = encode(user_id, 10)  # 无需免登录
+                    data['loginToken'] = encode(user_id, 7200)  # 无需免登录
                 user.user_IP = request.remote_addr  # 获取本地ip地址
                 try:
                     db.session.add(user)  # 加入数据库
@@ -164,17 +164,19 @@ class LoginOut(Resource):
             return jsonify({'success': False, 'message': str(e)})
 
 
-# 定义全局 用户列表字典集合【key:uid,value:用户状态（0:同一局域网,1:好友在线,-1:好友非在线）】
+# 定义全局 用户列表字典集合【key:value=uid：value
+#                    value:用户状态（0:同一局域网,1:好友在线,2:好友未添加(请求添加者),3：待确认添加好友(好友接收者)
+#                       负数：表示不在线    eg：-1:好友不在线, -2:未添加的好友不在线, -3：待确认好友不在线）】
 userIdDict = {}
 
 
 # 获取同一局域网下的所有用户id
 def getSameNetUsers(user_id, ip):
-    '''
+    """
     :param user_id:
     :param ip:
     :return: userIdDict
-    '''
+    """
     global userIdDict
     for user in User.query.filter(User.user_IP == ip):
         if user.user_id != user_id and user.user_id not in userIdDict:
@@ -183,28 +185,34 @@ def getSameNetUsers(user_id, ip):
 
 # 获取好友的用户id
 def getFriends(user_id, ip):
-    '''
+    """
     :param user_id:
     :param ip:
     :return: userIdDict
-    '''
+    """
     global userIdDict
     # 通过uid找authtoken对应的用户
-    for friend in FriendShip.query.filter(FriendShip.userid == user_id, FriendShip.friend_state == 1):
-        user = User.query.filter(User.user_authToken == friend.friend_token)[0]
-        userIdDict[user.user_id] = 1 if user.user_IP == ip else -1
+    for friend in FriendShip.query.filter(FriendShip.userid == user_id):
+        user = User.query.filter(User.user_authToken == friend.friend_token).first()
+        if friend.friend_state == 1:  # 已添加好友
+            userIdDict[user.user_id] = 1 if user.user_IP == ip else -1
+        elif friend.friend_state == 0:  # 待确认添加的好友
+            userIdDict[user.user_id] = 2 if user.user_IP == ip else -2
 
     # 通过authtoken找uid对应的用户
     auth_token_user = User.query.filter(User.user_id == user_id)[0]
-    for friend in FriendShip.query.filter(FriendShip.friend_token == auth_token_user.user_authToken,
-                                          FriendShip.friend_state == 1):
-        user = User.query.filter(User.user_id == friend.userid)[0]
-        userIdDict[user.user_id] = 1 if user.user_IP == ip else -1
+    for friend in FriendShip.query.filter(FriendShip.friend_token == auth_token_user.user_authToken, ):
+        user = User.query.filter(User.user_id == friend.userid).first()
+        if friend.friend_state == 1:  # 已添加好友
+            userIdDict[user.user_id] = 1 if user.user_IP == ip else -1
+        elif friend.friend_state == 0:  # 用户自己需要确认的好友
+            userIdDict[user.user_id] = 3 if user.user_IP == ip else -3
 
 
 # 获取用户列表
 class GetUserList(Resource):
     def get(self):
+        global userIdDict
         user_id = request.args['id']  # 获取当前用户id
         ip = request.remote_addr
         # 1、获取当前局域网下的所有用户id
@@ -214,4 +222,5 @@ class GetUserList(Resource):
         # 3、根据id进行数据封装
         data = [{'id': user.user_id, 'name': user.user_name, 'icon': user.user_iconUrl, 'ip': user.user_IP,
                  'state': userIdDict[user.user_id]} for user in User.query.filter(User.user_id.in_(userIdDict.keys()))]
+        userIdDict.clear()
         return jsonify({'data': data, 'success': True})

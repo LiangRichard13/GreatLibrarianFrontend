@@ -41,9 +41,18 @@ class QAOperation(Resource):
 
     # 查询审核任务  接收参数【url追加  审核人:uid】
     def get(self):
-        qaList = QA.query.filter(QA.uid == request.args['uid'],QA.TPid == request.args['tpid'])
-        data = [{'QAid': qa.QA_id, 'Q': qa.QA_question, 'A': qa.QA_answer} for qa in qaList]
-        return jsonify({'data': data, 'success': True})
+        tpid = request.args.get('tpid')  # 获取 tpid 参数
+        uid = request.args.get('uid')
+        if uid:
+            # 如果存在 uid，则进行正常查询
+            qaList = QA.query.filter(QA.uid == uid, QA.TPid == tpid).all()
+            data = [{'QAid': qa.QA_id, 'Q': qa.QA_question, 'A': qa.QA_answer} for qa in qaList]
+            return jsonify({'data': data, 'success': True})
+        else:
+            # 如果不存在 uid，只返回 qaList 的长度
+            count = QA.query.filter(QA.TPid == tpid).count()
+            return jsonify({'data': count, 'success': True})
+
 
     # 修改审核人  接收参数【json格式  审核id值:QAid， 目标审核人:uid】
     def put(self):
@@ -81,3 +90,15 @@ class QAOperation(Resource):
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
             return jsonify({'success': False, 'message': str(e)})
+# class Test:
+#     def post(self):
+#         qa = QA(uid=request.json['uid'], TPid=request.json['TPid'], QA_time=datetime.now(),
+#                     QA_question=request.json['question'], QA_answer=request.json['answer'], QA_field=request.json['filed'], QA_thread=request.json['thread'])
+#         try:
+#             db.session.add(qa)  # 加入数据库
+#             db.session.commit()
+#         except Exception as e:  # 数据库操作异常处理
+#             db.session.rollback()  # 回滚
+#             db.session.flush()  # 刷新，清空缓存
+#             return jsonify({'success': False, 'message': str(e)})
+#         return jsonify({'success': True})

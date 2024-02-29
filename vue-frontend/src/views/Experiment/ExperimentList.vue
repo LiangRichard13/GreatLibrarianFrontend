@@ -68,7 +68,12 @@
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-button size="mini" type="warning" @click="initialEdit(scope.row)">
-                                            修改配置
+                                            修改实验配置
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
+                                        <el-button size="mini" type="primary" @click="handleEditConfigFile(scope.row)">
+                                            编辑配置文件
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
@@ -254,9 +259,9 @@
                     </el-form-item>
 
                     <!-- 进行实验配置文件的编辑 -->
-                    <el-form-item>
-                        <el-button type="primary" @click="showCodeEditorDialog = true">编辑 Python实验配置文件</el-button>
-                    </el-form-item>
+                    <!-- <el-form-item>
+                        <el-button type="primary" @click="showCodeEditorDialog = true">编辑实验配置文件</el-button>
+                    </el-form-item> -->
 
                 </el-form>
             </div>
@@ -309,10 +314,31 @@
         </el-dialog>
 
         <!-- 代码编辑器 -->
-        <el-dialog title="编辑 Python实验配置文件" :visible.sync="showCodeEditorDialog" width="70%" @opened="loadTemplate">
+        <el-dialog title="编辑 Python实验配置文件" :visible.sync="showCodeEditorDialog" width="50%" @opened="loadTemplate">
+            <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
+                <h4>当前实验:{{ currentExpName }} - {{ currentExpId }}</h4>
+            </div>
             <div>
                 <!-- 这里放置你的代码编辑器组件 -->
-                <div id="python-editor" style="height: 700px;"></div>
+                <!-- 代码组件1 -->
+                <h3> 编辑实验模型call函数</h3>
+                <!-- <el-form ref="form">
+                    <el-form-item label="实验模型类名">
+                        <el-input v-model="LL1ClassName" style="width:200px"></el-input>
+                    </el-form-item>
+                </el-form> -->
+                <div id="python-editor_1" style="height: 300px;"></div>
+            </div>
+
+            <div>
+                <!-- 代码组件2 -->
+                <h3> 编辑评估模型call函数</h3>
+                <!-- <el-form ref="form">
+                    <el-form-item label="评估模型类名">
+                        <el-input v-model="LL2ClassName" style="width: 200px;"></el-input>
+                    </el-form-item>
+                </el-form> -->
+                <div id="python-editor_2" style="height: 300px;"></div>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="resetCodeEditor">取消</el-button>
@@ -348,7 +374,7 @@
   
 <script>
 import { getExperimentByProjectId } from '@/api/experiment'
-import { deleteById, addExpirement, editExpirement, deleteOperationFile } from '@/api/experiment'
+import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOperationFile, addOperationFile, updateOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
 // import { getExperimentProgress, updateExperimentStatus, startExp } from '@/api/expOperation'
@@ -356,6 +382,7 @@ import { startExp } from '@/api/expOperation'
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-chrome';
+
 
 
 
@@ -377,14 +404,18 @@ export default {
             doneList: [], // 已完成列表数据
             thisProject: {},
             editExperiment: { name: '', AK1: '', AK2: '', DS: '', tPid: '' },
-            pythonCode: '',
+            pythonCode_1: '',
+            pythonCode_2: '',
             pythonFile: null,
-            editor: null, // 存储编辑器实例
+            editor_1: null, // 存储编辑器实例
+            editor_2: null, // 存储编辑器实例
             userFriends: [],
             selectFriendsId: [],
             currentExpName: '',
             currentExpId: '',
-            thisRowCollaborators: []
+            thisRowCollaborators: [],
+            // LL1ClassName: '',
+            // LL2ClassName: ''
         }
     },
     mounted() {
@@ -472,40 +503,33 @@ export default {
         handleAddNewExpirement() {
             if (this.newExpirement.name.trim()) {
                 if (this.newExpirement.AK1 !== '' && this.newExpirement.Ak2 !== '' && this.newExpirement.DS !== '') {
-                    if (this.pythonFile !== null) {
-                        // const data = {
-                        //     name: this.newExpirement.name,
-                        //     AK1: this.newExpirement.AK1,
-                        //     AK2: this.newExpirement.AK2,
-                        //     DS: this.newExpirement.DS,
-                        //     pid: this.thisProject.id
-                        // }
-                        const formData = new FormData();
-                        formData.append('configFile', this.pythonFile);
-                        formData.append('name', this.newExpirement.name);
-                        formData.append('AK1', this.newExpirement.AK1);
-                        formData.append('AK2', this.newExpirement.AK2);
-                        formData.append('DS', this.newExpirement.DS);
-                        formData.append('pid', this.thisProject.id)
-                        addExpirement(formData).then(res => {
-                            if (res.success) {
-                                this.resetDialog
-                                this.showDialog = false; // 关闭对话框
-                                this.$message({
-                                    message: '添加成功',
-                                    type: 'success'
-                                });
-                                this.setExpEmpty()
-                                this.load()
-                            }
-                        })
-                    }
-                    else {
-                        this.$message({
-                            message: '实验文件尚未编辑',
-                            type: 'warning'
-                        });
-                    }
+                    // if (this.pythonFile !== null) {
+                    const formData = new FormData();
+                    // formData.append('configFile', this.pythonFile);
+                    formData.append('name', this.newExpirement.name);
+                    formData.append('AK1', this.newExpirement.AK1);
+                    formData.append('AK2', this.newExpirement.AK2);
+                    formData.append('DS', this.newExpirement.DS);
+                    formData.append('pid', this.thisProject.id)
+                    addExpirement(formData).then(res => {
+                        if (res.success) {
+                            this.resetDialog
+                            this.showDialog = false; // 关闭对话框
+                            this.$message({
+                                message: '添加成功',
+                                type: 'success'
+                            });
+                            this.setExpEmpty()
+                            this.load()
+                        }
+                    })
+                    // }
+                    // else {
+                    //     this.$message({
+                    //         message: '实验文件尚未编辑',
+                    //         type: 'warning'
+                    //     });
+                    // }
                 }
                 else {
                     this.$message({
@@ -584,7 +608,7 @@ export default {
         resetEditDialog() {
             this.editExperiment.name = '',
                 this.editExperiment.AK1 = '',
-                this.editExperiment.Ak2 = '',
+                this.editExperiment.AK2 = '',
                 this.editExperiment.DS = ''
         },
         formatDate(dateStr) {
@@ -606,12 +630,21 @@ export default {
                     console.log('进行修改的实验数据：', data)
                     editExpirement(data).then(res => {
                         if (res.success) {
-                            this.resetEditDialog
-                            this.editDialog = false; // 关闭对话框
                             this.$message({
                                 message: '修改成功',
                                 type: 'success'
                             });
+                            const updateData = { tPid: this.editExperiment.tPid }
+                            updateOperationFile(updateData).then(res => {
+                                if (res.success) {
+                                    this.$message({
+                                        message: '配置文件更新成功',
+                                        type: 'success'
+                                    });
+                                }
+                            })
+                            this.resetEditDialog()
+                            this.editDialog = false; // 关闭对话框
                             this.setExpEmpty()
                             this.load()
                         }
@@ -639,23 +672,45 @@ export default {
 
         },
         resetCodeEditor() {
-            this.pythonCode = '',
+            this.pythonCode_1 = '',
+                this.pythonCode_2 = '',
                 this.pythonFile = null,
+                // this.LL1ClassName='',
+                // this.LL2ClassName='',
                 this.showCodeEditorDialog = false
         },
-        initPythonEditor(template) {
-            if (document.getElementById('python-editor')) {
-                // 初始化 Ace Editor
-                this.editor = ace.edit("python-editor");
-                this.editor.setTheme("ace/theme/chrome"); // 使用亮色主题
-                this.editor.session.setMode("ace/mode/python");
-                this.editor.setFontSize(18); // 设置字体大小为18px
-                this.editor.setValue(template, 1);
-                this.pythonCode = this.editor.getValue()
+        initPythonEditor_1(template) {
+            if (document.getElementById('python-editor_1')) {
+                // 初始化 Ace Editor1
+                this.editor_1 = ace.edit("python-editor_1");
+                this.editor_1.setTheme("ace/theme/chrome"); // 使用亮色主题
+                this.editor_1.session.setMode("ace/mode/python");
+                this.editor_1.setFontSize(18); // 设置字体大小为18px
+                this.editor_1.setValue(template, 1);
+                this.pythonCode_1 = this.editor_1.getValue()
 
                 // 监听代码改变事件
-                this.editor.session.on('change', () => {
-                    this.pythonCode = this.editor.getValue();
+                this.editor_1.session.on('change', () => {
+                    this.pythonCode_1 = this.editor_1.getValue();
+                });
+            }
+            else {
+                console.log('The #python-editor element does not exist.')
+            }
+        },
+        initPythonEditor_2(template) {
+            if (document.getElementById('python-editor_2')) {
+                // 初始化 Ace Editor2
+                this.editor_2 = ace.edit("python-editor_2");
+                this.editor_2.setTheme("ace/theme/chrome"); // 使用亮色主题
+                this.editor_2.session.setMode("ace/mode/python");
+                this.editor_2.setFontSize(18); // 设置字体大小为18px
+                this.editor_2.setValue(template, 1);
+                this.pythonCode_2 = this.editor_2.getValue()
+
+                // 监听代码改变事件
+                this.editor_2.session.on('change', () => {
+                    this.pythonCode_2 = this.editor_2.getValue();
                 });
             }
             else {
@@ -663,25 +718,79 @@ export default {
             }
         },
         savePythonFile() {
-            console.log('实验配置文件编辑', this.pythonCode)
-            const fileBlob = new Blob([this.pythonCode], { type: 'text/plain' });
-            this.pythonFile = new File([fileBlob], "script.py");
-            this.$message({
-                message: '编辑成功！',
-                type: 'success'
-            });
-            this.showCodeEditorDialog = false;
+            // if (this.LL1ClassName !== '' && this.LL2ClassName !== '') {
+            console.log('LLM1配置', this.pythonCode_1)
+            console.log('LLM2配置', this.pythonCode_2)
+
+            let checkData = { tPid: this.currentExpId, code: this.pythonCode_1, className: 'new_llm1' }
+            checkOperationFile(checkData).then(res => {
+                if (res.success) {
+                    let checkData = { tPid: this.currentExpId, code: this.pythonCode_2, className: 'new_llm2' }
+                    checkOperationFile(checkData).then(res => {
+                        if (res.success) {
+                            // 使用模板字符串和换行符`\n`来确保两段代码之间有一个换行
+                            const combinedCode = `${this.pythonCode_1}\n${this.pythonCode_2}`;
+                            const fileBlob = new Blob([combinedCode], { type: 'text/plain' });
+                            this.pythonFile = new File([fileBlob], "script.py");
+
+                            addOperationFile(this.currentExpId).then(res => {
+                                if (res.success) {
+                                    this.$message({
+                                        message: '编辑成功！',
+                                        type: 'success'
+                                    });
+
+                                    this.resetCodeEditor()
+                                }
+                            })
+                        }
+                        else {
+                            this.$message({
+                                message: '评估模型call函数编译失败',
+                                type: 'danger'
+                            })
+                        }
+                    })
+                }
+                else {
+                    this.$message({
+                        message: '实验模型call函数编译失败',
+                        type: 'danger'
+                    })
+
+                }
+            })
+            // }
+            // else {
+            //     this.$message({
+            //         message: '类名不可为空！',
+            //         type: 'warning'
+            //     })
+            // }
         },
         loadTemplate() {
-            fetch('/codeTemplate.txt')
+            fetch('/codeTemplate_L1.txt')
                 .then(response => response.text())
                 .then(data => {
-                    this.initPythonEditor(data);
+                    this.initPythonEditor_1(data);
                 })
                 .catch(error => {
                     console.error('Error loading the template:', error)
                     this.$message({
-                        message: '无法加载模板文件',
+                        message: '无法加载LL1模板文件',
+                        type: 'error'
+                    });
+                }
+                );
+            fetch('/codeTemplate_L2.txt')
+                .then(response => response.text())
+                .then(data => {
+                    this.initPythonEditor_2(data);
+                })
+                .catch(error => {
+                    console.error('Error loading the template:', error)
+                    this.$message({
+                        message: '无法加载LL2模板文件',
                         type: 'error'
                     });
                 }
@@ -752,18 +861,31 @@ export default {
             });
         },
         confirmStart(index, row) {
-            this.$confirm('确定执行该实验吗？一旦执行将直至结束', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                this.handleStartExpirement(index, row)
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消执行'
+            if (row.configFile !== '') {
+                this.$confirm('确定执行该实验吗？一旦执行将直至结束', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.handleStartExpirement(index, row)
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消执行'
+                    });
                 });
-            });
+            }
+            else {
+                this.$message({
+                    message: '请先编辑实验配置文件！',
+                    type: 'warning'
+                })
+            }
+        },
+        handleEditConfigFile(row) {
+            this.currentExpId = row.id
+            this.currentExpName = row.name
+            this.showCodeEditorDialog = true
         },
         // proceedingExp() {
         //     const interval = setInterval(() => {

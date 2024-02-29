@@ -348,11 +348,11 @@
   
 <script>
 import { getExperimentByProjectId } from '@/api/experiment'
-import { deleteById, addExpirement, editExpirement } from '@/api/experiment'
+import { deleteById, addExpirement, editExpirement, deleteOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
 // import { getExperimentProgress, updateExperimentStatus, startExp } from '@/api/expOperation'
-import{startExp}from '@/api/expOperation'
+import { startExp } from '@/api/expOperation'
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-chrome';
@@ -523,24 +523,28 @@ export default {
         },
         handleRemoveExpirement(index, row) {
             const deleteData = { tPid: row.id }
-            deleteById(deleteData).then(res => {
+            deleteOperationFile(deleteData).then(res => {
                 if (res.success) {
-                    this.$message({
-                        message: '删除成功',
-                        type: 'success',
-                    });
-                    switch (row.status) {
-                        case 0:
-                            this.expList.splice(index, 1);
-                            break;
-                        case 2:
-                            this.reviewList.splice(index, 1);
-                            break;
-                        case 3:
-                            this.doneList.splice(index, 1);
-                            break;
-                        // 你可以根据需要添加更多的状态分类
-                    }
+                    deleteById(deleteData).then(res => {
+                        if (res.success) {
+                            this.$message({
+                                message: '删除成功',
+                                type: 'success',
+                            });
+                            switch (row.status) {
+                                case 0:
+                                    this.expList.splice(index, 1);
+                                    break;
+                                case 2:
+                                    this.reviewList.splice(index, 1);
+                                    break;
+                                case 3:
+                                    this.doneList.splice(index, 1);
+                                    break;
+                                // 你可以根据需要添加更多的状态分类
+                            }
+                        }
+                    })
                 }
             })
         },
@@ -808,20 +812,20 @@ export default {
                 // 遍历 this.proceeding 中的每个实验
                 this.proceeding.forEach((experiment, index) => {
 
-                        this.proceeding[index].progress = this.proceeding[index].progress+20
+                    this.proceeding[index].progress = this.proceeding[index].progress + 20
 
 
-                        if (this.proceeding[index].progress === 100) {
+                    if (this.proceeding[index].progress === 100) {
 
-                                    this.$message({
-                                        type: 'info',
-                                        message: experiment.id + '-' + experiment.name + '执行完成'
-                                    });
-                                    this.proceeding[index].progress = 0
-                        }
+                        this.$message({
+                            type: 'info',
+                            message: experiment.id + '-' + experiment.name + '执行完成'
+                        });
+                        this.proceeding[index].progress = 0
+                    }
 
 
-                   
+
                 });
             }, 5000); // 设置轮询间隔为 5 秒
         }

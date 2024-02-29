@@ -4,7 +4,7 @@ export function findById(id) {
     return service({
         url: '/user',
         method: 'get',
-        data:id
+        params:id
     })
 
 }
@@ -28,7 +28,7 @@ export function Register(data) {
 export function isExpired(token) {
     return service({
         url: '/user/login',
-        method: 'get',
+        method: 'put',
         data:token
     })
 }
@@ -74,7 +74,7 @@ export function getUserIconUrl(data) {
 export function removeUserIp(id) {
     return service({
             url: "/user/login",
-            method: 'put',
+            method: 'get',
             params:{
                 uid:id
             }

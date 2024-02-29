@@ -37,3 +37,10 @@ export function editExpirement(data) {
     })
 }
 
+export function deleteOperationFile(data) {
+    return service({
+        url: '/testProjectConfig',
+        method: 'delete',
+        data: data
+    })
+}

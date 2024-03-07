@@ -21,7 +21,7 @@ class new_llm1(LLMs):
         return self.name
 
     def __call__(self, prompt: str, history=None) -> str:
-        print('我是修改后的代code-------------------')
+        print('我是new_llm1类下修改后的代code-------------------')
         return True
 
 @LLM_base.register_module('wenxin')

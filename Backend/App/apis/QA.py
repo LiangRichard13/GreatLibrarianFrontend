@@ -45,11 +45,11 @@ class QAOperation(Resource):
     def get(self):
         global qaList
         choose = request.args['choose']  # 查询选项
-        if choose == 1:  # 实验审核人的查询
+        if choose == '1':  # 实验审核人的查询
             qaList = QA.query.filter(QA.uid == request.args['uid'], QA.TPid == request.args['tpid'])
             data = [{'QAid': qa.QA_id, 'Q': qa.QA_question, 'A': qa.QA_answer} for qa in qaList]
             return jsonify({'data': data, 'success': True})
-        elif choose == 2:  # 实验创建者的查询
+        elif choose == '2':  # 实验创建者的查询
             count = QA.query.filter(QA.TPid == request.args['tpid']).count()
             return jsonify({'count': count, 'success': True})
 

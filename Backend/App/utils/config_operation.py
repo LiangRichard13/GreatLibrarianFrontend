@@ -44,7 +44,7 @@ def _backend_path():
 # 补充类的实例化参数
 def update_instance(tPid):
     tp = TestProject.query.filter(TestProject.tP_id == tPid).first()
-    temp_path = os.path.join(_backend_path(), 'App', 'data', 'config', 'Temp', 'config_' + tPid + '.py')  # 配置文件临时区路径
+    temp_path = os.path.join(_backend_path(), 'App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件临时区路径
 
     # 参数值
     type_1 = "qwen_turbo"
@@ -119,8 +119,8 @@ def update_code_to_class(file_path, updated_code, class_name):
         return False
 
 
-def add_call_function(file_path, updated_code, class_name):
-    template = os.path.join(_backend_path(), 'App', 'utils', 'config_template.py')  # 模板路径
+def add_call_function(file_path, flag, updated_code, class_name):
+    template = file_path if flag == 1 else os.path.join(_backend_path(), 'App', 'utils', 'config_template.py')  # 模板路径
     with open(template, 'r', encoding='UTF-8') as file:
         file_code = file.read()
     # 解析代码为AST
@@ -132,14 +132,18 @@ def add_call_function(file_path, updated_code, class_name):
             # 检查类中是否已经存在 __call__ 函数
             if not any(isinstance(member, ast.FunctionDef) and member.name == '__call__' for member in node.body):
                 try:
-                    new_call_ast = ast.parse(updated_code).body[0]  # 创建一个新的 __call__ 函数节点
-                    node.body.append(new_call_ast)  # 将新的 __call__ 函数添加到类的成员中
-                    new_content = ast.unparse(tree)  # 重新生成代码
-                    os.makedirs(os.path.join(_backend_path(), 'App', 'data', 'config', 'Temp'), exist_ok=True)  # 创建文件夹
-                    with open(file_path, 'w', encoding='UTF-8') as file:
-                        file.write(new_content)  # 将更新后的代码写回文件
-                    compile(new_content, file_path, 'exec')  # 编译新文件以检查语法错误
-                    return True
+                    if len(ast.parse(updated_code).body) != 0:
+                        new_call_ast = ast.parse(updated_code).body[0]  # 创建一个新的 __call__ 函数节点
+                        node.body.append(new_call_ast)  # 将新的 __call__ 函数添加到类的成员中
+                        new_content = ast.unparse(tree)  # 重新生成代码
+                        os.makedirs(os.path.join(_backend_path(), 'App', 'data', 'config', 'Temp'),
+                                    exist_ok=True)  # 创建文件夹
+                        with open(file_path, 'w', encoding='UTF-8') as file:
+                            file.write(new_content)  # 将更新后的代码写回文件
+                        compile(new_content, file_path, 'exec')  # 编译新文件以检查语法错误
+                        return True
+                    else:
+                        return True
                 except SyntaxError as e:
                     print(f"配置脚本文件发生语法错误：{e}")
                     return False

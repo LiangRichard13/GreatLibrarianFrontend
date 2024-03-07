@@ -1,22 +1,26 @@
 import service from "@/utils/request";
 
+//查询某实验下的QA
 export function getQAByExpirenceId(expId,uid) {
     return service({
         url: '/QA',
         method: 'get',
         params: {
             tpid: expId,
-            uid:uid
+            uid:uid,
+            choose:1
         }
     })
 }
 
+//查询某实验下的QA条数
 export function getQACount(expId) {
     return service({
         url: '/QA',
         method: 'get',
         params: {
             tpid: expId,
+            choose:2
         }
     })
 }

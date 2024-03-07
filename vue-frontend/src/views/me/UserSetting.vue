@@ -121,7 +121,7 @@ export default {
       })
     },
     onSubmit() {
-      const UpdateData = { id: localStorage.getItem('uid'), name: this.user.name }
+      const UpdateData = { id: localStorage.getItem('uid'), name: this.user.name,choose:1 }
       updateUser(UpdateData).then(res => {
         if (res.success) {
           this.$message({
@@ -192,7 +192,7 @@ export default {
     this.onSubmit()
   },
   handleEditPassword() {
-    const updatePassoword = { id: localStorage.getItem('uid'), password: this.password }
+    const updatePassoword = { id: localStorage.getItem('uid'), password: this.password,choose:2 }
     editPassword(updatePassoword).then(res => {
       if (res.success) {
         this.$message({

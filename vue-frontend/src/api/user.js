@@ -2,9 +2,9 @@ import service from "@/utils/request";
 
 export function findById(id) {
     return service({
-        url: '/user/findById',
-        method: 'post',
-        data:id
+        url: '/user',
+        method: 'get',
+        params:id
     })
 
 }
@@ -19,7 +19,7 @@ export function Login(data) {
 
 export function Register(data) {
     return service({
-        url: '/user/register',
+        url: '/user',
         method: 'post',
         data: data
     })
@@ -27,24 +27,24 @@ export function Register(data) {
 
 export function isExpired(token) {
     return service({
-        url: '/user/isExpired',
-        method: 'post',
+        url: '/user/login',
+        method: 'put',
         data:token
     })
 }
 
 export function updateUser(data) {
     return service({
-        url: '/user/updateUser',
-        method: 'post',
+        url: '/user',
+        method: 'put',
         data: data
     })
 }
 
 export function editPassword(data) {
     return service({
-        url: '/user/updatePassword',
-        method: 'post',
+        url: '/user',
+        method: 'put',
         data: data
     })
 }
@@ -73,8 +73,8 @@ export function getUserIconUrl(data) {
 
 export function removeUserIp(id) {
     return service({
-            url: "/user/loginOut",
-            method: 'put',
+            url: "/user/login",
+            method: 'get',
             params:{
                 uid:id
             }
@@ -82,13 +82,13 @@ export function removeUserIp(id) {
     )
     }
 
-    export function setUserIp(id) {
-        return service({
-            url: "/user/setUserIp",
-            method: 'put',
-            params:{
-                id:id
-            }
-        })
+    // export function setUserIp(id) {
+    //     return service({
+    //         url: "/user/setUserIp",
+    //         method: 'put',
+    //         params:{
+    //             id:id
+    //         }
+    //     })
 
-    }
+    // }

@@ -39,9 +39,9 @@ class UserCRUD(Resource):
     def put(self):
         choose = request.json['choose']
         user = User.query.filter(User.user_id == request.json['id']).first()  # 通过ID值查找user
-        if choose == 1:  # 用户修改个人信息
+        if choose == '1':  # 用户修改个人信息
             user.user_name = request.json['name']
-        elif choose == 2:  # 用户更新密码
+        elif choose == '2':  # 用户更新密码
             user.user_password = request.json['password']
         try:
             db.session.commit()  # 提交数据库

@@ -551,6 +551,8 @@ export default {
                 if (res.success) {
                     deleteById(deleteData).then(res => {
                         if (res.success) {
+                            localStorage.removeItem(row.id+'_1')
+                            localStorage.removeItem(row.id+'_2')
                             this.$message({
                                 message: '删除成功',
                                 type: 'success',
@@ -686,7 +688,10 @@ export default {
                 this.editor_1.setTheme("ace/theme/chrome"); // 使用亮色主题
                 this.editor_1.session.setMode("ace/mode/python");
                 this.editor_1.setFontSize(18); // 设置字体大小为18px
+                if(localStorage.getItem(this.currentExpId+'_1')===null)
                 this.editor_1.setValue(template, 1);
+            else
+                this.editor_1.setValue(localStorage.getItem(this.currentExpId+'_1'), 1);
                 this.pythonCode_1 = this.editor_1.getValue()
 
                 // 监听代码改变事件
@@ -705,7 +710,11 @@ export default {
                 this.editor_2.setTheme("ace/theme/chrome"); // 使用亮色主题
                 this.editor_2.session.setMode("ace/mode/python");
                 this.editor_2.setFontSize(18); // 设置字体大小为18px
+                if(localStorage.getItem(this.currentExpId+'_2')===null)
                 this.editor_2.setValue(template, 1);
+            else
+                this.editor_2.setValue(localStorage.getItem(this.currentExpId+'_2'), 1);
+                this.pythonCode_1 = this.editor_1.getValue()
                 this.pythonCode_2 = this.editor_2.getValue()
 
                 // 监听代码改变事件
@@ -735,6 +744,8 @@ export default {
 
                             addOperationFile(this.currentExpId).then(res => {
                                 if (res.success) {
+                                    localStorage.setItem(this.currentExpId+'_1',this.pythonCode_1)
+                                    localStorage.setItem(this.currentExpId+'_2',this.pythonCode_2)
                                     this.$message({
                                         message: '编辑成功！',
                                         type: 'success'

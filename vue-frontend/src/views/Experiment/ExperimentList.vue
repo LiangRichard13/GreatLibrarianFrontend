@@ -25,10 +25,11 @@
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
-                    <el-table-column label="时间" prop="time">
+                    <el-table-column label="创建时间" prop="time">
                         <template slot-scope="scope">
                             <!-- 格式化时间 -->
                             <div>{{ formatDate(scope.row.time) }}</div>
+                            <!-- <div>{{ scope.row.time }}</div> -->
                         </template>
                     </el-table-column>
                     <!-- <el-table-column label="进度" prop="progress">
@@ -45,6 +46,14 @@
                                 </div>
                             </div>
                             <el-tag v-else type="danger">还没有协作者！</el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="配置文件">
+                        <template slot-scope="scope">
+                            <div v-if="scope.row.configURL !== null">
+                                <el-tag type="success">有</el-tag>
+                            </div>
+                            <el-tag v-else type="danger">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
@@ -108,7 +117,7 @@
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
-                    <el-table-column label="时间" prop="time">
+                    <el-table-column label="创建时间" prop="time">
                         <template slot-scope="scope">
                             <!-- 格式化时间 -->
                             <div>{{ formatDate(scope.row.time) }}</div>
@@ -130,7 +139,7 @@
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
-                    <el-table-column label="时间" prop="time">
+                    <el-table-column label="创建时间" prop="time">
                         <template slot-scope="scope">
                             <!-- 格式化时间 -->
                             <div>{{ formatDate(scope.row.time) }}</div>
@@ -198,7 +207,7 @@
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
-                    <el-table-column label="时间" prop="time">
+                    <el-table-column label="创建时间" prop="time">
                         <template slot-scope="scope">
                             <!-- 格式化时间 -->
                             <div>{{ formatDate(scope.row.time) }}</div>
@@ -621,10 +630,21 @@ export default {
                 this.editExperiment.DS = ''
         },
         formatDate(dateStr) {
-            // 使用 JavaScript 的 Date 对象进行解析和格式化
-            // 这里是一个简单的示例，您可以根据需要调整格式
             const date = new Date(dateStr);
-            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+
+            // 使用Intl.DateTimeFormat格式化日期，保持为GMT时间
+            const formattedDate = new Intl.DateTimeFormat('zh-CN', { // 这里使用'zh-CN'来得到年月日的顺序
+                year: 'numeric', // 数字年份
+                month: '2-digit', // 2位数字月份
+                day: '2-digit', // 2位数字日期
+                hour: '2-digit', // 2位数字小时
+                minute: '2-digit', // 2位数字分钟
+                second: '2-digit', // 2位数字秒
+                timeZone: 'UTC', // 指定时区为UTC，以保持与GMT一致
+                hour12: false // 使用24小时制
+            }).format(date);
+
+            return formattedDate
         },
         handleEditExperiment() {
             if (this.editExperiment.name.trim()) {
@@ -674,11 +694,18 @@ export default {
             }
         },
         initialEdit(row) {
-            this.editExperiment.name = row.name
-            this.editExperiment.tPid = row.id
-            console.log('当前进行修改的实验id', this.editExperiment.tPid)
-            this.editDialog = true
-
+            if (row.configURL != null) {
+                this.editExperiment.name = row.name
+                this.editExperiment.tPid = row.id
+                console.log('当前进行修改的实验id', this.editExperiment.tPid)
+                this.editDialog = true
+            }
+            else {
+                this.$message({
+                    message: '请先编辑实验配置文件！',
+                    type: 'warning'
+                });
+            }
         },
         resetCodeEditor() {
             this.pythonCode_1 = '',
@@ -757,7 +784,8 @@ export default {
                                         message: '编辑成功！',
                                         type: 'success'
                                     });
-
+                                    this.setExpEmpty()
+                                    this.load()
                                     this.resetCodeEditor()
                                 }
                             })
@@ -879,7 +907,7 @@ export default {
             });
         },
         confirmStart(index, row) {
-            if (row.configFile !== '') {
+            if (row.configURL !== null) {
                 this.$confirm('确定执行该实验吗？一旦执行将直至结束', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',

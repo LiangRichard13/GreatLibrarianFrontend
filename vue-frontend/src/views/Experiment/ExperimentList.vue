@@ -1,6 +1,5 @@
 <template>
     <div class="main">
-
         <el-page-header @back="goBack" content="我的项目">
         </el-page-header>
         <div class="content">
@@ -11,7 +10,14 @@
                 <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">为该项目创建新实验
                 </el-button>
             </div>
-            <div class="section">
+            <el-tabs v-model="currentTab" type="card" @tab-click="handleClick">
+                <el-tab-pane label="待实验" name="待实验"></el-tab-pane>
+                <el-tab-pane label="正在实验" name="正在实验"></el-tab-pane>
+                <el-tab-pane label="待审核" name="待审核"></el-tab-pane>
+                <el-tab-pane label="已完成" name="已完成"></el-tab-pane>
+            </el-tabs>
+
+            <div class="section" v-if="currentTab === '待实验'">
                 <h4>待实验</h4>
                 <el-table :data="expList" style="width: 100%">
                     <el-table-column label="实验 ID" prop="id"></el-table-column>
@@ -94,7 +100,7 @@
                 </el-table>
             </div>
 
-            <div class="section">
+            <div class="section" v-if="currentTab === '正在实验'">
                 <h4>正在实验</h4>
                 <el-table :data="proceeding" style="width: 100%">
                     <el-table-column label="实验 ID" prop="id"></el-table-column>
@@ -116,7 +122,7 @@
                 </el-table>
             </div>
 
-            <div class="section">
+            <div class="section" v-if="currentTab === '待审核'">
                 <h4>待审核</h4>
                 <el-table :data="reviewList" style="width: 100%">
                     <el-table-column label="实验 ID" prop="id"></el-table-column>
@@ -184,7 +190,7 @@
                 </el-table>
             </div>
 
-            <div class="section">
+            <div class="section" v-if="currentTab === '已完成'">
                 <h4>已完成</h4>
                 <el-table :data="doneList" style="width: 100%">
                     <el-table-column label="实验 ID" prop="id"></el-table-column>
@@ -392,6 +398,7 @@ export default {
     name: "ExperimentList",
     data() {
         return {
+            currentTab: '待实验', // 默认选中的选项卡
             friendsToExp: false,
             showCodeEditorDialog: false,
             showDialog: false,
@@ -551,8 +558,8 @@ export default {
                 if (res.success) {
                     deleteById(deleteData).then(res => {
                         if (res.success) {
-                            localStorage.removeItem(row.id+'_1')
-                            localStorage.removeItem(row.id+'_2')
+                            localStorage.removeItem(row.id + '_1')
+                            localStorage.removeItem(row.id + '_2')
                             this.$message({
                                 message: '删除成功',
                                 type: 'success',
@@ -688,10 +695,10 @@ export default {
                 this.editor_1.setTheme("ace/theme/chrome"); // 使用亮色主题
                 this.editor_1.session.setMode("ace/mode/python");
                 this.editor_1.setFontSize(18); // 设置字体大小为18px
-                if(localStorage.getItem(this.currentExpId+'_1')===null)
-                this.editor_1.setValue(template, 1);
-            else
-                this.editor_1.setValue(localStorage.getItem(this.currentExpId+'_1'), 1);
+                if (localStorage.getItem(this.currentExpId + '_1') === null)
+                    this.editor_1.setValue(template, 1);
+                else
+                    this.editor_1.setValue(localStorage.getItem(this.currentExpId + '_1'), 1);
                 this.pythonCode_1 = this.editor_1.getValue()
 
                 // 监听代码改变事件
@@ -710,10 +717,10 @@ export default {
                 this.editor_2.setTheme("ace/theme/chrome"); // 使用亮色主题
                 this.editor_2.session.setMode("ace/mode/python");
                 this.editor_2.setFontSize(18); // 设置字体大小为18px
-                if(localStorage.getItem(this.currentExpId+'_2')===null)
-                this.editor_2.setValue(template, 1);
-            else
-                this.editor_2.setValue(localStorage.getItem(this.currentExpId+'_2'), 1);
+                if (localStorage.getItem(this.currentExpId + '_2') === null)
+                    this.editor_2.setValue(template, 1);
+                else
+                    this.editor_2.setValue(localStorage.getItem(this.currentExpId + '_2'), 1);
                 this.pythonCode_1 = this.editor_1.getValue()
                 this.pythonCode_2 = this.editor_2.getValue()
 
@@ -744,8 +751,8 @@ export default {
 
                             addOperationFile(this.currentExpId).then(res => {
                                 if (res.success) {
-                                    localStorage.setItem(this.currentExpId+'_1',this.pythonCode_1)
-                                    localStorage.setItem(this.currentExpId+'_2',this.pythonCode_2)
+                                    localStorage.setItem(this.currentExpId + '_1', this.pythonCode_1)
+                                    localStorage.setItem(this.currentExpId + '_2', this.pythonCode_2)
                                     this.$message({
                                         message: '编辑成功！',
                                         type: 'success'
@@ -961,6 +968,9 @@ export default {
 
                 });
             }, 5000); // 设置轮询间隔为 5 秒
+        },
+        handleClick(tab, event) {
+            console.log(tab, event);
         }
     }
 }

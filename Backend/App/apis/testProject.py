@@ -30,19 +30,19 @@ class TestProjectCRUD(Resource):
                          Pid=request.form['pid'], AK1=request.form['AK1'], AK2=request.form['AK2'],
                          DS=request.form['DS'])
         # 上传配置文件
-        f = request.files.get('configFile')  # 获取到前端的config文件
-        file_dir = os.path.join("App", "data", "config")
-        os.makedirs(file_dir, exist_ok=True)  # 创建多层文件夹
-        fileName = 'config_' + tP.tP_id + '.' + f.filename.split('.')[-1]  # 文件名为config_+实验Id
-        file_url = os.path.join(file_dir, fileName)
-        tP.tP_configURL = file_url
+        # f = request.files.get('configFile')  # 获取到前端的config文件
+        # file_dir = os.path.join("App", "data", "config")
+        # os.makedirs(file_dir, exist_ok=True)  # 创建多层文件夹
+        # fileName = 'config_' + tP.tP_id + '.' + f.filename.split('.')[-1]  # 文件名为config_+实验Id
+        # file_url = os.path.join(file_dir, fileName)
+        # tP.tP_configURL = file_url
         try:
-            f.save(file_url)  # 将文件进行保存
+            # f.save(file_url)  # 将文件进行保存
             db.session.add(tP)
             db.session.commit()
             return jsonify({'success': True})
-        except OSError as oe:  # 文件处理异常
-            return jsonify({'success': False, 'message': str(oe)})
+        # except OSError as oe:  # 文件处理异常
+        #     return jsonify({'success': False, 'message': str(oe)})
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存

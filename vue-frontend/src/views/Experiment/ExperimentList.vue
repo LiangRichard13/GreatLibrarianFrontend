@@ -392,7 +392,7 @@ import { getExperimentByProjectId } from '@/api/experiment'
 import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOperationFile, addOperationFile, updateOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
-// import { getExperimentProgress, updateExperimentStatus, startExp } from '@/api/expOperation'
+import { getExperimentProgress, updateExperimentStatus} from '@/api/expOperation'
 import { startExp } from '@/api/expOperation'
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
@@ -933,42 +933,6 @@ export default {
             this.currentExpName = row.name
             this.showCodeEditorDialog = true
         },
-        // proceedingExp() {
-        //     const interval = setInterval(() => {
-        //         // 如果 this.proceeding 为空，则停止轮询
-        //         if (!this.proceeding.length) {
-        //             clearInterval(interval);
-        //             return;
-        //         }
-
-        //         // 遍历 this.proceeding 中的每个实验
-        //         this.proceeding.forEach((experiment, index) => {
-
-        //             getExperimentProgress(experiment.id).then(res => {
-
-        //                 this.proceeding[index].progress = res.process
-
-
-        //                 if (this.proceeding[index].progress === 100) {
-        //                     // 更新实验状态
-        //                     const updateExp = { TPid: experiment.id, uid: localStorage.getItem('uid') }
-        //                     updateExperimentStatus(updateExp).then(res => {
-        //                         if (res.success) {
-        //                             this.$message({
-        //                                 type: 'info',
-        //                                 message: experiment.id + '-' + experiment.name + '执行完成'
-        //                             });
-        //                             this.setExpEmpty()
-        //                             this.load()
-        //                         }
-        //                     });
-        //                 }
-
-
-        //             });
-        //         });
-        //     }, 5000); // 设置轮询间隔为 5 秒
-        // }
         proceedingExp() {
             const interval = setInterval(() => {
                 // 如果 this.proceeding 为空，则停止轮询
@@ -980,23 +944,59 @@ export default {
                 // 遍历 this.proceeding 中的每个实验
                 this.proceeding.forEach((experiment, index) => {
 
-                    this.proceeding[index].progress = this.proceeding[index].progress + 20
+                    getExperimentProgress(experiment.id).then(res => {
+
+                        this.proceeding[index].progress = res.process
 
 
-                    if (this.proceeding[index].progress === 100) {
+                        if (this.proceeding[index].progress === 100) {
+                            // 更新实验状态
+                            const updateExp = { TPid: experiment.id, uid: localStorage.getItem('uid') }
+                            updateExperimentStatus(updateExp).then(res => {
+                                if (res.success) {
+                                    this.$message({
+                                        type: 'info',
+                                        message: experiment.id + '-' + experiment.name + '执行完成'
+                                    });
+                                    this.setExpEmpty()
+                                    this.load()
+                                }
+                            });
+                        }
 
-                        this.$message({
-                            type: 'info',
-                            message: experiment.id + '-' + experiment.name + '执行完成'
-                        });
-                        this.proceeding[index].progress = 0
-                    }
 
-
-
+                    });
                 });
             }, 5000); // 设置轮询间隔为 5 秒
         },
+        // proceedingExp() {
+        //     const interval = setInterval(() => {
+        //         // 如果 this.proceeding 为空，则停止轮询
+        //         if (!this.proceeding.length) {
+        //             clearInterval(interval);
+        //             return;
+        //         }
+
+        //         // 遍历 this.proceeding 中的每个实验
+        //         this.proceeding.forEach((experiment, index) => {
+
+        //             this.proceeding[index].progress = this.proceeding[index].progress + 20
+
+
+        //             if (this.proceeding[index].progress === 100) {
+
+        //                 this.$message({
+        //                     type: 'info',
+        //                     message: experiment.id + '-' + experiment.name + '执行完成'
+        //                 });
+        //                 this.proceeding[index].progress = 0
+        //             }
+
+
+
+        //         });
+        //     }, 5000); // 设置轮询间隔为 5 秒
+        // },
         handleClick(tab, event) {
             console.log(tab, event);
         }

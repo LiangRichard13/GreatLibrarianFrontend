@@ -22,6 +22,6 @@ export function startExp(data) {
     return service({
         url: '/testProjectOperation',
         method: 'post',
-        data:data
+        params:data
     })
 }

@@ -39,8 +39,7 @@ class TestProjectUserCRUD(Resource):
 
     # 删除协作者【参数：TPid实验ID,uid协作者用户ID】
     def delete(self):
-        tPU = TestProjectUser.query.filter(TestProjectUser.TPid == request.json['TPid'],
-                                           TestProjectUser.uid == request.json['uid']).first()
+        tPU = TestProjectUser.query.filter(TestProjectUser.TPid == request.json['TPid'],TestProjectUser.uid == request.json['uid']).first()
         try:
             db.session.delete(tPU)
             db.session.commit()

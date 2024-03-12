@@ -4,9 +4,12 @@
 # -*- coding: utf-8 -*-
 import os
 import shutil
+
 from flask import jsonify, request
 from flask_restful import Resource
+
 from App.models import db, DataSet
+from App.utils.backend_path import BackendPath
 
 
 class DataSetCRUD(Resource):
@@ -23,6 +26,8 @@ class DataSetCRUD(Resource):
             f = request.files.get('dataSetFile')  # 获取到前端的zip文件
             file_dir = os.path.join("App", "data", "DataSet", f.filename.replace(('.' + f.filename.split('.')[-1]), ''))
             DS.DS_url = file_dir  # 存储数据集保存的url
+
+            file_dir = os.path.join(BackendPath(), file_dir)
 
             os.makedirs(file_dir, exist_ok=True)  # 创建多层文件夹
             file_url = os.path.join(file_dir, f.filename)

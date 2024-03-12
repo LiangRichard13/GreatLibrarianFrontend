@@ -1,10 +1,14 @@
 # @Author: LiXiang
 # @Time: 2023/12/22 15:21
 # @version: 1.0
+import os
+import re
+
 from flask import jsonify, request
 from flask_restful import Resource
-from App.models import db,TestProject
-import re
+
+from App.models import db, TestProject
+from App.utils.backend_path import BackendPath
 
 
 # 采用正则化，进行temp文件进行读取
@@ -32,7 +36,8 @@ class Progress(Resource):
         #           state=3 已完成【直接返回100】
         tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         if tP.tP_status == 1:
-            process = readTemp('APP/data/Logs/' + tP.tP_id + '/process.temp')
+            # process = readTemp('APP/data/Logs/' + tP.tP_id + '/process.temp')
+            process = readTemp(os.path.join(BackendPath(), "App", "data", "Logs", tP.tP_id, "process.temp"))
             if process >= 0:
                 tP.tP_progress = process
                 # if process == 100:  # 已经完成实验，进行实验状态修改

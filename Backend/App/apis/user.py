@@ -8,6 +8,7 @@ from flask_restful import Resource
 
 from App.models import db, User, FriendShip
 from App.utils.MD5_ID import creat_md5_id
+from App.utils.backend_path import BackendPath
 from App.utils.token import encode, decode
 
 
@@ -19,11 +20,11 @@ class Icon(Resource):
     def post(self):
         user = User.query.filter(User.user_id == request.args['uid']).first()
         file = request.files.get('iconFile')  # 获取到头像图片
-        file_dir = os.path.join("App", "data", "icon")
+        file_dir = os.path.join(BackendPath(), "App", "data", "icon")
         os.makedirs(file_dir, exist_ok=True)  # 创建多层文件夹
         fileName = 'icon_' + user.user_id + '.' + file.filename.split('.')[-1]  # 文件名为icon_+用户Id
         fileUrl = os.path.join(file_dir, fileName)
-        user.user_iconUrl = fileUrl
+        user.user_iconUrl = os.path.join("App", "data", "icon", fileName)
         try:
             for file_in_dir in os.listdir(file_dir):
                 if file_in_dir.startswith('icon_' + user.user_id):
@@ -102,7 +103,8 @@ class Login(Resource):
             user = users[0]
             if password == user.user_password:
                 user_id = user.user_id
-                data = {'id': user_id,'loginToken': encode(user_id, 60 * 60 * (24 * 5 if remember else 2))}  # 免登录5天，否则2小时
+                data = {'id': user_id,
+                        'loginToken': encode(user_id, 60 * 60 * (24 * 5 if remember else 2))}  # 免登录5天，否则2小时
                 user.user_IP = request.remote_addr  # 获取本地ip地址
                 try:
                     db.session.add(user)  # 加入数据库

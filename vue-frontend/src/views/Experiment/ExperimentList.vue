@@ -936,7 +936,7 @@ export default {
         proceedingExp() {
             const interval = setInterval(() => {
                 // 如果 this.proceeding 为空，则停止轮询
-                if (!this.proceeding.length) {
+                if (!this.proceeding.length||this.currentTab==='正在实验') {
                     clearInterval(interval);
                     return;
                 }

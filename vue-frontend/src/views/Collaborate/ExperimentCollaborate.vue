@@ -7,7 +7,6 @@
                 我参与协作的实验
             </h3>
             <div class="section">
-                <h4>待审核</h4>
                 <el-table :data="experimentList" style="width: 100%">
                     <el-table-column label="实验 ID" prop="id"></el-table-column>
                     <el-table-column label="名称" prop="name"></el-table-column>

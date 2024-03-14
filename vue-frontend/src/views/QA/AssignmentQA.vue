@@ -27,8 +27,8 @@
           </el-table-column>
         </el-table>
         <div class="pagination-container" style="margin-top: 20px;">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-            :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+            :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
             layout="total, sizes, prev, pager, next, jumper">
           </el-pagination>
         </div>
@@ -65,7 +65,7 @@
     </div>
   </div>
 </template>
-     
+
 <script>
 import { getQAByExpirenceId, distributeToOthers } from '@/api/qa'
 // import { getCollaboratorsByProjectId, getProjectByExpirementId } from "@/api/project"
@@ -87,7 +87,7 @@ export default {
       distributeUserId: null,
       currentPage: 1,
       pageSize: 10,
-      pagedQAList: [] // 用于显示当前页的数据
+      pagedQAList: [], // 用于显示当前页的数据
     }
   },
   mounted() {
@@ -97,8 +97,8 @@ export default {
       this.thisExperiment = JSON.parse(storedExperiment);
     }
     else {
-        // 处理没有数据的情况，可能是跳转到此页面或刷新页面
-        this.$router.push("/projectsList")
+      // 处理没有数据的情况，可能是跳转到此页面或刷新页面
+      this.$router.push("/projectsList")
     }
     this.load();
     // this.thisExperiment = this.$route.query;
@@ -155,36 +155,58 @@ export default {
           });
         }
         else {
-          // 遍历 selectedIds 数组
-          console.log('选择的QAid', this.selectedIds)
-          this.selectedIds.forEach(id => {
+          // 初始化成功和失败的计数器
+          let successCount = 0;
+          let failCount = 0;
+
+          // 将所有的分发请求的Promise收集到一个数组中
+          const distributePromises = this.selectedIds.map(id => {
             const data = {
               uid: this.distributeUserId,
               QAid: id
             };
-            // 对每个 id 发起请求
-            distributeToOthers(data).then(res => {
+
+            // 返回每个分发请求的Promise
+            return distributeToOthers(data).then(res => {
               if (res.success) {
-                // 请求成功的处理
-                this.$message({
-                  message: '分发成功！',
-                  type: 'success'
-                });
-                this.load()
+                // 如果请求成功，增加成功计数器
+                successCount++;
               } else {
-                // 请求失败的处理（可选）
-                this.$message({
-                  message: '分发失败',
-                  type: 'error'
-                });
+                // 如果请求失败，增加失败计数器
+                failCount++;
               }
+            }).catch(() => {
+              // 处理请求失败的情况（例如网络错误等）
+              failCount++;
             });
           });
 
-          // 重置对话框和重新加载数据
-          this.resetDialog();
-          this.showDialog = false;
-          this.load();
+          // 使用Promise.all等待所有分发请求完成
+          Promise.all(distributePromises).then(() => {
+            // 所有请求处理完毕后，根据成功和失败的计数器显示消息
+            if (successCount > 0) {
+              this.$message({
+                message: `分发成功${successCount}条！`,
+                type: 'success'
+              });
+            }
+
+            // 如果有失败的，显示失败的条数
+            if (failCount > 0) {
+              this.$message({
+                message: `分发失败${failCount}条`,
+                type: 'error'
+              });
+            }
+
+            // 重新加载数据等后续操作
+            this.load();
+            this.resetDialog();
+            this.showDialog=false;
+          }).catch(error => {
+            // 处理可能的错误（例如，某个Promise抛出的异常）
+            console.error('分发过程中出现错误：', error);
+          });
         }
       }
     },
@@ -210,7 +232,7 @@ export default {
   },
 }
 </script>
-     
+
 <style scoped>
 .table-container {
   max-width: 2000px;

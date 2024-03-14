@@ -385,14 +385,14 @@
 
     </div>
 </template>
-  
-  
+
+
 <script>
 import { getExperimentByProjectId } from '@/api/experiment'
 import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOperationFile, addOperationFile, updateOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
-import { getExperimentProgress, updateExperimentStatus} from '@/api/expOperation'
+import { getExperimentProgress, updateExperimentStatus } from '@/api/expOperation'
 import { startExp } from '@/api/expOperation'
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
@@ -422,7 +422,7 @@ export default {
             editExperiment: { name: '', AK1: '', AK2: '', DS: '', tPid: '' },
             pythonCode_1: '',
             pythonCode_2: '',
-            pythonFile: null,
+            // pythonFile: null,
             editor_1: null, // 存储编辑器实例
             editor_2: null, // 存储编辑器实例
             userFriends: [],
@@ -493,10 +493,11 @@ export default {
                                 // 将结果合并回exp对象
                                 return {
                                     ...exp,
-                                    thisExpQA: res.data
+                                    thisExpQA: res.count,
                                 };
                             });
                         })).then(updatedExperimentList => {
+                            console.log('待审核',updatedExperimentList)
                             // 这里的updatedExperimentList包含了修改后的experimentList
                             // 可以在这里处理或更新状态
                             this.reviewList = updatedExperimentList;
@@ -563,30 +564,18 @@ export default {
         },
         handleRemoveExpirement(index, row) {
             const deleteData = { tPid: row.id }
-            deleteOperationFile(deleteData).then(res => {
+            deleteById(deleteData).then(res => {
                 if (res.success) {
-                    deleteById(deleteData).then(res => {
-                        if (res.success) {
-                            localStorage.removeItem(row.id + '_1')
-                            localStorage.removeItem(row.id + '_2')
-                            this.$message({
-                                message: '删除成功',
-                                type: 'success',
-                            });
-                            switch (row.status) {
-                                case 0:
-                                    this.expList.splice(index, 1);
-                                    break;
-                                case 2:
-                                    this.reviewList.splice(index, 1);
-                                    break;
-                                case 3:
-                                    this.doneList.splice(index, 1);
-                                    break;
-                                // 你可以根据需要添加更多的状态分类
+                    if (row.configURL !== null) {
+                        deleteOperationFile(deleteData).then(res => {
+                            if (res.success) {
+                                this.afterDeleteExp(row, index)
                             }
-                        }
-                    })
+                        })
+                    }
+                    else {
+                        this.afterDeleteExp(row, index)
+                    }
                 }
             })
         },
@@ -710,7 +699,7 @@ export default {
         resetCodeEditor() {
             this.pythonCode_1 = '',
                 this.pythonCode_2 = '',
-                this.pythonFile = null,
+                // this.pythonFile = null,
                 // this.LL1ClassName='',
                 // this.LL2ClassName='',
                 this.showCodeEditorDialog = false
@@ -772,9 +761,9 @@ export default {
                     checkOperationFile(checkData).then(res => {
                         if (res.success) {
                             // 使用模板字符串和换行符`\n`来确保两段代码之间有一个换行
-                            const combinedCode = `${this.pythonCode_1}\n${this.pythonCode_2}`;
-                            const fileBlob = new Blob([combinedCode], { type: 'text/plain' });
-                            this.pythonFile = new File([fileBlob], "script.py");
+                            // const combinedCode = `${this.pythonCode_1}\n${this.pythonCode_2}`;
+                            // const fileBlob = new Blob([combinedCode], { type: 'text/plain' });
+                            // this.pythonFile = new File([fileBlob], "script.py");
 
                             addOperationFile(this.currentExpId).then(res => {
                                 if (res.success) {
@@ -936,7 +925,7 @@ export default {
         proceedingExp() {
             const interval = setInterval(() => {
                 // 如果 this.proceeding 为空，则停止轮询
-                if (!this.proceeding.length||this.currentTab==='正在实验') {
+                if (!this.proceeding.length || this.currentTab === '正在实验') {
                     clearInterval(interval);
                     return;
                 }
@@ -999,13 +988,33 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
+        },
+        afterDeleteExp(row, index) {
+            localStorage.removeItem(row.id + '_1')
+            localStorage.removeItem(row.id + '_2')
+            this.$message({
+                message: '删除成功',
+                type: 'success',
+            });
+            switch (row.status) {
+                case 0:
+                    this.expList.splice(index, 1);
+                    break;
+                case 2:
+                    this.reviewList.splice(index, 1);
+                    break;
+                case 3:
+                    this.doneList.splice(index, 1);
+                    break;
+                // 你可以根据需要添加更多的状态分类
+            }
         }
     }
 }
 
 
 </script>
-  
+
 <style scoped>
 .table-container {
     max-width: 2000px;

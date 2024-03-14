@@ -41,7 +41,8 @@ class TPOperation(Resource):
         project_name = Project.query.filter(Project.project_id == tP.Pid).first().project_name  # 项目名称
         # 执行实验命令
         command = 'conda run -n GL gltest --testcase_path=' + testcase_path + ' --config_path=' + config_path + \
-                  ' --project_name=' + project_name + ' --test_name=' + tP.tP_name + ' --test_id=' + tP.tP_id
+                  ' --project_name=' + project_name + ' --test_name=' + tP.tP_name + ' --test_id=' + tP.tP_id + \
+                  ' --logs_path=' + os.path.join(BackendPath(), 'APP', 'data')
         print(command)
         try:
             thread = threading.Thread(target=lambda: execute_commnd(command))  # 线程机制

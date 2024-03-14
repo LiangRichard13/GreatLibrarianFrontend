@@ -12,7 +12,7 @@ algorithm = 'HS256'
 
 # 创建JWT
 def encode(user_id, token_time):
-    print('正在生成token*********')
+    # print('正在生成token*********')
     # 生成字典，包含具体信息
     payload = {
         # 公共声明
@@ -32,7 +32,7 @@ def encode(user_id, token_time):
 def decode(token):
     try:
         decoded = jwt.decode(token, secret_key, algorithms=[algorithm])
-        print(f"token解码信息的id:{decoded['data']['id']}")
+        # print(f"token解码信息的id:{decoded['data']['id']}")
         return True, decoded['data']['id']
     except Exception as e:
         # print(f'token过期-----{e}')

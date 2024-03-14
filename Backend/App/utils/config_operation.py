@@ -6,14 +6,7 @@ import re
 
 from datetime import datetime
 from App.models import TestProject
-
-
-def _backend_path():
-    # 设置文件路径
-    index = os.path.abspath(__file__).find('App')
-    backend_path = os.path.abspath(__file__)[:index] if index != -1 else print("Backend not found")
-    return backend_path
-
+from App.utils.backend_path import BackendPath
 
 """def add_code_to_class(file, addCode, className):
     try:
@@ -44,7 +37,7 @@ def _backend_path():
 # 补充类的实例化参数
 def update_instance(tPid):
     tp = TestProject.query.filter(TestProject.tP_id == tPid).first()
-    temp_path = os.path.join(_backend_path(), 'App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件临时区路径
+    temp_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件临时区路径
 
     # 参数值
     type_1 = "qwen_turbo"
@@ -120,7 +113,7 @@ def update_code_to_class(file_path, updated_code, class_name):
 
 
 def add_call_function(file_path, flag, updated_code, class_name):
-    template = file_path if flag == 1 else os.path.join(_backend_path(), 'App', 'utils', 'config_template.py')  # 模板路径
+    template = file_path if flag == 1 else os.path.join(BackendPath(), 'App', 'utils', 'config_template.py')  # 模板路径
     with open(template, 'r', encoding='UTF-8') as file:
         file_code = file.read()
     # 解析代码为AST
@@ -136,8 +129,7 @@ def add_call_function(file_path, flag, updated_code, class_name):
                         new_call_ast = ast.parse(updated_code).body[0]  # 创建一个新的 __call__ 函数节点
                         node.body.append(new_call_ast)  # 将新的 __call__ 函数添加到类的成员中
                         new_content = ast.unparse(tree)  # 重新生成代码
-                        os.makedirs(os.path.join(_backend_path(), 'App', 'data', 'config', 'Temp'),
-                                    exist_ok=True)  # 创建文件夹
+                        os.makedirs(os.path.join(BackendPath(), 'App', 'data', 'config', 'Temp'), exist_ok=True)
                         with open(file_path, 'w', encoding='UTF-8') as file:
                             file.write(new_content)  # 将更新后的代码写回文件
                         compile(new_content, file_path, 'exec')  # 编译新文件以检查语法错误

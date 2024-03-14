@@ -1,12 +1,16 @@
 # @Author: LiXiang
 # @Time: 2023/12/22 14:43
 # @version: 1.0
+import os
 import re
+from datetime import datetime
+
 import pandas as pd
 from flask import jsonify, request
 from flask_restful import Resource
-from datetime import datetime
+
 from App.models import db, QA, TestProject
+from App.utils.backend_path import BackendPath
 
 
 # 采用正则化，进行log日志内容的读取
@@ -28,7 +32,8 @@ class QAOperation(Resource):
         # 已经完成实验
         tP = TestProject.query.filter(TestProject.tP_id == TPid).first()
         tP.tP_status = 2  # 进行实验状态修改
-        url = 'APP/data/Logs/' + TPid + '/dialog_init.log'
+        # url = 'APP/data/Logs/' + TPid + '/dialog_init.log'
+        url = os.path.join(BackendPath(), "App", "data", "Logs", TPid, "dialog_init.log")
         for index, row in readLog(url).iterrows():
             qa = QA(uid=uid, TPid=TPid, QA_time=datetime.now(),
                     QA_question=row['Q'], QA_answer=row['A'], QA_field=row['field'], QA_thread=row['thread'])
@@ -79,7 +84,9 @@ class QAOperation(Resource):
                   nowTime + ' - INFO - The final score of this testcase is ' + request.args['score'] + \
                   ', in ' + qa.QA_field + ' field.from thread ' + str(qa.QA_thread) + '\n'
 
-        with open('APP/data/Logs/' + qa.TPid + '/human_evaluation.log', "a", encoding="utf-8") as file:
+        # with open('APP/data/Logs/' + qa.TPid + '/human_evaluation.log', "a", encoding="utf-8") as file:
+        url = os.path.join(BackendPath(), "App", "data", "Logs", qa.TPid, "human_evaluation.log")
+        with open(url, "a", encoding="utf-8") as file:
             file.write(logData)
         try:
             db.session.delete(qa)

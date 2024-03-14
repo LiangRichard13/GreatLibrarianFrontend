@@ -3,12 +3,14 @@
 # @version: 1.0
 import os
 import shutil
+from datetime import datetime
 
 from flask import jsonify, request
 from flask_restful import Resource
+
 from App.models import db, APIKey, DataSet, TestProject
-from datetime import datetime
 from App.utils.MD5_ID import *
+from App.utils.backend_path import BackendPath
 from App.utils.config_operation import add_call_function, update_code_to_class, update_instance
 
 
@@ -30,19 +32,19 @@ class TestProjectCRUD(Resource):
                          Pid=request.form['pid'], AK1=request.form['AK1'], AK2=request.form['AK2'],
                          DS=request.form['DS'])
         # 上传配置文件
-        f = request.files.get('configFile')  # 获取到前端的config文件
-        file_dir = os.path.join("App", "data", "config")
-        os.makedirs(file_dir, exist_ok=True)  # 创建多层文件夹
-        fileName = 'config_' + tP.tP_id + '.' + f.filename.split('.')[-1]  # 文件名为config_+实验Id
-        file_url = os.path.join(file_dir, fileName)
-        tP.tP_configURL = file_url
+        # f = request.files.get('configFile')  # 获取到前端的config文件
+        # file_dir = os.path.join("App", "data", "config")
+        # os.makedirs(file_dir, exist_ok=True)  # 创建多层文件夹
+        # fileName = 'config_' + tP.tP_id + '.' + f.filename.split('.')[-1]  # 文件名为config_+实验Id
+        # file_url = os.path.join(file_dir, fileName)
+        # tP.tP_configURL = file_url
         try:
-            f.save(file_url)  # 将文件进行保存
+            # f.save(file_url)  # 将文件进行保存
             db.session.add(tP)
             db.session.commit()
             return jsonify({'success': True})
-        except OSError as oe:  # 文件处理异常
-            return jsonify({'success': False, 'message': str(oe)})
+        # except OSError as oe:  # 文件处理异常
+        #     return jsonify({'success': False, 'message': str(oe)})
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
@@ -93,9 +95,12 @@ class ConfigCRUD(Resource):
     # 添加配置文件(加入到数据库)
     def get(self):
         tp = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
-        temp_path = os.path.join('APP', 'data', 'config', 'Temp', 'config_' + tp.tP_id + '.py')  # 配置文件临时区路径
-        config_path = os.path.join('APP', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
+        # 配置文件临时区路径
+        temp_path = os.path.join(BackendPath(), 'APP', 'data', 'config', 'Temp', 'config_' + tp.tP_id + '.py')
+        # 配置文件路径
+        config_path = os.path.join('APP', 'data', 'config', 'config_' + tp.tP_id + '.py')
         tp.tP_configURL = config_path  # 修改数据库数据
+        config_path = os.path.join(BackendPath(), config_path)
         try:
             shutil.move(temp_path, config_path)  # 移动配置文件
             update_instance(request.args['tPid'])  # 补充配置文件的实例化
@@ -113,7 +118,7 @@ class ConfigCRUD(Resource):
         choose = request.args['choose']  # 修改内容选项【1:call函数,2:实例化参数】
         if choose == '1':  # 修改call函数
             tPid, code, className = request.json['tPid'], request.json['code'], request.json['className']
-            temp_path = os.path.join('App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件临时区路径
+            temp_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件临时区路径
             return jsonify({'success': update_code_to_class(temp_path, code, className)})
         elif choose == '2':  # 修改实例化参数
             return jsonify({'success': update_instance(request.json['tPid'])})  # 补充配置文件的实例化
@@ -121,7 +126,7 @@ class ConfigCRUD(Resource):
     # 删除配置文件
     def delete(self):
         tp = TestProject.query.filter(TestProject.tP_id == request.json['tPid']).first()
-        config_path = os.path.join('APP', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
+        config_path = os.path.join(BackendPath(), 'APP', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
         tp.tP_configURL = None
         try:
             os.remove(config_path)
@@ -137,6 +142,7 @@ class ConfigCRUD(Resource):
     # 添加相应代码至配置文件并进行代码语法检查【参数：tPid实验id,code函数代码,className类名】
     def post(self):
         tPid, code, className = request.json['tPid'], request.json['code'], request.json['className']
-        temp_path = os.path.join('App', 'data', 'config', 'Temp', 'config_' + tPid + '.py')  # 配置文件临时区路径
+        # 配置文件临时区路径
+        temp_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'Temp', 'config_' + tPid + '.py')
         flag = 1 if os.path.exists(temp_path) else -1
         return jsonify({'success': add_call_function(temp_path, flag, code, className)})

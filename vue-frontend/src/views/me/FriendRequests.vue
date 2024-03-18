@@ -70,7 +70,7 @@ export default {
                   let iconUrl = user.data.iconUrl.replace(/\\/g, '/');
 
                   // 移除 'App' 字符串
-                  iconUrl = user.data.iconUrl.replace(/App/g, '');
+                  iconUrl = iconUrl.replace(/App/g, '');
 
                   // 拼接完整的 URL
                   // iconUrl = `${config.API_URL}/${iconUrl}`;

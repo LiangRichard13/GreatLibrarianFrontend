@@ -10,7 +10,8 @@
           <div class="header-links">
             <el-link style="color: white" href="/Home" class="header-link" :underline="false">主页</el-link>
             <el-link style="color: white" href="/addProject" class="header-link" :underline="false">项目</el-link>
-            <el-link style="color: white" href="/experimentCollaborate" class="header-link" :underline="false">合作</el-link>
+            <el-link style="color: white" href="/experimentCollaborate" class="header-link"
+              :underline="false">合作</el-link>
             <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">配置</el-link>
           </div>
 
@@ -112,6 +113,7 @@ export default {
           this.user.iconUrl = this.user.iconUrl.replace(/\\/g, "/");
           this.user.iconUrl = this.user.iconUrl.replace(/App/g, "");
           this.user.iconUrl = config.API_URL + this.user.iconUrl;
+
         }
 
       })
@@ -197,19 +199,22 @@ export default {
 }
 
 .header-link {
-  color: initial; /* 初始颜色 */
-  text-shadow: none; /* 初始阴影 */
-  transition: color 0.3s ease, text-shadow 0.3s ease; /* 动画效果 */
+  color: initial;
+  /* 初始颜色 */
+  text-shadow: none;
+  /* 初始阴影 */
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  /* 动画效果 */
 }
 
 .header-link:hover {
   color: #ffffff;
   text-shadow: 0 0 10px #ffffff,
-               0 0 20px #ffffff,
-               0 0 40px #ffffff,
-               0 0 80px #ffffff,
-               0 0 120px #ffffff,
-               0 0 160px #ffffff;
+    0 0 20px #ffffff,
+    0 0 40px #ffffff,
+    0 0 80px #ffffff,
+    0 0 120px #ffffff,
+    0 0 160px #ffffff;
 }
 
 

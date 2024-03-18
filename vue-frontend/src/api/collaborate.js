@@ -32,7 +32,7 @@ export function deleteById(id, uid) {
     return service({
         url: '/friend',
         method: 'delete',
-        params: {
+        data: {
             fid: id,
             uid: uid
         }

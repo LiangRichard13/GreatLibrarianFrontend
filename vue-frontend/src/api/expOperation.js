@@ -25,3 +25,11 @@ export function startExp(data) {
         params:data
     })
 }
+
+export function genReport(tPid) {
+    return service({
+        url: '/testProjectOperation',
+        method: 'put',
+        params:{tPid:tPid}
+    })
+}

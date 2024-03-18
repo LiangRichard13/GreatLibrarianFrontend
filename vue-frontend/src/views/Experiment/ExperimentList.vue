@@ -152,14 +152,17 @@
                     </el-table-column> -->
                     <el-table-column label="协作者">
                         <template slot-scope="scope">
-                            <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
-                                {{ collaborator.name }}
+                            <div v-if="scope.row.collaborators && scope.row.collaborators.length > 0">
+                                <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
+                                    {{ collaborator.name }}
+                                </div>
                             </div>
+                            <el-tag v-else type="warning">无协作者</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="总待审核条数" prop="thisExpQA">
                         <template slot-scope="scope">
-                            <el-tag type="warning">{{ scope.row.thisExpQA }}</el-tag>
+                            <el-tag type="warning"> {{ scope.row.thisExpQA }}</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
@@ -179,6 +182,11 @@
                                         <el-button size="mini" type="warning"
                                             @click.stop="handleReviewExpirement(scope.row)">
                                             审核结果
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
+                                        <el-button size="mini" type="success" @click.stop="handleReport(scope.row)">
+                                            生成报告
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
@@ -393,7 +401,8 @@ import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOp
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
 import { getExperimentProgress, updateExperimentStatus } from '@/api/expOperation'
-import { startExp } from '@/api/expOperation'
+import { startExp, genReport } from '@/api/expOperation'
+import config from "@/services/conf"
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-chrome';
@@ -497,7 +506,7 @@ export default {
                                 };
                             });
                         })).then(updatedExperimentList => {
-                            console.log('待审核',updatedExperimentList)
+                            console.log('待审核', updatedExperimentList)
                             // 这里的updatedExperimentList包含了修改后的experimentList
                             // 可以在这里处理或更新状态
                             this.reviewList = updatedExperimentList;
@@ -537,7 +546,6 @@ export default {
                                 type: 'success'
                             });
                             this.setExpEmpty()
-                            this.load()
                         }
                     })
                     // }
@@ -588,7 +596,6 @@ export default {
                         type: 'info'
                     });
                     this.setExpEmpty()
-                    this.load()
                 }
             })
         },
@@ -664,7 +671,6 @@ export default {
                             this.resetEditDialog()
                             this.editDialog = false; // 关闭对话框
                             this.setExpEmpty()
-                            this.load()
                         }
                     })
                 }
@@ -774,7 +780,6 @@ export default {
                                         type: 'success'
                                     });
                                     this.setExpEmpty()
-                                    this.load()
                                     this.resetCodeEditor()
                                 }
                             })
@@ -871,7 +876,6 @@ export default {
                     });
                 }
                 this.setExpEmpty()
-                this.load()
             })
             this.handleDialogClose()
         },
@@ -880,6 +884,7 @@ export default {
             this.proceeding = []
             this.doneList = []
             this.expList = []
+            this.load()
         },
         confirmDelete(index, row) {
             this.$confirm('是否删除该实验？', '提示', {
@@ -925,16 +930,23 @@ export default {
         proceedingExp() {
             const interval = setInterval(() => {
                 // 如果 this.proceeding 为空，则停止轮询
-                if (!this.proceeding.length || this.currentTab === '正在实验') {
+                console.log('目前的选择', this.currentTab)
+                if (!this.proceeding.length) {
                     clearInterval(interval);
                     return;
                 }
+                // if (this.currentTab!=='正在实验') {
+                //     clearInterval(interval);
+                //     return;
+                // }
+
 
                 // 遍历 this.proceeding 中的每个实验
                 this.proceeding.forEach((experiment, index) => {
 
                     getExperimentProgress(experiment.id).then(res => {
 
+                        console.log('进度获取响应', res)
                         this.proceeding[index].progress = res.process
 
 
@@ -948,13 +960,12 @@ export default {
                                         message: experiment.id + '-' + experiment.name + '执行完成'
                                     });
                                     this.setExpEmpty()
-                                    this.load()
                                 }
                             });
                         }
 
 
-                    });
+                    })
                 });
             }, 5000); // 设置轮询间隔为 5 秒
         },
@@ -988,6 +999,7 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
+            this.setExpEmpty()
         },
         afterDeleteExp(row, index) {
             localStorage.removeItem(row.id + '_1')
@@ -1008,6 +1020,32 @@ export default {
                     break;
                 // 你可以根据需要添加更多的状态分类
             }
+        },
+        handleReport(row) {
+            genReport(row.id).then(res => {
+                if (res.success) {
+                    this.$message({
+                        type: 'success',
+                        message: row.id + '-' + row.name + '实验报告更新成功！开始生成报告，请稍等...'
+                    });
+                    let downloadUrl = res.url
+                    downloadUrl = downloadUrl.replace(/\\/g, '/');
+                    downloadUrl = downloadUrl.replace(/App/g, '');
+                    downloadUrl = config.API_URL + downloadUrl;
+                      const fileName = '下载的文件名';
+
+                      // 创建一个隐藏的<a>标签，设置属性并模拟点击
+                      const a = document.createElement('a');
+                      a.style.display = 'none';
+                      a.href = downloadUrl;
+                      a.download = fileName;
+                      document.body.appendChild(a);
+                      a.click();
+
+                      // 清理：移除<a>标签
+                      document.body.removeChild(a);
+                }
+            })
         }
     }
 }

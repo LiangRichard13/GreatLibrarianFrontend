@@ -39,6 +39,9 @@
             </div>
           </el-col>
 
+          <!-- 下载链接 -->
+          <!-- <el-button type="primary" @click="downloadFile()">下载文件</el-button> -->
+
           <!-- 右侧好友列表区域 -->
           <el-col :span="6">
             <el-badge :value="friendRequestNumebr" class="item" style="margin-top: 20px;">
@@ -95,7 +98,7 @@ export default {
         this.userFriends = this.userFriends.map(user => {
           if (user.icon) {
             let icon = user.icon.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
-            icon = user.icon.replace(/App/g, '');
+            icon = icon.replace(/App/g, '');
             icon = config.API_URL + icon; // 拼接完整的 URL
             return { ...user, icon }; // 返回更新后的用户对象
           }
@@ -148,7 +151,24 @@ export default {
     },
     pushToProject(){
       this.$router.push('/projectsList')
-    }
+    },
+    // downloadFile() {
+    //   // 文件的URL
+    //   const fileUrl = config.API_URL+'/data/icon/icon_377dbf961d73f74.jpg';
+    //   // 文件名，你可以根据需要从后端获取或自定义
+    //   const fileName = '下载的文件名';
+
+    //   // 创建一个隐藏的<a>标签，设置属性并模拟点击
+    //   const a = document.createElement('a');
+    //   a.style.display = 'none';
+    //   a.href = fileUrl;
+    //   a.download = fileName;
+    //   document.body.appendChild(a);
+    //   a.click();
+
+    //   // 清理：移除<a>标签
+    //   document.body.removeChild(a);
+    // },
   },
   mounted() {
     if (localStorage.getItem("uid") !== null)

@@ -30,7 +30,7 @@ class TestProjectUserCRUD(Resource):
             return jsonify({'success': True, 'data': collaborators})  # 返回协作者用户ID列表
         # 通过协作者id找实验【参数:uid协作者用户ID】
         if request.args['choose'] == '2':
-            tPUList = TestProjectUser.query.filter(TestProjectUser.TPid == request.args['uid'])
+            tPUList = TestProjectUser.query.filter(TestProjectUser.uid == request.args['uid'])
             testProjects = []
             for tPU in tPUList:
                 testProject = TestProject.query.filter(TestProject.tP_id == tPU.TPid).first()

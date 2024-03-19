@@ -21,12 +21,12 @@
 
               <el-card class="box-card" style="margin-top: 20px;">
                 <div slot="header" class="clearfix">
-                  <span>我协助的实验</span>
+                  <span>我协助的测试</span>
                 </div>
                 <el-table :data="participatedExp">
                   <!-- 表格内容 -->
-                  <el-table-column label="实验 ID" prop="id"></el-table-column>
-                  <el-table-column label="实验名称" prop="name"></el-table-column>
+                  <el-table-column label="测试 ID" prop="id"></el-table-column>
+                  <el-table-column label="测试名称" prop="name"></el-table-column>
                   <el-table-column label="待审核条数" prop="thisExpQA">
                     <template slot-scope="scope">
                       <el-tag type="warning">{{ scope.row.thisExpQA }}</el-tag>
@@ -119,7 +119,7 @@ export default {
       getProjectsByUserId(uid).then(res => {
         this.myProjects = res.data
       })
-      //获取参与的实验
+      //获取参与的测试
       if (localStorage.getItem("uid") !== null) {
         const id = localStorage.getItem("uid")
         getExperimentsByUserId(id).then(res => {
@@ -137,7 +137,7 @@ export default {
             // 这里的updatedExperimentList包含了修改后的experimentList
             // 可以在这里处理或更新状态
             this.participatedExp = updatedExperimentList;
-            console.log('我参与的实验', this.participatedExp)
+            console.log('我参与的测试', this.participatedExp)
           }).catch(error => {
             // 处理任何在Promise链中发生的错误
             console.error("Error while updating experiment list:", error);

@@ -1,10 +1,10 @@
 <template>
   <div class="main">
-    <el-page-header @back="goBack" content="实验列表">
+    <el-page-header @back="goBack" content="测试列表">
     </el-page-header>
     <div class="content">
       <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-        {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 实验的QA记录
+        {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 测试的QA记录
       </h3>
     </div>
     <template v-if="QAList.length">
@@ -90,7 +90,7 @@ export default {
     let storedExperiment = localStorage.getItem('thisExperiment');
     if (storedExperiment) {
       this.thisExperiment = JSON.parse(storedExperiment);
-      console.log('进行分发的实验:',this,this.thisExperiment)
+      console.log('进行分发的测试:',this,this.thisExperiment)
     }
     else {
       // 处理没有数据的情况，可能是跳转到此页面或刷新页面
@@ -107,7 +107,7 @@ export default {
         this.updatePagedQAList(); // 初始加载
       })
 
-      //用于获取当前实验的项目
+      //用于获取当前测试的项目
       // getProjectByExpirementId(this.thisExperiment.id).then(res => {
       //   this.thisProjejctId = res.data
       // })
@@ -115,7 +115,7 @@ export default {
       // 获取当前项目的协作者以便分发
       getFriendsByExperimentId(this.thisExperiment.id).then(res => {
         this.thisCollaborators = res.data
-        console.log('当前实验的协作者',this.thisCollaborators)
+        console.log('当前测试的协作者',this.thisCollaborators)
       })
     },
     goBack() {

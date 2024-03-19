@@ -45,7 +45,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
                   <el-button size="mini" type="primary" @click.stop="handleExperiment(scope.row)"> <!-- 阻止冒泡 -->
-                    实验列表
+                    测试列表
                   </el-button>
                 </el-dropdown-item>
                 <!-- <el-dropdown-item>

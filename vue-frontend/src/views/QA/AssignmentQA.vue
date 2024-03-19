@@ -40,7 +40,7 @@
         <el-button type="primary" @click="showDialog = true">分发给协作者</el-button>
       </div>
 
-      <!-- 添加API_KEY的对话框 -->
+      <!-- 分发协作者对话框 -->
       <el-dialog title="选择分发协作者" :visible.sync="showDialog" width="30%" @close="resetDialog">
         <div>
           <el-form ref="form" label-width="100px">
@@ -75,14 +75,9 @@ export default {
   data() {
     return {
       showDialog: false,
-      QAList: [{ QAid: '1', Q: '世界上最高的峰是哪个峰 ?', A: '世界上最高的山峰是珠穆朗玛峰（Mount Everest），它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。', score: 0 },
-      { QAid: '2', Q: '世界上最深的湖是哪个?', A: '世界上最深的湖是贝加尔湖，位于俄罗斯。', score: 3 },
-      { QAid: '3', Q: '世界上最长的山脉是什么?', A: '世界上最长的山脉是安第斯山脉，延伸南美西部海岸线。', score: 4 },
-      { QAid: '4', Q: '世界上最大的热带雨林是哪里?', A: '世界上最大的热带雨林是亚马孙雨林，覆盖多个南美国家。', score: 5 },
-      { QAid: '5', Q: '世界上最大的岛屿是哪个?', A: '世界上最大的岛屿是格陵兰岛，属于丹麦。', score: 2 }
-      ],
+      QAList: [],
       thisExperiment: {},
-      thisCollaborators: [{ id: '1', name: 'Alice' }, { id: '2', name: 'Bob' }],
+      thisCollaborators: [],
       selectedIds: [],
       distributeUserId: null,
       currentPage: 1,
@@ -95,6 +90,7 @@ export default {
     let storedExperiment = localStorage.getItem('thisExperiment');
     if (storedExperiment) {
       this.thisExperiment = JSON.parse(storedExperiment);
+      console.log('进行分发的实验:',this,this.thisExperiment)
     }
     else {
       // 处理没有数据的情况，可能是跳转到此页面或刷新页面
@@ -119,7 +115,7 @@ export default {
       // 获取当前项目的协作者以便分发
       getFriendsByExperimentId(this.thisExperiment.id).then(res => {
         this.thisCollaborators = res.data
-        console.log(this.thisCollaborators)
+        console.log('当前实验的协作者',this.thisCollaborators)
       })
     },
     goBack() {

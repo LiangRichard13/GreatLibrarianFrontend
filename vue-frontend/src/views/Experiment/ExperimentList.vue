@@ -48,14 +48,14 @@
                             <el-tag v-else type="danger">还没有协作者！</el-tag>
                         </template>
                     </el-table-column>
-                    <el-table-column label="配置文件">
+                    <!-- <el-table-column label="配置文件">
                         <template slot-scope="scope">
                             <div v-if="scope.row.configURL !== null">
                                 <el-tag type="success">有</el-tag>
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
                         </template>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
                             <el-link type="primary" style="margin-right: 10px;"
@@ -104,6 +104,14 @@
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
+                        </template>
+                    </el-table-column>
+                        <el-table-column label="配置文件">
+                        <template slot-scope="scope">
+                            <div v-if="scope.row.configURL !== null">
+                                <el-tag type="success">有</el-tag>
+                            </div>
+                            <el-tag v-else type="danger">无</el-tag>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -230,9 +238,6 @@
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="primary" slot="reference" @click.stop> <!-- 阻止冒泡 -->
-                                查看记录
-                            </el-button>
                             <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                 icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                 title="确定要删除此实验吗？">
@@ -401,7 +406,7 @@ import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOp
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
 import { getExperimentProgress, updateExperimentStatus } from '@/api/expOperation'
-import { startExp, genReport } from '@/api/expOperation'
+import { startExp,updateReport } from '@/api/expOperation'
 import config from "@/services/conf"
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
@@ -787,7 +792,7 @@ export default {
                         else {
                             this.$message({
                                 message: '评估模型call函数编译失败',
-                                type: 'danger'
+                                type: 'error'
                             })
                         }
                     })
@@ -795,7 +800,7 @@ export default {
                 else {
                     this.$message({
                         message: '实验模型call函数编译失败',
-                        type: 'danger'
+                        type: 'error'
                     })
 
                 }
@@ -847,19 +852,20 @@ export default {
                 this.friendsToExp = false
         },
         handlefriendsToExp() {
-            this.selectFriendsId.forEach(id => {
-                //检查id是否在thisRowCollabortors里
+            // 使用map而不是forEach来收集所有的promise
+            const promises = this.selectFriendsId.map(id => {
+                // 检查id是否在thisRowCollabortors里
                 const findExistOne = this.thisRowCollaborators.find(collab => collab.id === id);
                 if (!findExistOne) {
                     const data = { TPid: this.currentExpId, uid: id };
-                    addFriendsToExperiment(data).then(res => {
+                    // 直接返回addFriendsToExperiment的调用
+                    return addFriendsToExperiment(data).then(res => {
                         if (res.success) {
                             // 请求成功的处理
                             this.$message({
                                 message: '加入成功！',
                                 type: 'success'
                             });
-
                         } else {
                             // 请求失败的处理（可选）
                             this.$message({
@@ -867,24 +873,33 @@ export default {
                                 type: 'error'
                             });
                         }
-                    })
-                }
-                else {
-                    this.$message({
-                        message: '加入失败' + findExistOne.name + '已经在该项目中',
-                        type: 'error'
+                    });
+                } else {
+                    // 立即resolve已经存在的id，保持promise数组的一致性
+                    return Promise.resolve().then(() => {
+                        this.$message({
+                            message: '加入失败，' + findExistOne.name + '已经在该项目中',
+                            type: 'error'
+                        });
                     });
                 }
-                this.setExpEmpty()
-            })
-            this.handleDialogClose()
+            });
+
+            // 使用Promise.all等待所有的promise完成
+            Promise.all(promises).then(() => {
+                // 全部完成后执行
+                this.setExpEmpty();
+                this.handleDialogClose();
+            });
         },
-        setExpEmpty() {
-            this.reviewList = []
-            this.proceeding = []
-            this.doneList = []
-            this.expList = []
-            this.load()
+        async setExpEmpty() {
+            this.reviewList = [];
+            this.proceeding = [];
+            this.doneList = [];
+            this.expList = [];
+
+            // 如果this.load()是异步的，这里等待它完成
+            await this.load();
         },
         confirmDelete(index, row) {
             this.$confirm('是否删除该实验？', '提示', {
@@ -999,7 +1014,7 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
-            this.setExpEmpty()
+            // this.setExpEmpty()
         },
         afterDeleteExp(row, index) {
             localStorage.removeItem(row.id + '_1')
@@ -1022,28 +1037,42 @@ export default {
             }
         },
         handleReport(row) {
-            genReport(row.id).then(res => {
+            updateReport(row.id).then(res => {
                 if (res.success) {
                     this.$message({
                         type: 'success',
                         message: row.id + '-' + row.name + '实验报告更新成功！开始生成报告，请稍等...'
                     });
+
+                    if(localStorage.getItem(row.id+'_report')!==null)
+                    {
+                       let value = localStorage.getItem(row.id+'_report');
+                       value = Number(value);
+                       value++;
+                       localStorage.setItem(row.id+'_report', value.toString());
+
+                    }
+                    else
+                    {
+                        localStorage.setItem(row.id+'_report','1')
+                    }
+
                     let downloadUrl = res.url
                     downloadUrl = downloadUrl.replace(/\\/g, '/');
                     downloadUrl = downloadUrl.replace(/App/g, '');
                     downloadUrl = config.API_URL + downloadUrl;
-                      const fileName = '下载的文件名';
+                    const fileName = '实验报告';
 
-                      // 创建一个隐藏的<a>标签，设置属性并模拟点击
-                      const a = document.createElement('a');
-                      a.style.display = 'none';
-                      a.href = downloadUrl;
-                      a.download = fileName;
-                      document.body.appendChild(a);
-                      a.click();
+                    // 创建一个隐藏的<a>标签，设置属性并模拟点击
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = downloadUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
 
-                      // 清理：移除<a>标签
-                      document.body.removeChild(a);
+                    // 清理：移除<a>标签
+                    document.body.removeChild(a);
                 }
             })
         }

@@ -9,7 +9,7 @@
           </div>
           <div class="header-links">
             <el-link style="color: white" href="/Home" class="header-link" :underline="false">主页</el-link>
-            <el-link style="color: white" href="/addProject" class="header-link" :underline="false">项目</el-link>
+            <el-link style="color: white" href="/projectsList" class="header-link" :underline="false">项目</el-link>
             <el-link style="color: white" href="/experimentCollaborate" class="header-link"
               :underline="false">合作</el-link>
             <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">配置</el-link>

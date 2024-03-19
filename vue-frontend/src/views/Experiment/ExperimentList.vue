@@ -106,7 +106,7 @@
                             </el-dropdown>
                         </template>
                     </el-table-column>
-                        <el-table-column label="配置文件">
+                    <el-table-column label="配置文件">
                         <template slot-scope="scope">
                             <div v-if="scope.row.configURL !== null">
                                 <el-tag type="success">有</el-tag>
@@ -406,7 +406,7 @@ import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOp
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
 import { getExperimentProgress, updateExperimentStatus } from '@/api/expOperation'
-import { startExp,updateReport } from '@/api/expOperation'
+import { startExp, updateReport } from '@/api/expOperation'
 import config from "@/services/conf"
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
@@ -945,26 +945,21 @@ export default {
         proceedingExp() {
             const interval = setInterval(() => {
                 // 如果 this.proceeding 为空，则停止轮询
-                console.log('目前的选择', this.currentTab)
+
                 if (!this.proceeding.length) {
                     clearInterval(interval);
                     return;
                 }
-                // if (this.currentTab!=='正在实验') {
-                //     clearInterval(interval);
-                //     return;
-                // }
-
+                if(this.currentTab!=='正在实验')
+                {
+                    clearInterval(interval);
+                    return;
+                }
 
                 // 遍历 this.proceeding 中的每个实验
                 this.proceeding.forEach((experiment, index) => {
-
                     getExperimentProgress(experiment.id).then(res => {
-
-                        console.log('进度获取响应', res)
                         this.proceeding[index].progress = res.process
-
-
                         if (this.proceeding[index].progress === 100) {
                             // 更新实验状态
                             const updateExp = { TPid: experiment.id, uid: localStorage.getItem('uid') }
@@ -974,6 +969,8 @@ export default {
                                         type: 'info',
                                         message: experiment.id + '-' + experiment.name + '执行完成'
                                     });
+                                    // 停止当前轮询
+                                    clearInterval(interval);
                                     this.setExpEmpty()
                                 }
                             });
@@ -1014,7 +1011,8 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
-            // this.setExpEmpty()
+            if (this.currentTab === '正在实验')
+                this.proceedingExp()
         },
         afterDeleteExp(row, index) {
             localStorage.removeItem(row.id + '_1')
@@ -1044,17 +1042,15 @@ export default {
                         message: row.id + '-' + row.name + '实验报告更新成功！开始生成报告，请稍等...'
                     });
 
-                    if(localStorage.getItem(row.id+'_report')!==null)
-                    {
-                       let value = localStorage.getItem(row.id+'_report');
-                       value = Number(value);
-                       value++;
-                       localStorage.setItem(row.id+'_report', value.toString());
+                    if (localStorage.getItem(row.id + '_report') !== null) {
+                        let value = localStorage.getItem(row.id + '_report');
+                        value = Number(value);
+                        value++;
+                        localStorage.setItem(row.id + '_report', value.toString());
 
                     }
-                    else
-                    {
-                        localStorage.setItem(row.id+'_report','1')
+                    else {
+                        localStorage.setItem(row.id + '_report', '1')
                     }
 
                     let downloadUrl = res.url

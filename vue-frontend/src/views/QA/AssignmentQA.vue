@@ -1,10 +1,10 @@
 <template>
   <div class="main">
-    <el-page-header @back="goBack" content="实验列表">
+    <el-page-header @back="goBack" content="测试列表">
     </el-page-header>
     <div class="content">
       <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-        {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 实验的QA记录
+        {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 测试的QA记录
       </h3>
     </div>
     <template v-if="QAList.length">
@@ -27,8 +27,8 @@
           </el-table-column>
         </el-table>
         <div class="pagination-container" style="margin-top: 20px;">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-            :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+            :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
             layout="total, sizes, prev, pager, next, jumper">
           </el-pagination>
         </div>
@@ -40,7 +40,7 @@
         <el-button type="primary" @click="showDialog = true">分发给协作者</el-button>
       </div>
 
-      <!-- 添加API_KEY的对话框 -->
+      <!-- 分发协作者对话框 -->
       <el-dialog title="选择分发协作者" :visible.sync="showDialog" width="30%" @close="resetDialog">
         <div>
           <el-form ref="form" label-width="100px">
@@ -65,7 +65,7 @@
     </div>
   </div>
 </template>
-     
+
 <script>
 import { getQAByExpirenceId, distributeToOthers } from '@/api/qa'
 // import { getCollaboratorsByProjectId, getProjectByExpirementId } from "@/api/project"
@@ -75,19 +75,14 @@ export default {
   data() {
     return {
       showDialog: false,
-      QAList: [{ QAid: '1', Q: '世界上最高的峰是哪个峰 ?', A: '世界上最高的山峰是珠穆朗玛峰（Mount Everest），它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。', score: 0 },
-      { QAid: '2', Q: '世界上最深的湖是哪个?', A: '世界上最深的湖是贝加尔湖，位于俄罗斯。', score: 3 },
-      { QAid: '3', Q: '世界上最长的山脉是什么?', A: '世界上最长的山脉是安第斯山脉，延伸南美西部海岸线。', score: 4 },
-      { QAid: '4', Q: '世界上最大的热带雨林是哪里?', A: '世界上最大的热带雨林是亚马孙雨林，覆盖多个南美国家。', score: 5 },
-      { QAid: '5', Q: '世界上最大的岛屿是哪个?', A: '世界上最大的岛屿是格陵兰岛，属于丹麦。', score: 2 }
-      ],
+      QAList: [],
       thisExperiment: {},
-      thisCollaborators: [{ id: '1', name: 'Alice' }, { id: '2', name: 'Bob' }],
+      thisCollaborators: [],
       selectedIds: [],
       distributeUserId: null,
       currentPage: 1,
       pageSize: 10,
-      pagedQAList: [] // 用于显示当前页的数据
+      pagedQAList: [], // 用于显示当前页的数据
     }
   },
   mounted() {
@@ -95,10 +90,11 @@ export default {
     let storedExperiment = localStorage.getItem('thisExperiment');
     if (storedExperiment) {
       this.thisExperiment = JSON.parse(storedExperiment);
+      console.log('进行分发的测试:',this,this.thisExperiment)
     }
     else {
-        // 处理没有数据的情况，可能是跳转到此页面或刷新页面
-        this.$router.push("/projectsList")
+      // 处理没有数据的情况，可能是跳转到此页面或刷新页面
+      this.$router.push("/projectsList")
     }
     this.load();
     // this.thisExperiment = this.$route.query;
@@ -111,7 +107,7 @@ export default {
         this.updatePagedQAList(); // 初始加载
       })
 
-      //用于获取当前实验的项目
+      //用于获取当前测试的项目
       // getProjectByExpirementId(this.thisExperiment.id).then(res => {
       //   this.thisProjejctId = res.data
       // })
@@ -119,7 +115,7 @@ export default {
       // 获取当前项目的协作者以便分发
       getFriendsByExperimentId(this.thisExperiment.id).then(res => {
         this.thisCollaborators = res.data
-        console.log(this.thisCollaborators)
+        console.log('当前测试的协作者',this.thisCollaborators)
       })
     },
     goBack() {
@@ -155,36 +151,58 @@ export default {
           });
         }
         else {
-          // 遍历 selectedIds 数组
-          console.log('选择的QAid', this.selectedIds)
-          this.selectedIds.forEach(id => {
+          // 初始化成功和失败的计数器
+          let successCount = 0;
+          let failCount = 0;
+
+          // 将所有的分发请求的Promise收集到一个数组中
+          const distributePromises = this.selectedIds.map(id => {
             const data = {
               uid: this.distributeUserId,
               QAid: id
             };
-            // 对每个 id 发起请求
-            distributeToOthers(data).then(res => {
+
+            // 返回每个分发请求的Promise
+            return distributeToOthers(data).then(res => {
               if (res.success) {
-                // 请求成功的处理
-                this.$message({
-                  message: '分发成功！',
-                  type: 'success'
-                });
-                this.load()
+                // 如果请求成功，增加成功计数器
+                successCount++;
               } else {
-                // 请求失败的处理（可选）
-                this.$message({
-                  message: '分发失败',
-                  type: 'error'
-                });
+                // 如果请求失败，增加失败计数器
+                failCount++;
               }
+            }).catch(() => {
+              // 处理请求失败的情况（例如网络错误等）
+              failCount++;
             });
           });
 
-          // 重置对话框和重新加载数据
-          this.resetDialog();
-          this.showDialog = false;
-          this.load();
+          // 使用Promise.all等待所有分发请求完成
+          Promise.all(distributePromises).then(() => {
+            // 所有请求处理完毕后，根据成功和失败的计数器显示消息
+            if (successCount > 0) {
+              this.$message({
+                message: `分发成功${successCount}条！`,
+                type: 'success'
+              });
+            }
+
+            // 如果有失败的，显示失败的条数
+            if (failCount > 0) {
+              this.$message({
+                message: `分发失败${failCount}条`,
+                type: 'error'
+              });
+            }
+
+            // 重新加载数据等后续操作
+            this.load();
+            this.resetDialog();
+            this.showDialog=false;
+          }).catch(error => {
+            // 处理可能的错误（例如，某个Promise抛出的异常）
+            console.error('分发过程中出现错误：', error);
+          });
         }
       }
     },
@@ -210,7 +228,7 @@ export default {
   },
 }
 </script>
-     
+
 <style scoped>
 .table-container {
   max-width: 2000px;

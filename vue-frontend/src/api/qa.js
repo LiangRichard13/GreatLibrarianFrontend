@@ -1,6 +1,6 @@
 import service from "@/utils/request";
 
-//查询某实验下的QA
+//查询某测试下的QA
 export function getQAByExpirenceId(expId,uid) {
     return service({
         url: '/QA',
@@ -13,7 +13,7 @@ export function getQAByExpirenceId(expId,uid) {
     })
 }
 
-//查询某实验下的QA条数
+//查询某测试下的QA条数
 export function getQACount(expId) {
     return service({
         url: '/QA',

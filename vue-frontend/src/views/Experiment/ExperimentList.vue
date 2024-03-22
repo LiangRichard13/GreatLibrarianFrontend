@@ -4,23 +4,23 @@
         </el-page-header>
         <div class="content">
             <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-                {{ this.thisProject.id }}-{{ this.thisProject.name }}的实验列表
+                {{ this.thisProject.id }}-{{ this.thisProject.name }}的测试列表
             </h3>
             <div style="display: flex; justify-content: flex-start; padding-bottom: 20px;">
-                <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">为该项目创建新实验
+                <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">为该项目创建新测试
                 </el-button>
             </div>
             <el-tabs v-model="currentTab" type="card" @tab-click="handleClick">
-                <el-tab-pane label="待实验" name="待实验"></el-tab-pane>
-                <el-tab-pane label="正在实验" name="正在实验"></el-tab-pane>
+                <el-tab-pane label="待测试" name="待测试"></el-tab-pane>
+                <el-tab-pane label="正在测试" name="正在测试"></el-tab-pane>
                 <el-tab-pane label="待审核" name="待审核"></el-tab-pane>
                 <el-tab-pane label="已完成" name="已完成"></el-tab-pane>
             </el-tabs>
 
-            <div class="section" v-if="currentTab === '待实验'">
-                <h4>待实验</h4>
+            <div class="section" v-if="currentTab === '待测试'">
+                <h4>待测试</h4>
                 <el-table :data="expList" style="width: 100%">
-                    <el-table-column label="实验 ID" prop="id"></el-table-column>
+                    <el-table-column label="测试 ID" prop="id"></el-table-column>
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
@@ -48,14 +48,14 @@
                             <el-tag v-else type="danger">还没有协作者！</el-tag>
                         </template>
                     </el-table-column>
-                    <el-table-column label="配置文件">
+                    <!-- <el-table-column label="配置文件">
                         <template slot-scope="scope">
                             <div v-if="scope.row.configURL !== null">
                                 <el-tag type="success">有</el-tag>
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
                         </template>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
                             <el-link type="primary" style="margin-right: 10px;"
@@ -78,12 +78,12 @@
                                     <el-dropdown-item>
                                         <el-button size="mini" type="success"
                                             @click="confirmStart(scope.$index, scope.row)">
-                                            开始实验
+                                            开始测试
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-button size="mini" type="warning" @click="initialEdit(scope.row)">
-                                            修改实验配置
+                                            修改测试配置
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
@@ -94,7 +94,7 @@
                                     <el-dropdown-item>
                                         <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                             icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
-                                            title="确定要删除此实验吗？">
+                                            title="确定要删除此测试吗？">
                                             <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                             </el-button>
                                         </el-popconfirm> -->
@@ -106,13 +106,21 @@
                             </el-dropdown>
                         </template>
                     </el-table-column>
+                    <el-table-column label="配置文件">
+                        <template slot-scope="scope">
+                            <div v-if="scope.row.configURL !== null">
+                                <el-tag type="success">有</el-tag>
+                            </div>
+                            <el-tag v-else type="danger">无</el-tag>
+                        </template>
+                    </el-table-column>
                 </el-table>
             </div>
 
-            <div class="section" v-if="currentTab === '正在实验'">
-                <h4>正在实验</h4>
+            <div class="section" v-if="currentTab === '正在测试'">
+                <h4>正在测试</h4>
                 <el-table :data="proceeding" style="width: 100%">
-                    <el-table-column label="实验 ID" prop="id"></el-table-column>
+                    <el-table-column label="测试 ID" prop="id"></el-table-column>
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
@@ -134,7 +142,7 @@
             <div class="section" v-if="currentTab === '待审核'">
                 <h4>待审核</h4>
                 <el-table :data="reviewList" style="width: 100%">
-                    <el-table-column label="实验 ID" prop="id"></el-table-column>
+                    <el-table-column label="测试 ID" prop="id"></el-table-column>
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
@@ -152,14 +160,17 @@
                     </el-table-column> -->
                     <el-table-column label="协作者">
                         <template slot-scope="scope">
-                            <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
-                                {{ collaborator.name }}
+                            <div v-if="scope.row.collaborators && scope.row.collaborators.length > 0">
+                                <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
+                                    {{ collaborator.name }}
+                                </div>
                             </div>
+                            <el-tag v-else type="warning">无协作者</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="总待审核条数" prop="thisExpQA">
                         <template slot-scope="scope">
-                            <el-tag type="warning">{{ scope.row.thisExpQA }}</el-tag>
+                            <el-tag type="warning"> {{ scope.row.thisExpQA }}</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
@@ -182,9 +193,14 @@
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
+                                        <el-button size="mini" type="success" @click.stop="handleReport(scope.row)">
+                                            生成报告
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
                                         <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                             icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
-                                            title="确定要删除此实验吗？">
+                                            title="确定要删除此测试吗？">
                                             <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                             </el-button>
                                         </el-popconfirm> -->
@@ -202,7 +218,7 @@
             <div class="section" v-if="currentTab === '已完成'">
                 <h4>已完成</h4>
                 <el-table :data="doneList" style="width: 100%">
-                    <el-table-column label="实验 ID" prop="id"></el-table-column>
+                    <el-table-column label="测试 ID" prop="id"></el-table-column>
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
@@ -222,12 +238,9 @@
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="primary" slot="reference" @click.stop> <!-- 阻止冒泡 -->
-                                查看记录
-                            </el-button>
                             <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                 icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
-                                title="确定要删除此实验吗？">
+                                title="确定要删除此测试吗？">
                                 <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                 </el-button>
                             </el-popconfirm> -->
@@ -240,16 +253,16 @@
             </div>
         </div>
 
-        <!-- 创建实验对话框 -->
-        <el-dialog title="创建新实验" :visible.sync="showDialog" width="50%" @close="resetDialog">
+        <!-- 创建测试对话框 -->
+        <el-dialog title="创建新测试" :visible.sync="showDialog" width="50%" @close="resetDialog">
             <div>
                 <el-form ref="form" :model="newExpirement" label-width="200px">
 
-                    <el-form-item label="实验名称">
+                    <el-form-item label="测试名称">
                         <el-input v-model="newExpirement.name"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="指定实验模型API Key">
+                    <el-form-item label="指定测试模型API Key">
                         <el-select v-model="newExpirement.AK1" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
@@ -265,7 +278,7 @@
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item label="指定实验数据集">
+                    <el-form-item label="指定测试数据集">
                         <el-select v-model="newExpirement.DS" placeholder="请选择">
                             <el-option v-for="item in thisProject.dataSet" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
@@ -273,9 +286,9 @@
                         </el-select>
                     </el-form-item>
 
-                    <!-- 进行实验配置文件的编辑 -->
+                    <!-- 进行测试配置文件的编辑 -->
                     <!-- <el-form-item>
-                        <el-button type="primary" @click="showCodeEditorDialog = true">编辑实验配置文件</el-button>
+                        <el-button type="primary" @click="showCodeEditorDialog = true">编辑测试配置文件</el-button>
                     </el-form-item> -->
 
                 </el-form>
@@ -286,16 +299,16 @@
             </span>
         </el-dialog>
 
-        <!-- 修改实验对话框 -->
-        <el-dialog title="修改实验配置" :visible.sync="editDialog" width="50%" @close="resetEditDialog">
+        <!-- 修改测试对话框 -->
+        <el-dialog title="修改测试配置" :visible.sync="editDialog" width="50%" @close="resetEditDialog">
             <div>
                 <el-form ref="form" :model="editExperiment" label-width="200px">
 
-                    <el-form-item label="实验名称">
+                    <el-form-item label="测试名称">
                         <el-input v-model="editExperiment.name"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="指定实验模型API Key">
+                    <el-form-item label="指定测试模型API Key">
                         <el-select v-model="editExperiment.AK1" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
@@ -311,7 +324,7 @@
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item label="指定实验数据集">
+                    <el-form-item label="指定测试数据集">
                         <el-select v-model="editExperiment.DS" placeholder="请选择">
                             <el-option v-for="item in thisProject.dataSet" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
@@ -329,16 +342,16 @@
         </el-dialog>
 
         <!-- 代码编辑器 -->
-        <el-dialog title="编辑 Python实验配置文件" :visible.sync="showCodeEditorDialog" width="50%" @opened="loadTemplate">
+        <el-dialog title="编辑 Python测试配置文件" :visible.sync="showCodeEditorDialog" width="50%" @opened="loadTemplate">
             <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                <h4>当前实验:{{ currentExpName }} - {{ currentExpId }}</h4>
+                <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
             </div>
             <div>
                 <!-- 这里放置你的代码编辑器组件 -->
                 <!-- 代码组件1 -->
-                <h3> 编辑实验模型call函数</h3>
+                <h3> 编辑测试模型call函数</h3>
                 <!-- <el-form ref="form">
-                    <el-form-item label="实验模型类名">
+                    <el-form-item label="测试模型类名">
                         <el-input v-model="LL1ClassName" style="width:200px"></el-input>
                     </el-form-item>
                 </el-form> -->
@@ -361,13 +374,13 @@
             </span>
         </el-dialog>
 
-        <!-- 将好友加入到实验协作的对话框 -->
+        <!-- 将好友加入到测试协作的对话框 -->
         <template>
 
-            <el-dialog title="请为当前实验添加协作者" :visible.sync="friendsToExp" @close="handleDialogClose">
+            <el-dialog title="请为当前测试添加协作者" :visible.sync="friendsToExp" @close="handleDialogClose">
 
                 <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                    <h4>当前实验:{{ currentExpName }} - {{ currentExpId }}</h4>
+                    <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
                 </div>
 
                 <el-checkbox-group v-model="selectFriendsId">
@@ -385,15 +398,16 @@
 
     </div>
 </template>
-  
-  
+
+
 <script>
 import { getExperimentByProjectId } from '@/api/experiment'
 import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOperationFile, addOperationFile, updateOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
-import { getExperimentProgress, updateExperimentStatus} from '@/api/expOperation'
-import { startExp } from '@/api/expOperation'
+import { getExperimentProgress, updateExperimentStatus, genReport } from '@/api/expOperation'
+import { startExp, updateReport } from '@/api/expOperation'
+import config from "@/services/conf"
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-chrome';
@@ -407,22 +421,22 @@ export default {
     name: "ExperimentList",
     data() {
         return {
-            currentTab: '待实验', // 默认选中的选项卡
+            currentTab: '待测试', // 默认选中的选项卡
             friendsToExp: false,
             showCodeEditorDialog: false,
             showDialog: false,
             editDialog: false,
             experimentList: [],
             newExpirement: { name: '', AK1: '', AK2: '', DS: '' },
-            expList: [], // 待实验列表数据
-            proceeding: [],//正在实验列表
+            expList: [], // 待测试列表数据
+            proceeding: [],//正在测试列表
             reviewList: [], // 待审核列表数据
             doneList: [], // 已完成列表数据
             thisProject: {},
             editExperiment: { name: '', AK1: '', AK2: '', DS: '', tPid: '' },
             pythonCode_1: '',
             pythonCode_2: '',
-            pythonFile: null,
+            // pythonFile: null,
             editor_1: null, // 存储编辑器实例
             editor_2: null, // 存储编辑器实例
             userFriends: [],
@@ -452,13 +466,13 @@ export default {
             const id = this.thisProject.id
             getExperimentByProjectId(id).then(res => {
                 this.experimentList = res.data;
-                console.log('获取的所有实验数据', this.experimentList)
+                console.log('获取的所有测试数据', this.experimentList)
                 // 遍历 experimentList 并发起所有请求
                 if (this.experimentList.length !== 0) {
                     const collaboratorsRequests = this.experimentList.map(experiment => {
                         return getFriendsByExperimentId(experiment.id).then(res => {
-                            // 将 collaborators 数组添加到对应的实验记录中
-                            console.log('获取实验协作者响应信息', res)
+                            // 将 collaborators 数组添加到对应的测试记录中
+                            console.log('获取测试协作者响应信息', res)
                             return {
                                 ...experiment,
                                 collaborators: res.data
@@ -486,17 +500,18 @@ export default {
                                 // 你可以根据需要添加更多的状态分类
                             }
                         });
-                        //获取每个待审核实验的审核记录条数
+                        //获取每个待审核测试的审核记录条数
                         Promise.all(this.reviewList.map(exp => {
                             // 对每个exp调用getQAByExpirenceId函数
                             return getQACount(exp.id).then(res => {
                                 // 将结果合并回exp对象
                                 return {
                                     ...exp,
-                                    thisExpQA: res.data
+                                    thisExpQA: res.count,
                                 };
                             });
                         })).then(updatedExperimentList => {
+                            console.log('待审核', updatedExperimentList)
                             // 这里的updatedExperimentList包含了修改后的experimentList
                             // 可以在这里处理或更新状态
                             this.reviewList = updatedExperimentList;
@@ -508,7 +523,7 @@ export default {
                         // 处理可能出现的错误
                         console.error("Error fetching collaborators: ", error);
                     });
-                    //如果有待实验则开始轮询
+                    //如果有待测试则开始轮询
                     this.proceedingExp()
                 }
             })
@@ -536,13 +551,12 @@ export default {
                                 type: 'success'
                             });
                             this.setExpEmpty()
-                            this.load()
                         }
                     })
                     // }
                     // else {
                     //     this.$message({
-                    //         message: '实验文件尚未编辑',
+                    //         message: '测试文件尚未编辑',
                     //         type: 'warning'
                     //     });
                     // }
@@ -556,37 +570,25 @@ export default {
             }
             else {
                 this.$message({
-                    message: '创建新实验各字段不能为空',
+                    message: '创建新测试各字段不能为空',
                     type: 'warning'
                 });
             }
         },
         handleRemoveExpirement(index, row) {
             const deleteData = { tPid: row.id }
-            deleteOperationFile(deleteData).then(res => {
+            deleteById(deleteData).then(res => {
                 if (res.success) {
-                    deleteById(deleteData).then(res => {
-                        if (res.success) {
-                            localStorage.removeItem(row.id + '_1')
-                            localStorage.removeItem(row.id + '_2')
-                            this.$message({
-                                message: '删除成功',
-                                type: 'success',
-                            });
-                            switch (row.status) {
-                                case 0:
-                                    this.expList.splice(index, 1);
-                                    break;
-                                case 2:
-                                    this.reviewList.splice(index, 1);
-                                    break;
-                                case 3:
-                                    this.doneList.splice(index, 1);
-                                    break;
-                                // 你可以根据需要添加更多的状态分类
+                    if (row.configURL !== null) {
+                        deleteOperationFile(deleteData).then(res => {
+                            if (res.success) {
+                                this.afterDeleteExp(row, index)
                             }
-                        }
-                    })
+                        })
+                    }
+                    else {
+                        this.afterDeleteExp(row, index)
+                    }
                 }
             })
         },
@@ -599,7 +601,6 @@ export default {
                         type: 'info'
                     });
                     this.setExpEmpty()
-                    this.load()
                 }
             })
         },
@@ -656,7 +657,7 @@ export default {
                         DS: this.editExperiment.DS,
                         tPid: this.editExperiment.tPid
                     }
-                    console.log('进行修改的实验数据：', data)
+                    console.log('进行修改的测试数据：', data)
                     editExpirement(data).then(res => {
                         if (res.success) {
                             this.$message({
@@ -675,7 +676,6 @@ export default {
                             this.resetEditDialog()
                             this.editDialog = false; // 关闭对话框
                             this.setExpEmpty()
-                            this.load()
                         }
                     })
                 }
@@ -688,7 +688,7 @@ export default {
             }
             else {
                 this.$message({
-                    message: '实验各字段不能为空',
+                    message: '测试各字段不能为空',
                     type: 'warning'
                 });
             }
@@ -697,12 +697,12 @@ export default {
             if (row.configURL != null) {
                 this.editExperiment.name = row.name
                 this.editExperiment.tPid = row.id
-                console.log('当前进行修改的实验id', this.editExperiment.tPid)
+                console.log('当前进行修改的测试id', this.editExperiment.tPid)
                 this.editDialog = true
             }
             else {
                 this.$message({
-                    message: '请先编辑实验配置文件！',
+                    message: '请先编辑测试配置文件！',
                     type: 'warning'
                 });
             }
@@ -710,7 +710,7 @@ export default {
         resetCodeEditor() {
             this.pythonCode_1 = '',
                 this.pythonCode_2 = '',
-                this.pythonFile = null,
+                // this.pythonFile = null,
                 // this.LL1ClassName='',
                 // this.LL2ClassName='',
                 this.showCodeEditorDialog = false
@@ -772,9 +772,9 @@ export default {
                     checkOperationFile(checkData).then(res => {
                         if (res.success) {
                             // 使用模板字符串和换行符`\n`来确保两段代码之间有一个换行
-                            const combinedCode = `${this.pythonCode_1}\n${this.pythonCode_2}`;
-                            const fileBlob = new Blob([combinedCode], { type: 'text/plain' });
-                            this.pythonFile = new File([fileBlob], "script.py");
+                            // const combinedCode = `${this.pythonCode_1}\n${this.pythonCode_2}`;
+                            // const fileBlob = new Blob([combinedCode], { type: 'text/plain' });
+                            // this.pythonFile = new File([fileBlob], "script.py");
 
                             addOperationFile(this.currentExpId).then(res => {
                                 if (res.success) {
@@ -785,7 +785,6 @@ export default {
                                         type: 'success'
                                     });
                                     this.setExpEmpty()
-                                    this.load()
                                     this.resetCodeEditor()
                                 }
                             })
@@ -793,15 +792,15 @@ export default {
                         else {
                             this.$message({
                                 message: '评估模型call函数编译失败',
-                                type: 'danger'
+                                type: 'error'
                             })
                         }
                     })
                 }
                 else {
                     this.$message({
-                        message: '实验模型call函数编译失败',
-                        type: 'danger'
+                        message: '测试模型call函数编译失败',
+                        type: 'error'
                     })
 
                 }
@@ -853,19 +852,20 @@ export default {
                 this.friendsToExp = false
         },
         handlefriendsToExp() {
-            this.selectFriendsId.forEach(id => {
-                //检查id是否在thisRowCollabortors里
+            // 使用map而不是forEach来收集所有的promise
+            const promises = this.selectFriendsId.map(id => {
+                // 检查id是否在thisRowCollabortors里
                 const findExistOne = this.thisRowCollaborators.find(collab => collab.id === id);
                 if (!findExistOne) {
                     const data = { TPid: this.currentExpId, uid: id };
-                    addFriendsToExperiment(data).then(res => {
+                    // 直接返回addFriendsToExperiment的调用
+                    return addFriendsToExperiment(data).then(res => {
                         if (res.success) {
                             // 请求成功的处理
                             this.$message({
                                 message: '加入成功！',
                                 type: 'success'
                             });
-
                         } else {
                             // 请求失败的处理（可选）
                             this.$message({
@@ -873,27 +873,36 @@ export default {
                                 type: 'error'
                             });
                         }
-                    })
-                }
-                else {
-                    this.$message({
-                        message: '加入失败' + findExistOne.name + '已经在该项目中',
-                        type: 'error'
+                    });
+                } else {
+                    // 立即resolve已经存在的id，保持promise数组的一致性
+                    return Promise.resolve().then(() => {
+                        this.$message({
+                            message: '加入失败，' + findExistOne.name + '已经在该项目中',
+                            type: 'error'
+                        });
                     });
                 }
-                this.setExpEmpty()
-                this.load()
-            })
-            this.handleDialogClose()
+            });
+
+            // 使用Promise.all等待所有的promise完成
+            Promise.all(promises).then(() => {
+                // 全部完成后执行
+                this.setExpEmpty();
+                this.handleDialogClose();
+            });
         },
-        setExpEmpty() {
-            this.reviewList = []
-            this.proceeding = []
-            this.doneList = []
-            this.expList = []
+        async setExpEmpty() {
+            this.reviewList = [];
+            this.proceeding = [];
+            this.doneList = [];
+            this.expList = [];
+
+            // 如果this.load()是异步的，这里等待它完成
+            await this.load();
         },
         confirmDelete(index, row) {
-            this.$confirm('是否删除该实验？', '提示', {
+            this.$confirm('是否删除该测试？', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
@@ -908,7 +917,7 @@ export default {
         },
         confirmStart(index, row) {
             if (row.configURL !== null) {
-                this.$confirm('确定执行该实验吗？一旦执行将直至结束', '提示', {
+                this.$confirm('确定执行该测试吗？一旦执行将直至结束', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -923,7 +932,7 @@ export default {
             }
             else {
                 this.$message({
-                    message: '请先编辑实验配置文件！',
+                    message: '请先编辑测试配置文件！',
                     type: 'warning'
                 })
             }
@@ -936,21 +945,22 @@ export default {
         proceedingExp() {
             const interval = setInterval(() => {
                 // 如果 this.proceeding 为空，则停止轮询
+
                 if (!this.proceeding.length) {
                     clearInterval(interval);
                     return;
                 }
+                if (this.currentTab !== '正在测试') {
+                    clearInterval(interval);
+                    return;
+                }
 
-                // 遍历 this.proceeding 中的每个实验
+                // 遍历 this.proceeding 中的每个测试
                 this.proceeding.forEach((experiment, index) => {
-
                     getExperimentProgress(experiment.id).then(res => {
-
                         this.proceeding[index].progress = res.process
-
-
                         if (this.proceeding[index].progress === 100) {
-                            // 更新实验状态
+                            // 更新测试状态
                             const updateExp = { TPid: experiment.id, uid: localStorage.getItem('uid') }
                             updateExperimentStatus(updateExp).then(res => {
                                 if (res.success) {
@@ -958,14 +968,15 @@ export default {
                                         type: 'info',
                                         message: experiment.id + '-' + experiment.name + '执行完成'
                                     });
+                                    // 停止当前轮询
+                                    clearInterval(interval);
                                     this.setExpEmpty()
-                                    this.load()
                                 }
                             });
                         }
 
 
-                    });
+                    })
                 });
             }, 5000); // 设置轮询间隔为 5 秒
         },
@@ -977,7 +988,7 @@ export default {
         //             return;
         //         }
 
-        //         // 遍历 this.proceeding 中的每个实验
+        //         // 遍历 this.proceeding 中的每个测试
         //         this.proceeding.forEach((experiment, index) => {
 
         //             this.proceeding[index].progress = this.proceeding[index].progress + 20
@@ -999,13 +1010,78 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
+            if (this.currentTab === '正在测试')
+                this.proceedingExp()
+        },
+        afterDeleteExp(row, index) {
+            localStorage.removeItem(row.id + '_1')
+            localStorage.removeItem(row.id + '_2')
+            localStorage.removeItem(row.id + 'report')
+            this.$message({
+                message: '删除成功',
+                type: 'success',
+            });
+            switch (row.status) {
+                case 0:
+                    this.expList.splice(index, 1);
+                    break;
+                case 2:
+                    this.reviewList.splice(index, 1);
+                    break;
+                case 3:
+                    this.doneList.splice(index, 1);
+                    break;
+                // 你可以根据需要添加更多的状态分类
+            }
+        },
+        handleReport(row) {
+            updateReport(row.id).then(res => {
+                if (res.success) {
+                    this.$message({
+                        type: 'success',
+                        message: row.id + '-' + row.name + '测试报告更新成功！开始生成报告，请稍等...'
+                    });
+
+                    if (localStorage.getItem(row.id + '_report') !== null) {
+                        let value = localStorage.getItem(row.id + '_report');
+                        value = Number(value);
+                        value++;
+                        localStorage.setItem(row.id + '_report', value.toString());
+                    }
+                    else {
+                        localStorage.setItem(row.id + '_report', '1')
+                    }
+
+                    let num = Number(localStorage.getItem(row.id + '_report'))
+                    genReport(row.id, num).then(res => {
+                        if (res.success) {
+                            let downloadUrl = res.url
+                            downloadUrl = downloadUrl.replace(/\\/g, '/');
+                            downloadUrl = downloadUrl.replace(/App/g, '');
+                            downloadUrl = config.API_URL + downloadUrl;
+                            const fileName = '测试报告';
+
+                            // 创建一个隐藏的<a>标签，设置属性并模拟点击
+                            const a = document.createElement('a');
+                            a.style.display = 'none';
+                            a.href = downloadUrl;
+                            a.download = fileName;
+                            document.body.appendChild(a);
+                            a.click();
+
+                            // 清理：移除<a>标签
+                            document.body.removeChild(a);
+                        }
+                    })
+                }
+            })
         }
     }
 }
 
 
 </script>
-  
+
 <style scoped>
 .table-container {
     max-width: 2000px;

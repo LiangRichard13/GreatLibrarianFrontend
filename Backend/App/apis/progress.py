@@ -37,13 +37,17 @@ class Progress(Resource):
         tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         if tP.tP_status == 1:
             # process = readTemp('APP/data/Logs/' + tP.tP_id + '/process.temp')
-            process = readTemp(os.path.join(BackendPath(), "App", "data", "Logs", tP.tP_id, "process.temp"))
+            try:
+                process = readTemp(os.path.join(BackendPath(), "App", "data", "Logs", tP.tP_id, "process.temp"))
+            except Exception:
+                return jsonify({'success': False, 'message': tP.tP_id+'-'+tP.tP_name+'读取进度失败'})
             if process >= 0:
                 tP.tP_progress = process
                 # if process == 100:  # 已经完成实验，进行实验状态修改
                 #     tP.tP_status = 2
                 try:
                     db.session.commit()  # 提交数据库
+                    print('1')
                     return jsonify({'success': True, 'process': process})
                 except Exception as e:  # 数据库操作异常处理
                     db.session.rollback()  # 回滚
@@ -52,4 +56,5 @@ class Progress(Resource):
             else:
                 return jsonify({'success': False, 'message': 'not find'})
         else:
+            print('2')
             return jsonify({'success': True, 'process': tP.tP_progress})

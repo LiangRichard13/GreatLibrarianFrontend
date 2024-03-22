@@ -4,7 +4,7 @@
     </el-page-header>
     <div class="content">
       <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-        {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 实验的QA记录
+        {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 测试的QA记录
       </h3>
     </div>
     <template v-if="QAList.length">
@@ -100,7 +100,7 @@ export default {
             score: 0 // 添加新的字段score，并设其值为0
           };
         });
-        console.log('该实验下的QA',this.QAList)
+        console.log('该测试下的QA',this.QAList)
         this.updatePagedQAList(); // 初始加载
       })
     },

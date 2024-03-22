@@ -54,7 +54,7 @@ export default {
         this.userList = this.userList.map(user => {
           if (user.icon) {
             let icon = user.icon.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
-            icon = user.icon.replace(/App/g, '');
+            icon = icon.replace(/App/g, '');
             icon = config.API_URL + icon; // 拼接完整的 URL
             console.log('头像url', icon)
             return { ...user, icon }; // 返回更新后的用户对象

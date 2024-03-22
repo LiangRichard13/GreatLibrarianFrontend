@@ -50,7 +50,7 @@ export default {
     return {
       activeTab: "emailLogin", // 默认选中的选项卡
       phoneNumber: '18457096496',
-      email: '',
+      email: '1760268004@qq.com',
       password: '123456',
       remember: false,
     }

@@ -4,12 +4,11 @@
         </el-page-header> -->
         <div class="content">
             <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-                我参与协作的实验
+                我参与协作的测试
             </h3>
             <div class="section">
-                <h4>待审核</h4>
                 <el-table :data="experimentList" style="width: 100%">
-                    <el-table-column label="实验 ID" prop="id"></el-table-column>
+                    <el-table-column label="测试 ID" prop="id"></el-table-column>
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <!-- <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>

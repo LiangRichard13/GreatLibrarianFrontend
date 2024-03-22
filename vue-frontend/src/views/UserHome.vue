@@ -21,12 +21,12 @@
 
               <el-card class="box-card" style="margin-top: 20px;">
                 <div slot="header" class="clearfix">
-                  <span>我协助的实验</span>
+                  <span>我协助的测试</span>
                 </div>
                 <el-table :data="participatedExp">
                   <!-- 表格内容 -->
-                  <el-table-column label="实验 ID" prop="id"></el-table-column>
-                  <el-table-column label="实验名称" prop="name"></el-table-column>
+                  <el-table-column label="测试 ID" prop="id"></el-table-column>
+                  <el-table-column label="测试名称" prop="name"></el-table-column>
                   <el-table-column label="待审核条数" prop="thisExpQA">
                     <template slot-scope="scope">
                       <el-tag type="warning">{{ scope.row.thisExpQA }}</el-tag>
@@ -38,6 +38,9 @@
               </el-card>
             </div>
           </el-col>
+
+          <!-- 下载链接 -->
+          <!-- <el-button type="primary" @click="downloadFile()">下载文件</el-button> -->
 
           <!-- 右侧好友列表区域 -->
           <el-col :span="6">
@@ -95,7 +98,7 @@ export default {
         this.userFriends = this.userFriends.map(user => {
           if (user.icon) {
             let icon = user.icon.replace(/\\/g, '/'); // 替换所有反斜杠为斜杠
-            icon = user.icon.replace(/App/g, '');
+            icon = icon.replace(/App/g, '');
             icon = config.API_URL + icon; // 拼接完整的 URL
             return { ...user, icon }; // 返回更新后的用户对象
           }
@@ -116,7 +119,7 @@ export default {
       getProjectsByUserId(uid).then(res => {
         this.myProjects = res.data
       })
-      //获取参与的实验
+      //获取参与的测试
       if (localStorage.getItem("uid") !== null) {
         const id = localStorage.getItem("uid")
         getExperimentsByUserId(id).then(res => {
@@ -134,7 +137,7 @@ export default {
             // 这里的updatedExperimentList包含了修改后的experimentList
             // 可以在这里处理或更新状态
             this.participatedExp = updatedExperimentList;
-            console.log('我参与的实验', this.participatedExp)
+            console.log('我参与的测试', this.participatedExp)
           }).catch(error => {
             // 处理任何在Promise链中发生的错误
             console.error("Error while updating experiment list:", error);
@@ -148,7 +151,24 @@ export default {
     },
     pushToProject(){
       this.$router.push('/projectsList')
-    }
+    },
+    // downloadFile() {
+    //   // 文件的URL
+    //   const fileUrl = config.API_URL+'/data/icon/icon_377dbf961d73f74.jpg';
+    //   // 文件名，你可以根据需要从后端获取或自定义
+    //   const fileName = '下载的文件名';
+
+    //   // 创建一个隐藏的<a>标签，设置属性并模拟点击
+    //   const a = document.createElement('a');
+    //   a.style.display = 'none';
+    //   a.href = fileUrl;
+    //   a.download = fileName;
+    //   document.body.appendChild(a);
+    //   a.click();
+
+    //   // 清理：移除<a>标签
+    //   document.body.removeChild(a);
+    // },
   },
   mounted() {
     if (localStorage.getItem("uid") !== null)

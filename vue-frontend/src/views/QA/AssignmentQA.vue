@@ -88,7 +88,7 @@ export default {
   mounted() {
 
     let storedExperiment = localStorage.getItem('thisExperiment');
-    if (storedExperiment) {
+    if (storedExperiment!==null) {
       this.thisExperiment = JSON.parse(storedExperiment);
       console.log('进行分发的测试:',this,this.thisExperiment)
     }

@@ -450,7 +450,7 @@ export default {
     },
     mounted() {
         let storedProject = localStorage.getItem('thisProject');
-        if (storedProject) {
+        if (storedProject!==null) {
             this.thisProject = JSON.parse(storedProject);
         }
         else {
@@ -1068,6 +1068,7 @@ export default {
                             a.download = fileName;
                             document.body.appendChild(a);
                             a.click();
+                            console.log('版本:',res.version)
 
                             // 清理：移除<a>标签
                             document.body.removeChild(a);

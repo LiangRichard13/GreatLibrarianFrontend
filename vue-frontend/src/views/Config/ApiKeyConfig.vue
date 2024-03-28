@@ -14,13 +14,13 @@
     <div class="table-container">
       <el-table :data="apiKeys" style="width: 100%">
         <!-- <el-table-column prop="id" label="API_KEY ID"></el-table-column> -->
-        <el-table-column prop="name" label="接口"></el-table-column>
-        <el-table-column prop="value" label="内容"></el-table-column>
+        <el-table-column prop="name" label="大模型名称"></el-table-column>
+        <el-table-column prop="value" label="密钥"></el-table-column>
         <!-- <el-table-column prop="intro" label="介绍"></el-table-column> -->
         <el-table-column type="expand" label="介绍">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="介绍:">
+              <el-form-item label="背景介绍:">
                 <span>{{ props.row.intro }}</span>
               </el-form-item>
             </el-form>
@@ -61,15 +61,15 @@
       <div>
         <el-form ref="form" :model="newApiKey" label-width="100px">
 
-          <el-form-item label="接口来源">
+          <el-form-item label="大模型名称">
             <el-input v-model="newApiKey.name"></el-input>
           </el-form-item>
 
-          <el-form-item label="KEY内容">
+          <el-form-item label="密钥">
             <el-input v-model="newApiKey.value"></el-input>
           </el-form-item>
 
-            <el-form-item label="LLM介绍">
+            <el-form-item label="背景介绍">
             <el-input v-model="newApiKey.intro"></el-input>
           </el-form-item>
         </el-form>

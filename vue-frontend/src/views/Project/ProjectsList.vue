@@ -167,7 +167,7 @@ export default {
         })
         findApiKeyByUserId(id).then(res => {
           this.apiKeys = res.data;
-          console.log('获取的apikeys', this.apiKey)
+          console.log('获取的apikeys', this.apiKeys)
         })
         findDataSetByUserId(id).then(res => {
           this.dataSet = res.data;

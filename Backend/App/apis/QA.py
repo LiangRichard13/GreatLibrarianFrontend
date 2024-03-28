@@ -6,22 +6,56 @@ import re
 from datetime import datetime
 
 import pandas as pd
+from App.models import db, QA, TestProject
+from App.utils.backend_path import BackendPath
 from flask import jsonify, request
 from flask_restful import Resource
 
-from App.models import db, QA, TestProject
-from App.utils.backend_path import BackendPath
-
 
 # 采用正则化，进行log日志内容的读取
+# def readLog(logURL):
+#     with open(logURL, 'r', encoding="utf-8") as file:
+#         content = file.read()
+#     question = re.compile(r'To LLM:\s+(.*?)(?=\s+from thread)').findall(content)
+#     answer = re.compile(r'To User:\s+"(.*?)"\s+from thread ').findall(content)
+#     # field = re.compile(r'field:(.*?)(?=\s|$)').findall(content)
+#     field = re.compile(r'The final score of this testcase is \d+\.\d+, in (\w+) field.').findall(content)
+#     thread = re.compile(r'New Epoch ---------- from thread\s+(\d+)').findall(content)
+#
+#     print(len(question), len(answer), len(field), len(thread))
+#
+#     return pd.DataFrame({'Q': question, 'A': answer, 'field': field, 'thread': thread})
+
 def readLog(logURL):
+    # 读取文件内容
     with open(logURL, 'r', encoding="utf-8") as file:
-        content = file.read()
-    question = re.compile(r'To LLM:\s+(.*?)(?=\s+from thread 1)').findall(content)
-    answer = re.compile(r'To User:\s+"(.*?)"\s+from thread 1').findall(content)
-    field = re.compile(r'field:(.*?)(?=\s|$)').findall(content)
-    thread = re.compile(r'New Epoch ---------- from thread\s+(\d+)').findall(content)
-    return pd.DataFrame({'Q': question, 'A': answer, 'field': field, 'thread': thread})
+        file = file.read()
+
+    # 清空文件内容
+    with open(logURL, 'w') as f:
+        pass  # 打开文件以写模式，自动清空，无需写入任何内容
+
+    # 修改正则表达式以匹配整个部分
+    # parts = re.compile(r'To LLM:(.*?)To User:"(.*?)"\n.*?in (.*?) field\.from thread (\d+)\n', re.DOTALL).findall(file)
+    parts = re.compile(
+        r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO - \n(\d+)\..*?To LLM:(.*?)To User:"(.*?)"\n.*?in (.*?) field\.from thread (\d+)\n',
+        re.DOTALL).findall(file)
+
+    # pattern = re.compile(
+    #     r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO -\n(\d+)\..*?To LLM:(.*?)To User:"(.*?)"\n.*?field\.(.*?)\..*?from thread (\d+)',
+    #     re.DOTALL)
+
+    # 提取问题、答案、字段和线程内容
+    data = []
+    for m in parts:
+        data.append(
+            {'T': m[0].strip(), 'Q': m[1].strip(), 'A': m[2].strip(), 'field': m[3].strip(), 'thread': m[4].strip()})
+    # 构建DataFrame
+    return pd.DataFrame(data)
+
+
+# url = os.path.join(BackendPath(), "App", "data", "Logs", '8a53a91af', "human_evaluation.log")
+# print(readLog(url))
 
 
 # 人工审核
@@ -31,20 +65,22 @@ class QAOperation(Resource):
         uid, TPid = request.json['uid'], request.json['TPid']
         # 已经完成实验
         tP = TestProject.query.filter(TestProject.tP_id == TPid).first()
-        tP.tP_status = 2  # 进行实验状态修改
-        # url = 'APP/data/Logs/' + TPid + '/dialog_init.log'
-        url = os.path.join(BackendPath(), "App", "data", "Logs", TPid, "dialog_init.log")
-        for index, row in readLog(url).iterrows():
-            qa = QA(uid=uid, TPid=TPid, QA_time=datetime.now(),
-                    QA_question=row['Q'], QA_answer=row['A'], QA_field=row['field'], QA_thread=row['thread'])
-            try:
-                db.session.add(qa)  # 加入数据库
-                db.session.commit()
-            except Exception as e:  # 数据库操作异常处理
-                db.session.rollback()  # 回滚
-                db.session.flush()  # 刷新，清空缓存
-                return jsonify({'success': False, 'message': str(e)})
-        return jsonify({'success': True})
+        if tP.tP_progress == 100:  # 已经完成实验，进行实验状态修改
+            tP.tP_status = 2  # 进行实验状态修改
+            url = os.path.join(BackendPath(), "App", "data", "Logs", TPid, "human_evaluation.log")
+            for index, row in readLog(url).iterrows():
+                qa = QA(uid=uid, TPid=TPid, QA_time=datetime.strptime(row['T'], "%Y-%m-%d %H:%M:%S"),
+                        QA_question=row['Q'], QA_answer=row['A'], QA_field=row['field'], QA_thread=row['thread'])
+                try:
+                    db.session.add(qa)  # 加入数据库
+                    db.session.commit()
+                except Exception as e:  # 数据库操作异常处理
+                    db.session.rollback()  # 回滚
+                    db.session.flush()  # 刷新，清空缓存
+                    return jsonify({'success': False, 'message': str(e)})
+            return jsonify({'success': True})
+        else:
+            return jsonify({'success': False, 'message': 'TestProject not completed.'})
 
     # 查询审核任务  接收参数【url追加  审核人:uid】
     def get(self):
@@ -79,9 +115,9 @@ class QAOperation(Resource):
             testProject.tP_status = 3
 
         nowTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
-        logData = nowTime + ' - INFO - To LLM:' + qa.QA_question + 'from thread ' + str(qa.QA_thread) + '\n' + \
-                  nowTime + ' - INFO - To User:"' + qa.QA_answer + '"from thread ' + str(qa.QA_thread) + '\n' + \
-                  nowTime + ' - INFO - The final score of this testcase is ' + request.args['score'] + \
+        logData = str(qa.QA_time) + ' - INFO - To LLM:	 ' + qa.QA_question + ' from thread ' + str(qa.QA_thread) + '\n' + \
+                  str(qa.QA_time) + ' - INFO - To User:	 "' + qa.QA_answer + '" from thread ' + str(qa.QA_thread) + '\n' + \
+                  str(qa.QA_time) + ' - INFO - The final score of this testcase is ' + request.args['score'] + \
                   ', in ' + qa.QA_field + ' field.from thread ' + str(qa.QA_thread) + '\n'
 
         # with open('APP/data/Logs/' + qa.TPid + '/human_evaluation.log', "a", encoding="utf-8") as file:

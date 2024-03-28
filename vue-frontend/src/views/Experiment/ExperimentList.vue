@@ -193,12 +193,12 @@
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="success" @click.stop="handleUpdate(scope.row)">
+                                        <el-button size="mini" type="info" @click.stop="handleUpdate(scope.row)">
                                             更新报告
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="success" @click.stop="handleReport(scope.row)">
+                                        <el-button size="mini" type="success" @click.stop="handleDownload(scope.row)">
                                             下载报告
                                         </el-button>
                                     </el-dropdown-item>
@@ -401,6 +401,30 @@
             </el-dialog>
         </template>
 
+        <!-- 测试报告下载对话框 -->
+        <template>
+
+            <el-dialog title="下载测试报告" :visible.sync="downloader" @close="downloadClose">
+
+                <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
+                    <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
+                </div>
+
+                <el-form>
+                    <el-form-item label="选择下载版本">
+                        <el-select v-model="selectVersion" placeholder="请选择">
+                            <el-option v-for="index in reportCount" :key="index" :label="`V-${index}`" :value="index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="downloadClose">取消</el-button>
+                    <el-button type="primary" @click="confirmDownload">确定</el-button>
+                </span>
+            </el-dialog>
+        </template>
     </div>
 </template>
 
@@ -410,7 +434,7 @@ import { getExperimentByProjectId } from '@/api/experiment'
 import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOperationFile, addOperationFile, updateOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
-import { getExperimentProgress, updateExperimentStatus, genReport } from '@/api/expOperation'
+import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum } from '@/api/expOperation'
 import { startExp, updateReport } from '@/api/expOperation'
 import config from "@/services/conf"
 import ace from 'ace-builds/src-noconflict/ace';
@@ -431,6 +455,7 @@ export default {
             showCodeEditorDialog: false,
             showDialog: false,
             editDialog: false,
+            downloader: false,
             experimentList: [],
             newExpirement: { name: '', AK1: '', AK2: '', DS: '' },
             expList: [], // 待测试列表数据
@@ -449,6 +474,8 @@ export default {
             currentExpName: '',
             currentExpId: '',
             thisRowCollaborators: [],
+            reportCount: null,
+            selectVersion: null,
             // LL1ClassName: '',
             // LL2ClassName: ''
         }
@@ -774,7 +801,7 @@ export default {
                     message: '不能为空！',
                     type: 'warning'
                 });
-                return 
+                return
             }
 
             let checkData = { tPid: this.currentExpId, code: this.pythonCode_1, className: 'new_llm1' }
@@ -1057,7 +1084,6 @@ export default {
                         type: 'success',
                         message: row.id + '-' + row.name + '测试报告更新成功！'
                     });
-
                     // if (localStorage.getItem(row.id + '_report') !== null) {
                     //     let value = localStorage.getItem(row.id + '_report');
                     //     value = Number(value);
@@ -1067,31 +1093,48 @@ export default {
                     // else {
                     //     localStorage.setItem(row.id + '_report', '1')
                     // }
-
-                    let num = Number(localStorage.getItem(row.id + '_report'))
-                    genReport(row.id, num).then(res => {
-                        if (res.success) {
-                            let downloadUrl = res.url
-                            downloadUrl = downloadUrl.replace(/\\/g, '/');
-                            downloadUrl = downloadUrl.replace(/App/g, '');
-                            downloadUrl = config.API_URL + downloadUrl;
-                            const fileName = '测试报告';
-
-                            // 创建一个隐藏的<a>标签，设置属性并模拟点击
-                            const a = document.createElement('a');
-                            a.style.display = 'none';
-                            a.href = downloadUrl;
-                            a.download = fileName;
-                            document.body.appendChild(a);
-                            a.click();
-                            console.log('版本:', res.version)
-
-                            // 清理：移除<a>标签
-                            document.body.removeChild(a);
-                        }
-                    })
                 }
             })
+        },
+        handleDownload(row) {
+            getReportNum(row.id).then(res => {
+                this.reportCount = res.count
+            })
+            this.currentExpId = row.id
+            this.currentExpName = row.name
+            this.downloader = true
+        },
+        confirmDownload() {
+            genReport(this.currentExpId, this.selectVersion).then(res => {
+                if (res.success) {
+                    this.$message({
+                        type: 'success',
+                        message: this.currentExpId + '-' + this.currentExpName + '正在下载该测试的测试报告'
+                    });
+                    let downloadUrl = res.url
+                    downloadUrl = downloadUrl.replace(/\\/g, '/');
+                    downloadUrl = downloadUrl.replace(/App/g, '');
+                    downloadUrl = config.API_URL + downloadUrl;
+                    const fileName = '测试报告';
+
+                    // 创建一个隐藏的<a>标签，设置属性并模拟点击
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = downloadUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    console.log('版本:', res.version)
+
+                    // 清理：移除<a>标签
+                    document.body.removeChild(a);
+                    this.downloadClose()
+                }
+            })
+        },
+        downloadClose() {
+            this.selectVersion = null,
+                this.downloader = false
         }
     }
 }

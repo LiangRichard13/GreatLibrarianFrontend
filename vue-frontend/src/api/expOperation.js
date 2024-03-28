@@ -38,6 +38,14 @@ export function genReport(tPid,num) {
     return service({
         url: '/testProjectOperation',
         method: 'get',
-        params:{tPid:tPid,n:num}
+        params:{tPid:tPid,n:num,choose:2}
+    })
+}
+
+export function getReportNum(tPid){
+    return service({
+        url: '/testProjectOperation',
+        method: 'get',
+        params:{tPid:tPid,choose:1}
     })
 }

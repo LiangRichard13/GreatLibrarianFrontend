@@ -167,7 +167,7 @@ export default {
         })
         findApiKeyByUserId(id).then(res => {
           this.apiKeys = res.data;
-          console.log('获取的apikeys', this.apiKeys)
+          console.log('获取的apikeys', this.apiKey)
         })
         findDataSetByUserId(id).then(res => {
           this.dataSet = res.data;
@@ -221,8 +221,26 @@ export default {
     //   this.handleDialogClose(); // 关闭对话框
     // },
     handleExperiment(project) {
+      if(project.apiKey.length===0)
+     {
+      this.$message({
+                    message: '请重新配置API KEY',
+                    type: 'warning'
+                  });
+       return
+     }
+     else if(project.dataset.length===0)
+      {
+        this.$message({
+                    message: '请重新配置数据集',
+                    type: 'warning'
+                  });
+      }
+      else
+      {
       localStorage.setItem('thisProject', JSON.stringify(project));
       this.$router.push("/experimentList")
+      }
     },
     showEditDialog(row) {
       this.currentProjectId = row.id

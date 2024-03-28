@@ -31,7 +31,7 @@
           </el-table-column>
 
 
-          <el-table-column type="expand">
+          <el-table-column type="expand" lable="回答">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="回答:">

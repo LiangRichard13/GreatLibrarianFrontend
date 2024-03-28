@@ -754,18 +754,37 @@ export default {
                 this.editor_1.setTheme("ace/theme/chrome"); // 使用亮色主题
                 this.editor_1.session.setMode("ace/mode/python");
                 this.editor_1.setFontSize(18); // 设置字体大小为18px
+
                 if (localStorage.getItem(this.currentExpId + '_1') === null)
                     this.editor_1.setValue(template, 1);
                 else
                     this.editor_1.setValue(localStorage.getItem(this.currentExpId + '_1'), 1);
-                this.pythonCode_1 = this.editor_1.getValue()
+
+                this.pythonCode_1 = this.editor_1.getValue();
+
+                // this.editor_1.getSeesion().on('beforeChange', function (e) {
+                //     var range = e.lines.length; // 更改涉及的行数
+                //     var firstRowAffected = e.start.row; // 更改开始的行
+
+                //     // 检查是否影响了第一行
+                //     if (firstRowAffected === 0) {
+                //         // 阻止更改
+                //         e.preventDefault();
+                //     } else if (range > 1 && firstRowAffected < 1) {
+                //         // 如果更改影响多行，并且起始行包括第一行或更前，也阻止更改
+                //         e.preventDefault();
+                //     }
+                //     else {
+                //         this.pythonCode_1 = this.editor_1.getValue();
+                //     }
+                // });
 
                 // 监听代码改变事件
                 this.editor_1.session.on('change', () => {
+
                     this.pythonCode_1 = this.editor_1.getValue();
                 });
-            }
-            else {
+            } else {
                 console.log('The #python-editor element does not exist.')
             }
         },
@@ -780,7 +799,7 @@ export default {
                     this.editor_2.setValue(template, 1);
                 else
                     this.editor_2.setValue(localStorage.getItem(this.currentExpId + '_2'), 1);
-                this.pythonCode_1 = this.editor_1.getValue()
+
                 this.pythonCode_2 = this.editor_2.getValue()
 
                 // 监听代码改变事件
@@ -830,7 +849,7 @@ export default {
                         }
                         else {
                             this.$message({
-                                message: '评估模型call函数编译失败',
+                                message: '评估模型call函数编译失败,请检查语法错误',
                                 type: 'error'
                             })
                         }
@@ -838,7 +857,7 @@ export default {
                 }
                 else {
                     this.$message({
-                        message: '测试模型call函数编译失败',
+                        message: '测试模型call函数编译失败,请检查语法错误',
                         type: 'error'
                     })
 
@@ -861,7 +880,7 @@ export default {
                 .catch(error => {
                     console.error('Error loading the template:', error)
                     this.$message({
-                        message: '无法加载LL1模板文件',
+                        message: '加载LL1模板文件出错',
                         type: 'error'
                     });
                 }
@@ -874,7 +893,7 @@ export default {
                 .catch(error => {
                     console.error('Error loading the template:', error)
                     this.$message({
-                        message: '无法加载LL2模板文件',
+                        message: '加载LL1模板文件出错',
                         type: 'error'
                     });
                 }

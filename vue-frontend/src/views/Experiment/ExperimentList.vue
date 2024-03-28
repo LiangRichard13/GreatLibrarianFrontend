@@ -193,8 +193,13 @@
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
+                                        <el-button size="mini" type="success" @click.stop="handleUpdate(scope.row)">
+                                            更新报告
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
                                         <el-button size="mini" type="success" @click.stop="handleReport(scope.row)">
-                                            生成报告
+                                            下载报告
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
@@ -450,7 +455,7 @@ export default {
     },
     mounted() {
         let storedProject = localStorage.getItem('thisProject');
-        if (storedProject!==null) {
+        if (storedProject !== null) {
             this.thisProject = JSON.parse(storedProject);
         }
         else {
@@ -764,6 +769,13 @@ export default {
             // if (this.LL1ClassName !== '' && this.LL2ClassName !== '') {
             console.log('LLM1配置', this.pythonCode_1)
             console.log('LLM2配置', this.pythonCode_2)
+            if (this.pythonCode_1 === '' || this.pythonCode_2 === '') {
+                this.$message({
+                    message: '不能为空！',
+                    type: 'warning'
+                });
+                return 
+            }
 
             let checkData = { tPid: this.currentExpId, code: this.pythonCode_1, className: 'new_llm1' }
             checkOperationFile(checkData).then(res => {
@@ -943,15 +955,15 @@ export default {
             this.showCodeEditorDialog = true
         },
         proceedingExp() {
-            const interval = setInterval(() => {
+            this.interval = setInterval(() => {
                 // 如果 this.proceeding 为空，则停止轮询
 
                 if (!this.proceeding.length) {
-                    clearInterval(interval);
+                    clearInterval(this.interval);
                     return;
                 }
                 if (this.currentTab !== '正在测试') {
-                    clearInterval(interval);
+                    clearInterval(this.interval);
                     return;
                 }
 
@@ -969,7 +981,7 @@ export default {
                                         message: experiment.id + '-' + experiment.name + '执行完成'
                                     });
                                     // 停止当前轮询
-                                    clearInterval(interval);
+                                    clearInterval(this.interval);
                                     this.setExpEmpty()
                                 }
                             });
@@ -1010,8 +1022,12 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
-            if (this.currentTab === '正在测试')
+            if (this.currentTab === '正在测试') {
+                if (this.interval) {
+                    clearInterval(this.interval)
+                }
                 this.proceedingExp()
+            }
         },
         afterDeleteExp(row, index) {
             localStorage.removeItem(row.id + '_1')
@@ -1034,23 +1050,23 @@ export default {
                 // 你可以根据需要添加更多的状态分类
             }
         },
-        handleReport(row) {
+        handleUpdate(row) {
             updateReport(row.id).then(res => {
                 if (res.success) {
                     this.$message({
                         type: 'success',
-                        message: row.id + '-' + row.name + '测试报告更新成功！开始生成报告，请稍等...'
+                        message: row.id + '-' + row.name + '测试报告更新成功！'
                     });
 
-                    if (localStorage.getItem(row.id + '_report') !== null) {
-                        let value = localStorage.getItem(row.id + '_report');
-                        value = Number(value);
-                        value++;
-                        localStorage.setItem(row.id + '_report', value.toString());
-                    }
-                    else {
-                        localStorage.setItem(row.id + '_report', '1')
-                    }
+                    // if (localStorage.getItem(row.id + '_report') !== null) {
+                    //     let value = localStorage.getItem(row.id + '_report');
+                    //     value = Number(value);
+                    //     value++;
+                    //     localStorage.setItem(row.id + '_report', value.toString());
+                    // }
+                    // else {
+                    //     localStorage.setItem(row.id + '_report', '1')
+                    // }
 
                     let num = Number(localStorage.getItem(row.id + '_report'))
                     genReport(row.id, num).then(res => {
@@ -1068,7 +1084,7 @@ export default {
                             a.download = fileName;
                             document.body.appendChild(a);
                             a.click();
-                            console.log('版本:',res.version)
+                            console.log('版本:', res.version)
 
                             // 清理：移除<a>标签
                             document.body.removeChild(a);

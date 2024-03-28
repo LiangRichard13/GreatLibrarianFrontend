@@ -13,10 +13,11 @@
           tooltip-effect="dark" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55">
           </el-table-column>
-          <el-table-column label="QA ID" prop="QAid"></el-table-column>
+          <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
           <el-table-column label="问题" prop="Q"></el-table-column>
+          <el-table-column label="回答" prop="A"></el-table-column>
 
-          <el-table-column type="expand">
+          <!-- <el-table-column type="expand">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="回答:">
@@ -24,7 +25,7 @@
                 </el-form-item>
               </el-form>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         <div class="pagination-container" style="margin-top: 20px;">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"

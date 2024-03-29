@@ -60,9 +60,8 @@ class TPOperation(Resource):
 
     # 下载pdf报告
     def get(self):
-        url = os.path.join('APP', 'data', 'Logs', request.args['tPid'])  # 报告目录
-        dir_r = os.path.join(BackendPath(), url)
+        dir_r = os.path.join(BackendPath(), 'APP', 'data', 'Logs', request.args['tPid'])  # 报告目录
         if request.args['choose'] == '1':  # 报告数量
-            return jsonify({'count': sum(1 for file in os.listdir(dir_r) if file.startswith('report-v'))})
+            return jsonify({'count': sum(1 for file in os.listdir(dir_r) if file.startswith('report-v')),'success': True})
         if request.args['choose'] == '2':  # 报告路径
-            return jsonify({'url': os.path.join(url, 'report-v' + request.args['n'] + '.pdf'), 'success': True})
+            return jsonify({'url': os.path.join('App', 'data', 'Logs', request.args['tPid'],'report-v' + request.args['n'] + '.pdf'),'success': True})

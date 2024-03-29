@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <el-page-header @back="goBack" content="返回">
+    <el-page-header @back="goBack" content="测试列表">
     </el-page-header>
     <div class="content">
       <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
@@ -31,7 +31,7 @@
           </el-table-column>
 
 
-          <el-table-column type="expand">
+          <el-table-column type="expand" lable="回答">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="回答:">

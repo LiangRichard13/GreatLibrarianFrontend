@@ -13,10 +13,11 @@
           tooltip-effect="dark" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55">
           </el-table-column>
-          <el-table-column label="QA ID" prop="QAid"></el-table-column>
+          <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
           <el-table-column label="问题" prop="Q"></el-table-column>
+          <!-- <el-table-column label="回答" prop="A"></el-table-column> -->
 
-          <el-table-column type="expand">
+          <el-table-column type="expand" lable="回答">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="回答:">
@@ -88,7 +89,7 @@ export default {
   mounted() {
 
     let storedExperiment = localStorage.getItem('thisExperiment');
-    if (storedExperiment) {
+    if (storedExperiment!==null) {
       this.thisExperiment = JSON.parse(storedExperiment);
       console.log('进行分发的测试:',this,this.thisExperiment)
     }

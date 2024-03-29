@@ -193,8 +193,13 @@
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="success" @click.stop="handleReport(scope.row)">
-                                            生成报告
+                                        <el-button size="mini" type="info" @click.stop="handleUpdate(scope.row)">
+                                            更新报告
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
+                                        <el-button size="mini" type="success" @click.stop="handleDownload(scope.row)">
+                                            下载报告
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
@@ -396,6 +401,30 @@
             </el-dialog>
         </template>
 
+        <!-- 测试报告下载对话框 -->
+        <template>
+
+            <el-dialog title="下载测试报告" :visible.sync="downloader" @close="downloadClose">
+
+                <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
+                    <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
+                </div>
+
+                <el-form>
+                    <el-form-item label="选择下载版本">
+                        <el-select v-model="selectVersion" placeholder="请选择">
+                            <el-option v-for="index in reportCount" :key="index" :label="`V-${index}`" :value="index">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="downloadClose">取消</el-button>
+                    <el-button type="primary" @click="confirmDownload">确定</el-button>
+                </span>
+            </el-dialog>
+        </template>
     </div>
 </template>
 
@@ -405,7 +434,7 @@ import { getExperimentByProjectId } from '@/api/experiment'
 import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOperationFile, addOperationFile, updateOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
-import { getExperimentProgress, updateExperimentStatus, genReport } from '@/api/expOperation'
+import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum } from '@/api/expOperation'
 import { startExp, updateReport } from '@/api/expOperation'
 import config from "@/services/conf"
 import ace from 'ace-builds/src-noconflict/ace';
@@ -426,6 +455,7 @@ export default {
             showCodeEditorDialog: false,
             showDialog: false,
             editDialog: false,
+            downloader: false,
             experimentList: [],
             newExpirement: { name: '', AK1: '', AK2: '', DS: '' },
             expList: [], // 待测试列表数据
@@ -444,13 +474,15 @@ export default {
             currentExpName: '',
             currentExpId: '',
             thisRowCollaborators: [],
+            reportCount: null,
+            selectVersion: null,
             // LL1ClassName: '',
             // LL2ClassName: ''
         }
     },
     mounted() {
         let storedProject = localStorage.getItem('thisProject');
-        if (storedProject) {
+        if (storedProject !== null) {
             this.thisProject = JSON.parse(storedProject);
         }
         else {
@@ -722,18 +754,37 @@ export default {
                 this.editor_1.setTheme("ace/theme/chrome"); // 使用亮色主题
                 this.editor_1.session.setMode("ace/mode/python");
                 this.editor_1.setFontSize(18); // 设置字体大小为18px
+
                 if (localStorage.getItem(this.currentExpId + '_1') === null)
                     this.editor_1.setValue(template, 1);
                 else
                     this.editor_1.setValue(localStorage.getItem(this.currentExpId + '_1'), 1);
-                this.pythonCode_1 = this.editor_1.getValue()
+
+                this.pythonCode_1 = this.editor_1.getValue();
+
+                // this.editor_1.getSeesion().on('beforeChange', function (e) {
+                //     var range = e.lines.length; // 更改涉及的行数
+                //     var firstRowAffected = e.start.row; // 更改开始的行
+
+                //     // 检查是否影响了第一行
+                //     if (firstRowAffected === 0) {
+                //         // 阻止更改
+                //         e.preventDefault();
+                //     } else if (range > 1 && firstRowAffected < 1) {
+                //         // 如果更改影响多行，并且起始行包括第一行或更前，也阻止更改
+                //         e.preventDefault();
+                //     }
+                //     else {
+                //         this.pythonCode_1 = this.editor_1.getValue();
+                //     }
+                // });
 
                 // 监听代码改变事件
                 this.editor_1.session.on('change', () => {
+
                     this.pythonCode_1 = this.editor_1.getValue();
                 });
-            }
-            else {
+            } else {
                 console.log('The #python-editor element does not exist.')
             }
         },
@@ -748,7 +799,7 @@ export default {
                     this.editor_2.setValue(template, 1);
                 else
                     this.editor_2.setValue(localStorage.getItem(this.currentExpId + '_2'), 1);
-                this.pythonCode_1 = this.editor_1.getValue()
+
                 this.pythonCode_2 = this.editor_2.getValue()
 
                 // 监听代码改变事件
@@ -764,6 +815,13 @@ export default {
             // if (this.LL1ClassName !== '' && this.LL2ClassName !== '') {
             console.log('LLM1配置', this.pythonCode_1)
             console.log('LLM2配置', this.pythonCode_2)
+            if (this.pythonCode_1 === '' || this.pythonCode_2 === '') {
+                this.$message({
+                    message: '不能为空！',
+                    type: 'warning'
+                });
+                return
+            }
 
             let checkData = { tPid: this.currentExpId, code: this.pythonCode_1, className: 'new_llm1' }
             checkOperationFile(checkData).then(res => {
@@ -791,7 +849,7 @@ export default {
                         }
                         else {
                             this.$message({
-                                message: '评估模型call函数编译失败',
+                                message: '评估模型call函数编译失败,请检查语法错误',
                                 type: 'error'
                             })
                         }
@@ -799,7 +857,7 @@ export default {
                 }
                 else {
                     this.$message({
-                        message: '测试模型call函数编译失败',
+                        message: '测试模型call函数编译失败,请检查语法错误',
                         type: 'error'
                     })
 
@@ -822,7 +880,7 @@ export default {
                 .catch(error => {
                     console.error('Error loading the template:', error)
                     this.$message({
-                        message: '无法加载LL1模板文件',
+                        message: '加载LL1模板文件出错',
                         type: 'error'
                     });
                 }
@@ -835,7 +893,7 @@ export default {
                 .catch(error => {
                     console.error('Error loading the template:', error)
                     this.$message({
-                        message: '无法加载LL2模板文件',
+                        message: '加载LL1模板文件出错',
                         type: 'error'
                     });
                 }
@@ -943,15 +1001,15 @@ export default {
             this.showCodeEditorDialog = true
         },
         proceedingExp() {
-            const interval = setInterval(() => {
+            this.interval = setInterval(() => {
                 // 如果 this.proceeding 为空，则停止轮询
 
                 if (!this.proceeding.length) {
-                    clearInterval(interval);
+                    clearInterval(this.interval);
                     return;
                 }
                 if (this.currentTab !== '正在测试') {
-                    clearInterval(interval);
+                    clearInterval(this.interval);
                     return;
                 }
 
@@ -969,7 +1027,7 @@ export default {
                                         message: experiment.id + '-' + experiment.name + '执行完成'
                                     });
                                     // 停止当前轮询
-                                    clearInterval(interval);
+                                    clearInterval(this.interval);
                                     this.setExpEmpty()
                                 }
                             });
@@ -1010,8 +1068,12 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
-            if (this.currentTab === '正在测试')
+            if (this.currentTab === '正在测试') {
+                if (this.interval) {
+                    clearInterval(this.interval)
+                }
                 this.proceedingExp()
+            }
         },
         afterDeleteExp(row, index) {
             localStorage.removeItem(row.id + '_1')
@@ -1034,47 +1096,64 @@ export default {
                 // 你可以根据需要添加更多的状态分类
             }
         },
-        handleReport(row) {
+        handleUpdate(row) {
             updateReport(row.id).then(res => {
                 if (res.success) {
                     this.$message({
                         type: 'success',
-                        message: row.id + '-' + row.name + '测试报告更新成功！开始生成报告，请稍等...'
+                        message: row.id + '-' + row.name + '测试报告更新成功！'
                     });
-
-                    if (localStorage.getItem(row.id + '_report') !== null) {
-                        let value = localStorage.getItem(row.id + '_report');
-                        value = Number(value);
-                        value++;
-                        localStorage.setItem(row.id + '_report', value.toString());
-                    }
-                    else {
-                        localStorage.setItem(row.id + '_report', '1')
-                    }
-
-                    let num = Number(localStorage.getItem(row.id + '_report'))
-                    genReport(row.id, num).then(res => {
-                        if (res.success) {
-                            let downloadUrl = res.url
-                            downloadUrl = downloadUrl.replace(/\\/g, '/');
-                            downloadUrl = downloadUrl.replace(/App/g, '');
-                            downloadUrl = config.API_URL + downloadUrl;
-                            const fileName = '测试报告';
-
-                            // 创建一个隐藏的<a>标签，设置属性并模拟点击
-                            const a = document.createElement('a');
-                            a.style.display = 'none';
-                            a.href = downloadUrl;
-                            a.download = fileName;
-                            document.body.appendChild(a);
-                            a.click();
-
-                            // 清理：移除<a>标签
-                            document.body.removeChild(a);
-                        }
-                    })
+                    // if (localStorage.getItem(row.id + '_report') !== null) {
+                    //     let value = localStorage.getItem(row.id + '_report');
+                    //     value = Number(value);
+                    //     value++;
+                    //     localStorage.setItem(row.id + '_report', value.toString());
+                    // }
+                    // else {
+                    //     localStorage.setItem(row.id + '_report', '1')
+                    // }
                 }
             })
+        },
+        handleDownload(row) {
+            getReportNum(row.id).then(res => {
+                this.reportCount = res.count
+            })
+            this.currentExpId = row.id
+            this.currentExpName = row.name
+            this.downloader = true
+        },
+        confirmDownload() {
+            genReport(this.currentExpId, this.selectVersion).then(res => {
+                if (res.success) {
+                    this.$message({
+                        type: 'success',
+                        message: this.currentExpId + '-' + this.currentExpName + '正在下载该测试的测试报告'
+                    });
+                    let downloadUrl = res.url
+                    downloadUrl = downloadUrl.replace(/\\/g, '/');
+                    downloadUrl = downloadUrl.replace(/App/g, '');
+                    downloadUrl = config.API_URL + downloadUrl;
+                    const fileName = '测试报告';
+
+                    // 创建一个隐藏的<a>标签，设置属性并模拟点击
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = downloadUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    console.log('版本:', res.version)
+
+                    // 清理：移除<a>标签
+                    document.body.removeChild(a);
+                    this.downloadClose()
+                }
+            })
+        },
+        downloadClose() {
+            this.selectVersion = null,
+                this.downloader = false
         }
     }
 }

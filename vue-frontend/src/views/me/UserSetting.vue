@@ -46,7 +46,7 @@
           <el-button size="small" type="primary" style="margin-left:50px">
             <i class="el-icon-upload2"></i> 点击上传
           </el-button>
-          <div slot="tip" class="el-upload__tip">只能上传 jpg/png 文件</div>
+          <div slot="tip" class="el-upload__tip">请上传 jpg/png 文件</div>
         </el-upload>
       </div>
     </div>

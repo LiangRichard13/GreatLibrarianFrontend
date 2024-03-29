@@ -5,71 +5,26 @@ import os
 import re
 
 from datetime import datetime
-from App.models import TestProject
+from App.models import TestProject, APIKey
 from App.utils.backend_path import BackendPath
-
-"""def add_code_to_class(file, addCode, className):
-    try:
-        template = os.path.join(_backend_path(), 'App', 'utils', 'config_template.py')  # 模板路径
-        with open(template, 'r', encoding='utf-8') as f:
-            content = f.read()  # 读取原文件内容
-        start = content.find(f"class {className}(LLMs):")  # 定位要添加代码的类所在的位置
-        if start == -1:
-            return False
-        end = content.find("\n", start)
-        # 在类的合适位置插入新代码
-        new_content = ("# @Creat File Time: " + datetime.now().strftime("%Y/%m/%d %H:%M") + "\n"
-                       + content[:end] + f"\n{addCode}\n" + content[end:])
-        os.makedirs(os.path.join('..', 'data', 'config', 'Temp'), exist_ok=True)  # 创建多层文件夹
-        # 将修改后的内容写入新文件
-        with open(file, 'w', encoding='utf-8') as new_file:
-            new_file.write(new_content)
-        compile(new_content, file, 'exec')  # 编译新文件以检查语法错误
-        return True
-    except SyntaxError as e:
-        print(f"配置脚本文件发生语法错误：{e}")
-        return False
-    except Exception as e:
-        print(f"发生了其他错误：{e}")
-        return False"""
 
 
 # 补充类的实例化参数
 def update_instance(tPid):
     tp = TestProject.query.filter(TestProject.tP_id == tPid).first()
+    AK1 = APIKey.query.filter(APIKey.AK_id == tp.AK1).first()
+    AK2 = APIKey.query.filter(APIKey.AK_id == tp.AK2).first()
     temp_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件临时区路径
-
-    # 参数值
-    type_1 = "qwen_turbo"
-    apikey_1 = "your_apikey_1"
-    name_1 = "qwen_turbo_name"
-    llm_intro_1 = "your_llm_intro_1"
-
-    type_2 = "wenxin"
-    ak_2 = "your_ak_2"
-    sk_2 = "your_sk_2"
-    name_2 = "wenxin_name"
-    llm_intro_2 = "your_llm_intro_2"
-
     # 读取模板文件内容
     with open(temp_path, 'r', encoding='utf-8') as file:
         template_content = file.read()
-
-    # 定义要替换的变量名
-    variable_name_1 = "llm_cfg1"
-    variable_name_2 = "llm_cfg2"
-
-    # 构造替换的正则表达式
-    pattern_1 = re.compile(rf'{variable_name_1}\s*=\s*dict\([^)]*\)', re.DOTALL)
-    pattern_2 = re.compile(rf'{variable_name_2}\s*=\s*dict\([^)]*\)', re.DOTALL)
-
     # 替换模板中的值
-    llm_cfg1_updated = pattern_1.sub(
-        f'{variable_name_1} = dict(type="{type_1}", apikey="{apikey_1}", name="{name_1}", llm_intro="{llm_intro_1}")',
-        template_content)
-    llm_cfg2_updated = pattern_2.sub(
-        f'{variable_name_2} = dict(type="{type_2}", ak="{ak_2}", sk="{sk_2}", name="{name_2}", llm_intro="{llm_intro_2}")',
-        llm_cfg1_updated)
+    llm_cfg1_updated = re.compile(rf'llm_cfg1\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
+        f'llm_cfg1 = dict(type="{AK1.AK_name}", apikey="{AK1.AK_value}",name="{AK1.AK_name}",'
+        f' llm_intro="{"" if AK1.AK_intro is None else AK1.AK_intro}")', template_content)
+    llm_cfg2_updated = re.compile(rf'llm_cfg2\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
+        f'llm_cfg2 = dict(type="{AK2.AK_name}", apikey="{AK1.AK_value}", name="{AK2.AK_name}", '
+        f'llm_intro="{"" if AK2.AK_intro is None else AK2.AK_intro}")', llm_cfg1_updated)
     try:
         # 写入更新后的内容到新文件
         with open(temp_path, 'w', encoding='utf-8') as output_file:
@@ -113,7 +68,7 @@ def update_code_to_class(file_path, updated_code, class_name):
 
 
 def add_call_function(file_path, flag, updated_code, class_name):
-    template = file_path if flag == 1 else os.path.join(BackendPath(), 'App', 'utils', 'config_template.py')  # 模板路径
+    template = file_path if flag == 1 else os.path.join(BackendPath(), 'App', 'utils', 'config_template_fin.py')  # 模板路径
     with open(template, 'r', encoding='UTF-8') as file:
         file_code = file.read()
     # 解析代码为AST
@@ -145,20 +100,3 @@ def add_call_function(file_path, flag, updated_code, class_name):
             else:
                 print(f"Class '{class_name}' already has a __call__ function.")
             break
-
-# update_code = """
-# def __call__(self, prompt: str, history=None) -> str:
-#     print("我是修改后的代码code-------------------")
-#     return True
-# """
-
-# add_code = """
-# def __call__(self, prompt: str, history=None) -> str:
-#     print("我是修改后的代码code-------------------")
-#     return True
-# """
-
-# config_path = os.path.join('..', 'data', 'config', 'config_test.py')  # 配置文件路径
-# # print(update_code_to_class(config_path, update_code, "new_llm1"))
-# temp_path = os.path.join('..', 'data', 'config', 'Temp', 'config_123.py')  # 配置文件临时区路径
-# print(add_call_function(temp_path, add_code, "new_llm1"))

@@ -221,6 +221,7 @@ export default {
     //   this.handleDialogClose(); // 关闭对话框
     // },
     handleExperiment(project) {
+      console.log('该项目',project)
       if(project.apiKey.length===0)
      {
       this.$message({
@@ -229,7 +230,7 @@ export default {
                   });
        return
      }
-     else if(project.dataset.length===0)
+     else if(project.dataSet.length===0)
       {
         this.$message({
                     message: '请重新配置数据集',

@@ -17,7 +17,7 @@
           <el-table-column label="问题" prop="Q"></el-table-column>
           <!-- <el-table-column label="回答" prop="A"></el-table-column> -->
 
-          <el-table-column type="expand" lable="回答">
+          <el-table-column type="expand" label="回答">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="回答:">

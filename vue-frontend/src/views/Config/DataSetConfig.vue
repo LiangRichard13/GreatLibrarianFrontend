@@ -61,6 +61,10 @@
                 </el-button>
                 <div slot="tip" class="el-upload__tip">只能上传zip文件</div>
               </el-upload>
+              <span class="el-upload__tip" v-if="isUpload == true" style="color: black; margin-right: 10px;">
+                文件已添加
+                <el-icon name="check" style="color: green;"></el-icon>
+              </span>
             </el-form-item>
           </template>
         </el-form>
@@ -87,7 +91,8 @@ export default {
       dataSet: [],
       showDialog: false,
       newDataItem: { name: '', info: '' },
-      uploadFile: null
+      uploadFile: null,
+      isUpload: false
     }
   },
   mounted() {
@@ -159,14 +164,16 @@ export default {
       this.newDataItem.name = '';
       this.newDataItem.info = '';// 重置输入
       this.uploadFile = null
+      this.isUpload = false
     },
     beforeUpload(file) {
       // 检查文件类型等逻辑...
       this.uploadedFile = file; // 保存文件引用，但不上传
+      this.isUpload = true
       this.$message({
-            message: '文件添加成功',
-            type: 'success'
-          });
+        message: '文件添加成功',
+        type: 'success'
+      });
       return false; // 阻止自动上传
     },
 

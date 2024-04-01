@@ -10,20 +10,13 @@
 
     <div class="table-container">
       <el-table :data="dataSet" style="width: 100%">
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="数据集文件URL:">
-                <span>{{ props.row.url }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column label="数据集 ID" prop="id">
-        </el-table-column>
+        <!-- <el-table-column label="数据集 ID" prop="id">
+        </el-table-column> -->
         <el-table-column label="测试对象" prop="name">
         </el-table-column>
         <el-table-column label="详细描述" prop="info">
+        </el-table-column>
+        <el-table-column label="上传文件名称" prop="url">
         </el-table-column>
 
         <!-- 操作列 -->
@@ -56,13 +49,15 @@
           <template>
             <el-form-item label="上传文件">
               <el-upload class="upload-demo" accept="application/zip" :before-upload="beforeUpload" multiple :limit="1">
+                <div style="display: flex; align-items: center;">
                 <el-button size="small" type="primary">
                   <i class="el-icon-upload2"></i> 点击上传
                 </el-button>
-                <div slot="tip" class="el-upload__tip">只能上传zip文件</div>
+                <div slot="tip" class="el-upload__tip" style="margin-left: 20px;">只能上传zip文件</div>
+                </div>
               </el-upload>
               <span class="el-upload__tip" v-if="isUpload == true" style="color: black; margin-right: 10px;">
-                文件已添加
+                文件已上传
                 <el-icon name="check" style="color: green;"></el-icon>
               </span>
             </el-form-item>
@@ -105,6 +100,13 @@ export default {
         const id = localStorage.getItem("uid")
         findDataSetByUserId(id).then(res => {
           this.dataSet = res.data;
+          this.dataSet.forEach(item=>{
+            item.url=item.url.replace(/App/g, '')
+            item.url=item.url.replace(/data/g, '')
+            item.url=item.url.replace(/DataSet/g, '')
+            item.url=item.url.replace(/\\/g, '')
+
+          })
         })
       }
     },

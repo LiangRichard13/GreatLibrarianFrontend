@@ -13,7 +13,7 @@
                   <el-link style="float: right;" @click="pushToProject()">我的项目列表</el-link>
                 </div>
                 <el-table :data="myProjects">
-                  <el-table-column label="项目 ID" prop="id"></el-table-column>
+                  <!-- <el-table-column label="项目 ID" prop="id"></el-table-column> -->
                   <el-table-column label="项目名称" prop="name"></el-table-column>
                   <el-table-column label="测试说明" prop="info"></el-table-column>
                 </el-table>
@@ -25,7 +25,7 @@
                 </div>
                 <el-table :data="participatedExp">
                   <!-- 表格内容 -->
-                  <el-table-column label="测试 ID" prop="id"></el-table-column>
+                  <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                   <el-table-column label="测试名称" prop="name"></el-table-column>
                   <el-table-column label="待审核条数" prop="thisExpQA">
                     <template slot-scope="scope">

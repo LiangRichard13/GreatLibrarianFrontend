@@ -8,7 +8,7 @@
             </h3>
             <div class="section">
                 <el-table :data="experimentList" style="width: 100%">
-                    <el-table-column label="测试 ID" prop="id"></el-table-column>
+                    <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <!-- <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>

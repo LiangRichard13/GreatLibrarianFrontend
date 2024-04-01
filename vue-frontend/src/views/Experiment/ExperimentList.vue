@@ -20,7 +20,7 @@
             <div class="section" v-if="currentTab === '待测试'">
                 <h4>待测试</h4>
                 <el-table :data="expList" style="width: 100%">
-                    <el-table-column label="测试 ID" prop="id"></el-table-column>
+                    <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
@@ -120,7 +120,7 @@
             <div class="section" v-if="currentTab === '正在测试'">
                 <h4>正在测试</h4>
                 <el-table :data="proceeding" style="width: 100%">
-                    <el-table-column label="测试 ID" prop="id"></el-table-column>
+                    <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
@@ -142,7 +142,7 @@
             <div class="section" v-if="currentTab === '待审核'">
                 <h4>待审核</h4>
                 <el-table :data="reviewList" style="width: 100%">
-                    <el-table-column label="测试 ID" prop="id"></el-table-column>
+                    <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
@@ -223,7 +223,7 @@
             <div class="section" v-if="currentTab === '已完成'">
                 <h4>已完成</h4>
                 <el-table :data="doneList" style="width: 100%">
-                    <el-table-column label="测试 ID" prop="id"></el-table-column>
+                    <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
@@ -410,18 +410,29 @@
                     <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
                 </div>
 
-                <el-form>
-                    <el-form-item label="选择下载版本">
-                        <el-select v-model="selectVersion" placeholder="请选择">
+                <!-- <el-select v-model="selectVersion" placeholder="请选择">
                             <el-option v-for="index in reportCount" :key="index" :label="`V-${index}`" :value="index">
                             </el-option>
-                        </el-select>
+                        </el-select> -->
+                <el-form>
+                    <el-form-item>
+                        <el-table :data="downLoadTable" style="width: 100%">
+                            <el-table-column prop="index" label="版本">
+                                <template slot-scope="scope">
+                                    Version-{{ scope.row.index }}
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="操作">
+                                <template slot-scope="scope">
+                                    <el-button type="primary" @click="confirmDownload(scope.row.index)">下载报告</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
                     </el-form-item>
                 </el-form>
-
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="downloadClose">取消</el-button>
-                    <el-button type="primary" @click="confirmDownload">确定</el-button>
+                    <!-- <el-button type="primary" @click="confirmDownload">确定</el-button> -->
                 </span>
             </el-dialog>
         </template>
@@ -450,6 +461,7 @@ export default {
     name: "ExperimentList",
     data() {
         return {
+            downLoadTable: [],
             currentTab: '待测试', // 默认选中的选项卡
             friendsToExp: false,
             showCodeEditorDialog: false,
@@ -475,7 +487,7 @@ export default {
             currentExpId: '',
             thisRowCollaborators: [],
             reportCount: null,
-            selectVersion: null,
+            // selectVersion: null,
             // LL1ClassName: '',
             // LL2ClassName: ''
         }
@@ -1078,7 +1090,7 @@ export default {
         afterDeleteExp(row, index) {
             localStorage.removeItem(row.id + '_1')
             localStorage.removeItem(row.id + '_2')
-            localStorage.removeItem(row.id + 'report')
+            // localStorage.removeItem(row.id + 'report')
             this.$message({
                 message: '删除成功',
                 type: 'success',
@@ -1118,13 +1130,14 @@ export default {
         handleDownload(row) {
             getReportNum(row.id).then(res => {
                 this.reportCount = res.count
+                this.initDownLoadTable()
             })
             this.currentExpId = row.id
             this.currentExpName = row.name
             this.downloader = true
         },
-        confirmDownload() {
-            genReport(this.currentExpId, this.selectVersion).then(res => {
+        confirmDownload(selectVersion) {
+            genReport(this.currentExpId, selectVersion).then(res => {
                 if (res.success) {
                     this.$message({
                         type: 'success',
@@ -1152,9 +1165,14 @@ export default {
             })
         },
         downloadClose() {
-            this.selectVersion = null,
-                this.downloader = false
-        }
+            // this.selectVersion = null,
+            this.downloader = false
+        },
+        initDownLoadTable() {
+            this.downLoadTable = Array.from({ length: this.reportCount }, (_, i) => ({
+                index: i + 1, // 生成从1开始的行数
+            }));
+        },
     }
 }
 

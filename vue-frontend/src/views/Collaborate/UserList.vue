@@ -5,13 +5,13 @@
     </h3>
     <template v-if="userList.length">
       <el-row :gutter="20">
-        <el-col :span="13" v-for="(user, index) in userList" :key="user.id">
+        <el-col :span="7" v-for="(user, index) in userList" :key="user.id">
           <el-card style="margin-bottom: 20px;">
             <div style="display:flex; align-items: center;">
               <img :src="user.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
               <div style="margin-left: 10px;">
                 <p>用户名:{{ user.name }}</p>
-                <p>用户ID:{{ user.id }}</p>
+                <!-- <p>用户ID:{{ user.id }}</p> -->
                 <p>IP地址:{{ user.ip }}</p>
 
                 <!-- Conditional rendering for online/offline status -->

@@ -10,7 +10,7 @@
 
     <div class="table-container">
       <el-table :data="apiKeys" style="width: 100%">
-        <el-table-column prop="id" label="API_KEY ID" width="300%"></el-table-column>
+        <!-- <el-table-column prop="id" label="API_KEY ID" width="300%"></el-table-column> -->
         <el-table-column prop="name" label="大模型名称" width="300%"></el-table-column>
         <el-table-column prop="value" label="密钥"></el-table-column>
         <el-table-column  label="介绍" width="500%">

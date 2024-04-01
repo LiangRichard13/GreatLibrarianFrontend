@@ -10,7 +10,7 @@
               <img :src="row.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
               <div style="margin-left: 10px;">
                 <p>用户名:{{ row.name }}</p>
-                <p>用户ID:{{ row.id }}</p>
+                <!-- <p>用户ID:{{ row.id }}</p> -->
                 <p>IP地址:{{ row.ip }}
                   <span v-if="row.ip == null" style="color: red; margin-right: 10px;">用户已登出</span>
                   <span v-else-if="row.ip != null && row.state == -1" style="color: red;">用户不在同一局域网下</span>

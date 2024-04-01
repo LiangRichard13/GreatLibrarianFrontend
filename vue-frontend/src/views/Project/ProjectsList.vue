@@ -5,7 +5,7 @@
 
     <div class="table-container">
       <el-table :data="projectList" style="width: 100%">
-        <el-table-column label="项目 ID" prop="id"></el-table-column>
+        <!-- <el-table-column label="项目 ID" prop="id"></el-table-column> -->
         <el-table-column label="项目名称" prop="name"></el-table-column>
         <el-table-column label="测试说明" prop="info"></el-table-column>
 
@@ -22,7 +22,8 @@
         <el-table-column label="LLM">
           <template slot-scope="scope">
             <div v-for="apiKey in scope.row.apiKey" :key="apiKey.id">
-              {{ apiKey.id }} - {{ apiKey.name }}
+              <!-- {{ apiKey.id }} - {{ apiKey.name }} -->
+           {{ apiKey.name }}
             </div>
           </template>
         </el-table-column>
@@ -31,7 +32,8 @@
         <el-table-column label="数据集">
           <template slot-scope="scope">
             <div v-for="data in scope.row.dataSet" :key="data.id">
-              {{ data.id }} - {{ data.name }}
+              <!-- {{ data.id }} - {{ data.name }} -->
+          {{ data.name }}
             </div>
           </template>
         </el-table-column>

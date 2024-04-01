@@ -10,7 +10,7 @@
     <template v-if="QAList.length">
       <div class="table-container">
         <el-table :data="pagedQAList" style="width: 100%">
-          <el-table-column label="QA ID" prop="QAid"></el-table-column>
+          <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
           <el-table-column label="问题" prop="Q"></el-table-column>
           <el-table-column label="打分" prop="score">
             <template slot-scope="scope">

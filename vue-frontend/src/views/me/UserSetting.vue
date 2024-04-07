@@ -33,7 +33,7 @@
         <el-form-item style="padding: 0;" label="API_KEY">
           <div v-for="(row, index) in apiKeys" :key="index" class="api-key-item"
             style="box-shadow: 0px 0px 10px rgba(0,0,0,0.1); padding: 10px; margin-bottom: 20px;">
-            API_KEY({{ index + 1 }}): {{ row.name }}--{{ row.value }}
+          {{ row.name }}-----{{ row.value }}
           </div>
 
           <el-button @click="goToKeyConfig" type="success">配置我的API_KEY</el-button>

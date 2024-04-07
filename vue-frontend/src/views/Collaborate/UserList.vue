@@ -4,22 +4,22 @@
       在同一局域网下的用户
     </h3>
     <template v-if="userList.length">
-      <el-row :gutter="20">
-        <el-col :span="7" v-for="(user, index) in userList" :key="user.id">
-          <el-card style="margin-bottom: 20px;">
+      <el-row>
+        <el-col :span="6" v-for="(user, index) in userList" :key="user.id">
+          <el-card style="margin-bottom: 20px;margin-right: 20px;margin-left: 20px;">
             <div style="display:flex; align-items: center;">
               <img :src="user.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
               <div style="margin-left: 10px;">
                 <p>用户名:{{ user.name }}</p>
-                <!-- <p>用户ID:{{ user.id }}</p> -->
-                <p>IP地址:{{ user.ip }}</p>
+                <p>用户ID:{{ user.id }}</p>
+                <!-- <p>IP地址:{{ user.ip }}</p> -->
 
                 <!-- Conditional rendering for online/offline status -->
                 <!-- <p v-if="user.ip" style="color: green;">在线</p>
               <p v-else style="color: red;">离线</p> -->
               </div>
             </div>
-            <el-button type="primary" @click="handleAddFriend(user.id, index)">添加好友</el-button>
+            <el-button type="primary" @click="handleAddFriend(user.id, index)" style="margin-top: 20px;">添加好友</el-button>
           </el-card>
         </el-col>
       </el-row>
@@ -40,7 +40,12 @@ export default {
   data() {
     return {
       defaultAvatar: require('@/assets/avatar.png'), // 设置默认头像路径
-      userList: []
+      userList: [
+      {icon:null,name:'Richard',id:'377dbf961d73f74'},
+      {icon:null,name:'Richard',id:'377dbf961d73f74'},
+      {icon:null,name:'Richard',id:'377dbf961d73f74'},
+      {icon:null,name:'Richard',id:'377dbf961d73f74'},
+    ]
     }
   },
   methods: {
@@ -81,7 +86,7 @@ export default {
     }
   },
   mounted() {
-    this.load()
+    // this.load()
   },
 }
 </script>

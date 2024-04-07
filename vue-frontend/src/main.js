@@ -11,6 +11,8 @@ new Vue({
     render: h => h(App)
 }).$mount('#app');
 
+
+//解决error：ResizeObserver loop completed with undelivered notifications
 const debounce = (fn, delay) => {
     let timer
      return (...args) => {

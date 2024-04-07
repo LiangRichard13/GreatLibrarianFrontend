@@ -13,9 +13,9 @@
         <!-- <el-table-column prop="id" label="API_KEY ID" width="300%"></el-table-column> -->
         <el-table-column prop="name" label="大模型名称" width="300%"></el-table-column>
         <el-table-column prop="value" label="密钥"></el-table-column>
-        <el-table-column  label="介绍" width="500%">
+        <el-table-column  label="详细描述" width="500%">
           <template slot-scope="scope">
-            <div style="height: 100px; overflow: auto;">{{ scope.row.intro }}</div>
+            <div style="height: 70px; overflow: auto;">{{ scope.row.intro }}</div>
           </template>
         </el-table-column>
         <!-- <el-table-column type="expand" label="介绍">

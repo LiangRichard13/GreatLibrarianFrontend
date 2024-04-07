@@ -22,7 +22,7 @@
                 <el-table :data="expList" style="width: 100%">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
-                    <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
+                    <el-table-column label="被测模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
                     <el-table-column label="创建时间" prop="time">
@@ -122,7 +122,7 @@
                 <el-table :data="proceeding" style="width: 100%">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
-                    <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
+                    <el-table-column label="被测模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
                     <el-table-column label="创建时间" prop="time">
@@ -144,7 +144,7 @@
                 <el-table :data="reviewList" style="width: 100%">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
-                    <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
+                    <el-table-column label="被测模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
                     <el-table-column label="创建时间" prop="time">
@@ -225,7 +225,7 @@
                 <el-table :data="doneList" style="width: 100%">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
-                    <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
+                    <el-table-column label="被测模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
                     <el-table-column label="创建时间" prop="time">
@@ -267,7 +267,7 @@
                         <el-input v-model="newExpirement.name"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="指定测试模型API Key">
+                    <el-form-item label="指定被测模型API Key">
                         <el-select v-model="newExpirement.AK1" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
@@ -313,7 +313,7 @@
                         <el-input v-model="editExperiment.name"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="指定测试模型API Key">
+                    <el-form-item label="指定被测模型API Key">
                         <el-select v-model="editExperiment.AK1" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
@@ -354,7 +354,7 @@
             <div>
                 <!-- 这里放置你的代码编辑器组件 -->
                 <!-- 代码组件1 -->
-                <h3> 编辑测试模型call函数</h3>
+                <h3> 编辑被测模型call函数</h3>
                 <!-- <el-form ref="form">
                     <el-form-item label="测试模型类名">
                         <el-input v-model="LL1ClassName" style="width:200px"></el-input>
@@ -869,7 +869,7 @@ export default {
                 }
                 else {
                     this.$message({
-                        message: '测试模型call函数编译失败,请检查语法错误',
+                        message: '被测模型call函数编译失败,请检查语法错误',
                         type: 'error'
                     })
 

@@ -12,11 +12,14 @@
       <el-table :data="dataSet" style="width: 100%">
         <!-- <el-table-column label="数据集 ID" prop="id">
         </el-table-column> -->
-        <el-table-column label="测试对象" prop="name">
+        <el-table-column label="测试对象" prop="name" width="300%">
+        </el-table-column>
+        <el-table-column label="上传文件名称" prop="url" width="300%">
         </el-table-column>
         <el-table-column label="详细描述" prop="info">
-        </el-table-column>
-        <el-table-column label="上传文件名称" prop="url">
+          <template slot-scope="scope">
+            <div style="height: 70px; overflow: auto;">{{ scope.row.info }}</div>
+          </template>
         </el-table-column>
 
         <!-- 操作列 -->

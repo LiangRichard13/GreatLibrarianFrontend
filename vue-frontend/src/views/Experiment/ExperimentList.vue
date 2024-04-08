@@ -56,7 +56,15 @@
                             <el-tag v-else type="danger">无</el-tag>
                         </template>
                     </el-table-column> -->
-                    <el-table-column label="操作" width="180" align="center">
+                    <el-table-column label="配置文件">
+                        <template slot-scope="scope">
+                            <div v-if="scope.row.configURL !== null">
+                                <el-tag type="success">有</el-tag>
+                            </div>
+                            <el-tag v-else type="danger">无</el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="" width="180" align="center">
                         <template slot-scope="scope">
                             <el-link type="primary" style="margin-right: 10px;"
                                 @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators)">添加协作者</el-link>
@@ -65,8 +73,8 @@
                                             添加审核协作者
                                         </el-button> -->
                             <el-dropdown>
-                                <el-button size="mini" type="primary">
-                                    操作<i class="el-icon-arrow-down el-icon--right"></i>
+                                <el-button size="mini" type="primary">操作
+                                    <i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
                                 <el-dropdown-menu slot="dropdown">
                                     <!-- <el-dropdown-item>
@@ -76,18 +84,18 @@
                                         </el-button>
                                     </el-dropdown-item> -->
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="success"
+                                        <el-button icon="el-icon-caret-right" size="mini" type="success"
                                             @click="confirmStart(scope.$index, scope.row)">
                                             开始测试
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="warning" @click="initialEdit(scope.row)">
+                                        <el-button size="mini" icon="el-icon-edit" type="warning" @click="initialEdit(scope.row)">
                                             修改测试配置
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="primary" @click="handleEditConfigFile(scope.row)">
+                                        <el-button size="mini" icon="el-icon-edit" type="primary" @click="handleEditConfigFile(scope.row)">
                                             编辑配置文件
                                         </el-button>
                                     </el-dropdown-item>
@@ -104,14 +112,6 @@
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="配置文件">
-                        <template slot-scope="scope">
-                            <div v-if="scope.row.configURL !== null">
-                                <el-tag type="success">有</el-tag>
-                            </div>
-                            <el-tag v-else type="danger">无</el-tag>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -168,37 +168,32 @@
                             <el-tag v-else type="warning">无协作者</el-tag>
                         </template>
                     </el-table-column>
-                    <el-table-column label="总待审核条数" prop="thisExpQA">
-                        <template slot-scope="scope">
-                            <el-tag type="warning"> {{ scope.row.thisExpQA }}</el-tag>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="180" align="center">
+                    <el-table-column label="" width="180" align="center">
                         <template slot-scope="scope">
                             <el-dropdown>
-                                <el-button size="mini" type="primary">
-                                    操作<i class="el-icon-arrow-down el-icon--right"></i>
+                                <el-button size="mini" type="primary">操作
+                                    <i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="primary"
+                                        <el-button size="mini" icon="el-icon-s-promotion" type="primary"
                                             @click.stop="handleAssignExpirement(scope.row)">
                                             分发协作
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="warning"
+                                        <el-button size="mini" icon="el-icon-document-checked" type="warning"
                                             @click.stop="handleReviewExpirement(scope.row)">
                                             审核结果
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="info" @click.stop="handleUpdate(scope.row)">
+                                        <el-button size="mini" icon="el-icon-refresh" type="info" @click.stop="handleUpdate(scope.row)">
                                             更新报告
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="success" @click.stop="handleDownload(scope.row)">
+                                        <el-button size="mini" icon="el-icon-download" type="success" @click.stop="handleDownload(scope.row)">
                                             下载报告
                                         </el-button>
                                     </el-dropdown-item>
@@ -215,6 +210,11 @@
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="总待审核条数" prop="thisExpQA">
+                        <template slot-scope="scope">
+                            <el-tag type="warning"> {{ scope.row.thisExpQA }}</el-tag>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -306,7 +306,7 @@
 
         <!-- 修改测试对话框 -->
         <el-dialog title="修改测试配置" :visible.sync="editDialog" width="50%" @close="resetEditDialog">
-            <h4>当前测试:{{ editExperiment.tPid }} - {{ editExperiment.name }}</h4>
+            <h4>当前测试:{{ editExperiment.name }}</h4>
             <div>
                 <el-form ref="form" :model="editExperiment" label-width="200px">
 
@@ -350,7 +350,7 @@
         <!-- 代码编辑器 -->
         <el-dialog title="编辑 Python测试配置文件" :visible.sync="showCodeEditorDialog" width="50%" @opened="loadTemplate">
             <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                <h4>当前测试:{{ currentExpId }} - {{ currentExpName }}</h4>
+                <h4>当前测试:{{ currentExpName }}</h4>
             </div>
             <div>
                 <!-- 这里放置你的代码编辑器组件 -->
@@ -386,7 +386,7 @@
             <el-dialog title="请为当前测试添加协作者" :visible.sync="friendsToExp" @close="handleDialogClose">
 
                 <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                    <h4>当前测试:{{ currentExpId }} - {{ currentExpName }}</h4>
+                    <h4>当前测试:{{ currentExpName }}</h4>
                 </div>
 
                 <el-checkbox-group v-model="selectFriendsId">
@@ -408,24 +408,25 @@
             <el-dialog title="下载测试报告" :visible.sync="downloader" @close="downloadClose">
 
                 <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                    <h4>当前测试:{{ currentExpId }} - {{ currentExpName }}</h4>
+                    <h4>当前测试:{{ currentExpName }}</h4>
                 </div>
 
                 <!-- <el-select v-model="selectVersion" placeholder="请选择">
                             <el-option v-for="index in reportCount" :key="index" :label="`V-${index}`" :value="index">
                             </el-option>
                         </el-select> -->
-                <el-form>
+
+                        <el-form >
                     <el-form-item>
-                        <el-table :data="downLoadTable" style="width: 100%">
+                        <el-table :data="downLoadTable">
                             <el-table-column prop="index" label="版本">
                                 <template slot-scope="scope">
                                     Version-{{ scope.row.index }}
                                 </template>
                             </el-table-column>
-                            <el-table-column label="操作">
+                            <el-table-column label="下载">
                                 <template slot-scope="scope">
-                                    <el-button type="primary" @click="confirmDownload(scope.row.index)">下载报告</el-button>
+                                    <el-button icon="el-icon-download" type="info" circle @click="confirmDownload(scope.row.index)"></el-button>
                                 </template>
                             </el-table-column>
                         </el-table>

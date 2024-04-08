@@ -18,7 +18,7 @@
           <el-table-column type="selection" width="55">
           </el-table-column>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
-          <el-table-column label="问题" prop="Q" width="300%"></el-table-column>
+          <el-table-column label="问题" prop="Q" width="500%"></el-table-column>
 
           <!-- <el-table-column type="expand" label="回答">
             <template slot-scope="props">
@@ -30,7 +30,7 @@
             </template>
           </el-table-column> -->
 
-          <el-table-column label="回答" width="900%">
+          <el-table-column label="回答">
             <template slot-scope="scope">
               <div style="height: 70px; overflow: auto;">{{ scope.row.A }}</div>
             </template>
@@ -38,11 +38,11 @@
 
           <!-- 截图需要 -->
           <el-table-column label="选择协作者" prop="" width="300%">
-            <el-select placeholder="请选择">
-              <el-option v-for="item in this.thisCollaborators" :key="item.id" :label="`${item.id} - ${item.name}`"
-                :value="item.id">
-              </el-option>
-            </el-select>
+            <el-select v-model="distributeUserId" placeholder="请选择">
+                <el-option v-for="item in this.thisCollaborators" :key="item.id" :label="`${item.name}`"
+                  :value="item.id">
+                </el-option>
+              </el-select>
           </el-table-column>
 
         </el-table>

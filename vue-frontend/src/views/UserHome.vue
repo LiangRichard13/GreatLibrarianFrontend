@@ -45,7 +45,7 @@
           <!-- 右侧好友列表区域 -->
           <el-col :span="6">
             <el-badge :value="friendRequestNumebr" class="item" style="margin-top: 20px;">
-              <el-button size="large" @click="pushToFriendRequest">待处理的好友请求</el-button>
+              <el-button icon="el-icon-bell" size="large" @click="pushToFriendRequest">待处理的好友请求</el-button>
             </el-badge>
             <el-card class="box-card">
               <div slot="header" class="clearfix">

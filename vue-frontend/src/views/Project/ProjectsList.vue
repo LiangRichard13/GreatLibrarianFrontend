@@ -38,7 +38,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" width="180" align="center">
+        <el-table-column label="" width="180" align="center">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button size="mini" type="primary">
@@ -46,7 +46,7 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <el-button size="mini" type="primary" @click.stop="handleExperiment(scope.row)"> <!-- 阻止冒泡 -->
+                  <el-button icon="el-icon-tickets" size="mini" type="primary" @click.stop="handleExperiment(scope.row)"> <!-- 阻止冒泡 -->
                     测试列表
                   </el-button>
                 </el-dropdown-item>
@@ -59,7 +59,7 @@
           </el-button>
         </el-dropdown-item> -->
                 <el-dropdown-item>
-                  <el-button size="mini" type="warning" @click.stop="showEditDialog(scope.row)"> <!-- 阻止冒泡 -->
+                  <el-button icon="el-icon-edit" size="mini" type="warning" @click.stop="showEditDialog(scope.row)"> <!-- 阻止冒泡 -->
                     修改项目配置
                   </el-button>
                 </el-dropdown-item>
@@ -97,7 +97,7 @@
       <el-dialog title="修改当前项目" :visible.sync="showDialog" @close="handleDialogClose">
 
         <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-          <h4>当前项目：{{ currentProjectId }} - {{ currentProjectName }}</h4>
+          <h4>当前项目:{{ currentProjectId }} - {{ currentProjectName }}</h4>
         </div>
         <el-form ref="form" :model="editProject" label-width="100px">
           <el-form-item label="项目名称">

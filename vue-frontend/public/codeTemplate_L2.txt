@@ -1,8 +1,8 @@
-def __call__(self, prompt: str, history=None) -> str:
-    dashscope.api_key = self.apikey
-    response = dashscope.Generation.call(model=dashscope.Generation.Models.qwen_turbo, prompt=prompt, history=history)
+def __call__(self, prompt: str) -> str:
+    zhipuai.api_key = self.apikey
+    response = zhipuai.model_api.invoke(model='glm-3-turbo', prompt=[{'role': 'user', 'content': prompt}],top_p=0.7, temperature=0.95)
     if response:
-        if response['output']:
-            if response['output']['text']:
-                return response['output']['text']
-    return 'API Problem'
+        if response['code'] == 200:
+            return response['data']['choices'][0]['content']
+    else:
+        return 'API Problem'

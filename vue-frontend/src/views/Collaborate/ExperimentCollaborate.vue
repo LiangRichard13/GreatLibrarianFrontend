@@ -25,7 +25,7 @@
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
-                                <el-button size="mini" type="warning" @click.stop="handleReviewExpirement(scope.row)">
+                                <el-button size="mini" icon="el-icon-document-checked" type="warning" @click.stop="handleReviewExpirement(scope.row)">
                                     开始审核
                                 </el-button>
                         </template>

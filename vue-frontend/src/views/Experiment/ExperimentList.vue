@@ -3,8 +3,8 @@
         <el-page-header @back="goBack" content="我的项目">
         </el-page-header>
         <div class="content">
-            <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-                {{ this.thisProject.id }}-{{ this.thisProject.name }}的测试列表
+            <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 0px; text-align: center">
+                {{ this.thisProject.name }}的测试列表
             </h3>
             <div style="display: flex; justify-content: flex-start; padding-bottom: 20px;">
                 <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">为该项目创建新测试
@@ -306,6 +306,7 @@
 
         <!-- 修改测试对话框 -->
         <el-dialog title="修改测试配置" :visible.sync="editDialog" width="50%" @close="resetEditDialog">
+            <h4>当前测试:{{ editExperiment.tPid }} - {{ editExperiment.name }}</h4>
             <div>
                 <el-form ref="form" :model="editExperiment" label-width="200px">
 
@@ -349,7 +350,7 @@
         <!-- 代码编辑器 -->
         <el-dialog title="编辑 Python测试配置文件" :visible.sync="showCodeEditorDialog" width="50%" @opened="loadTemplate">
             <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
+                <h4>当前测试:{{ currentExpId }} - {{ currentExpName }}</h4>
             </div>
             <div>
                 <!-- 这里放置你的代码编辑器组件 -->
@@ -385,7 +386,7 @@
             <el-dialog title="请为当前测试添加协作者" :visible.sync="friendsToExp" @close="handleDialogClose">
 
                 <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                    <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
+                    <h4>当前测试:{{ currentExpId }} - {{ currentExpName }}</h4>
                 </div>
 
                 <el-checkbox-group v-model="selectFriendsId">
@@ -407,7 +408,7 @@
             <el-dialog title="下载测试报告" :visible.sync="downloader" @close="downloadClose">
 
                 <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                    <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
+                    <h4>当前测试:{{ currentExpId }} - {{ currentExpName }}</h4>
                 </div>
 
                 <!-- <el-select v-model="selectVersion" placeholder="请选择">
@@ -741,7 +742,7 @@ export default {
             if (row.configURL != null) {
                 this.editExperiment.name = row.name
                 this.editExperiment.tPid = row.id
-                console.log('当前进行修改的测试id', this.editExperiment.tPid)
+                // console.log('当前进行修改的测试id', this.editExperiment.tPid)
                 this.editDialog = true
             }
             else {

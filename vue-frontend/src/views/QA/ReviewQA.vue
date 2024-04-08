@@ -4,7 +4,7 @@
     </el-page-header>
     <div class="content">
       <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-        {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 测试的QA记录
+       {{ this.thisExperiment.name }}的存疑记录
       </h3>
     </div>
     <template v-if="QAList.length">

@@ -4,20 +4,23 @@
     </el-page-header>
     <div class="content">
       <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-        {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 测试的QA记录
+       {{ this.thisExperiment.name }}的存疑记录
       </h3>
     </div>
     <template v-if="QAList.length">
       <div class="table-container">
+
+           <!-- 截图需要 -->
+        <el-button type="primary" icon="el-icon-user-solid" style="float: right;">一键协作</el-button>
+
         <el-table :data="pagedQAList" :row-key="row => row.QAid" style="width: 100%" ref="multipleTable"
           tooltip-effect="dark" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55">
           </el-table-column>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
-          <el-table-column label="问题" prop="Q"></el-table-column>
-          <!-- <el-table-column label="回答" prop="A"></el-table-column> -->
+          <el-table-column label="问题" prop="Q" width="300%"></el-table-column>
 
-          <el-table-column type="expand" label="回答">
+          <!-- <el-table-column type="expand" label="回答">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="回答:">
@@ -25,7 +28,23 @@
                 </el-form-item>
               </el-form>
             </template>
+          </el-table-column> -->
+
+          <el-table-column label="回答" width="900%">
+            <template slot-scope="scope">
+              <div style="height: 70px; overflow: auto;">{{ scope.row.A }}</div>
+            </template>
           </el-table-column>
+
+          <!-- 截图需要 -->
+          <el-table-column label="选择协作者" prop="" width="300%">
+            <el-select placeholder="请选择">
+              <el-option v-for="item in this.thisCollaborators" :key="item.id" :label="`${item.id} - ${item.name}`"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-table-column>
+
         </el-table>
         <div class="pagination-container" style="margin-top: 20px;">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -38,7 +57,7 @@
         </div>
       </div>
       <div class="button-container" style="text-align: right; margin-top: 20px;">
-        <el-button type="primary" @click="showDialog = true">分发给协作者</el-button>
+        <el-button type="success" icon="el-icon-s-promotion" @click="showDialog = true">确认分发</el-button>
       </div>
 
       <!-- 分发协作者对话框 -->
@@ -62,7 +81,7 @@
       </el-dialog>
     </template>
     <div v-else class="emptyQAList">
-      <el-empty description="暂无审核任务"></el-empty>
+      <el-empty description="暂无可分发任务"></el-empty>
     </div>
   </div>
 </template>
@@ -89,9 +108,9 @@ export default {
   mounted() {
 
     let storedExperiment = localStorage.getItem('thisExperiment');
-    if (storedExperiment!==null) {
+    if (storedExperiment !== null) {
       this.thisExperiment = JSON.parse(storedExperiment);
-      console.log('进行分发的测试:',this,this.thisExperiment)
+      console.log('进行分发的测试:', this, this.thisExperiment)
     }
     else {
       // 处理没有数据的情况，可能是跳转到此页面或刷新页面
@@ -116,7 +135,7 @@ export default {
       // 获取当前项目的协作者以便分发
       getFriendsByExperimentId(this.thisExperiment.id).then(res => {
         this.thisCollaborators = res.data
-        console.log('当前测试的协作者',this.thisCollaborators)
+        console.log('当前测试的协作者', this.thisCollaborators)
       })
     },
     goBack() {
@@ -199,7 +218,7 @@ export default {
             // 重新加载数据等后续操作
             this.load();
             this.resetDialog();
-            this.showDialog=false;
+            this.showDialog = false;
           }).catch(error => {
             // 处理可能的错误（例如，某个Promise抛出的异常）
             console.error('分发过程中出现错误：', error);

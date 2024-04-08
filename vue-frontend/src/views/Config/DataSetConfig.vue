@@ -1,12 +1,19 @@
 <template>
   <div class="main">
 
-    <h3 style="letter-spacing: 1px;font-weight: 400;padding-bottom: 20px;text-align: center">数据集配置</h3>
+    <!-- <h3 style="letter-spacing: 1px;font-weight: 400;padding-bottom: 0px;text-align: center">数据集配置</h3>
 
     <div style="display: flex; justify-content: flex-end; padding-bottom: 20px;">
-      <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加数据集数据
+      <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加数据集
       </el-button>
+    </div> -->
+
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px;">
+    <div style="flex: 1; display: flex; justify-content: center;">
+        <h3 style="letter-spacing: 1px; font-weight: 400; margin: 0;">数据集配置</h3>
     </div>
+    <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加数据集</el-button>
+</div>
 
     <div class="table-container">
       <el-table :data="dataSet" style="width: 100%">

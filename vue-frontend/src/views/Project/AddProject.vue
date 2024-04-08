@@ -25,7 +25,7 @@
         </el-form-item>
 
         <div style="display: flex; justify-content: center; margin-top: 20px;">
-          <el-button type="success" icon="el-icon-plus" size="large" @click="handleAddProject">
+          <el-button plain type="success" icon="el-icon-plus" size="large" @click="handleAddProject">
             创建新项目
           </el-button>
         </div>

@@ -5,7 +5,7 @@
     <div style="flex: 1; display: flex; justify-content: center;">
         <h3 style="letter-spacing: 1px; font-weight: 400; margin: 0;">API_KEY配置</h3>
     </div>
-    <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加API_KEY</el-button>
+    <el-button plain icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加API_KEY</el-button>
 </div>
 
 
@@ -37,7 +37,7 @@
           <template slot-scope="scope">
             <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
               @confirm="removeKey(scope.$index, scope.row)" title="确定要删除此API_KEY吗?">
-              <el-button style="margin-left: 8px" size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+              <el-button plain style="margin-left: 8px" size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
               </el-button>
             </el-popconfirm>
           </template>
@@ -66,8 +66,8 @@
 
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="showDialog = false">取 消</el-button>
-        <el-button type="primary" @click="addKey">确 定</el-button>
+        <el-button plain @click="showDialog = false">取 消</el-button>
+        <el-button plain type="primary" @click="addKey">确 定</el-button>
       </span>
     </el-dialog>
 

@@ -8,7 +8,7 @@
           <el-input v-model="user.name"></el-input>
         </el-form-item>
         <el-form-item style="padding-top: 20px">
-          <el-button size="small" type="primary" icon="el-icon-edit" @click="onCheck">修改用户名</el-button>
+          <el-button plain size="small" type="primary" icon="el-icon-edit" @click="onCheck">修改用户名</el-button>
         </el-form-item>
         <!-- <el-form-item style="padding: 0" label="修改密码">
           <el-input type="password" v-model="password" show-password></el-input>
@@ -17,7 +17,7 @@
           <el-input type="password" v-model="checkPassword" show-password></el-input>
         </el-form-item> -->
         <el-form-item>
-          <el-button size="small" icon="el-icon-edit" type="danger" @click="showDialog = true">
+          <el-button plain size="small" icon="el-icon-edit" type="danger" @click="showDialog = true">
             <i></i>修改密码
           </el-button>
         </el-form-item>
@@ -36,14 +36,14 @@
           {{ row.name }}-----{{ row.value }}
           </div>
 
-          <el-button @click="goToKeyConfig" type="success">配置我的API_KEY</el-button>
+          <el-button plain @click="goToKeyConfig" type="success">配置我的API_KEY</el-button>
         </el-form-item>
       </el-form>
       <div style="text-align: center;">
         <img style="padding-left:100px;width: 150px; height: 150px;margin-bottom: 10px;" alt="" :src="user.iconUrl">
         <br>
         <el-upload class="upload-demo" :before-upload="beforeUpload" multiple :limit="1" accept=".png,.jpg">
-          <el-button size="small" type="primary" style="margin-left:50px">
+          <el-button plain size="small" type="primary" style="margin-left:50px">
             <i class="el-icon-upload2"></i> 点击上传
           </el-button>
           <div slot="tip" class="el-upload__tip">请上传 jpg/png 文件</div>
@@ -64,8 +64,8 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="showDialog = false">取 消</el-button>
-        <el-button type="primary" @click="passwordOnCheck">确 定</el-button>
+        <el-button plain @click="showDialog = false">取 消</el-button>
+        <el-button plain type="primary" @click="passwordOnCheck">确 定</el-button>
       </span>
     </el-dialog>
   </div>

@@ -19,7 +19,7 @@
               <p v-else style="color: red;">离线</p> -->
               </div>
             </div>
-            <el-button icon="el-icon-plus" type="primary" @click="handleAddFriend(user.id, index)" style="margin-top: 20px;">添加好友</el-button>
+            <el-button plain icon="el-icon-plus" type="primary" @click="handleAddFriend(user.id, index)" style="margin-top: 20px;">添加好友</el-button>
           </el-card>
         </el-col>
       </el-row>

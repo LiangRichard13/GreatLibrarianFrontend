@@ -41,17 +41,17 @@
         <el-table-column label="" width="180" align="center">
           <template slot-scope="scope">
             <el-dropdown>
-              <el-button size="mini" type="primary">
+              <el-button plain size="mini" type="primary">
                 操作<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <el-button icon="el-icon-tickets" size="mini" type="primary" @click.stop="handleExperiment(scope.row)"> <!-- 阻止冒泡 -->
+                  <el-button plain icon="el-icon-tickets" size="mini" type="primary" @click.stop="handleExperiment(scope.row)"> <!-- 阻止冒泡 -->
                     测试列表
                   </el-button>
                 </el-dropdown-item>
                 <!-- <el-dropdown-item>
-          <el-button
+          <el-button plain
             size="mini"
             type="success"
             @click.stop="setCurrentProjectID(scope.row.id, scope.row.name)">
@@ -59,7 +59,7 @@
           </el-button>
         </el-dropdown-item> -->
                 <el-dropdown-item>
-                  <el-button icon="el-icon-edit" size="mini" type="warning" @click.stop="showEditDialog(scope.row)"> <!-- 阻止冒泡 -->
+                  <el-button plain icon="el-icon-edit" size="mini" type="warning" @click.stop="showEditDialog(scope.row)"> <!-- 阻止冒泡 -->
                     修改项目配置
                   </el-button>
                 </el-dropdown-item>
@@ -71,7 +71,7 @@
             icon-color="red"
             @confirm.stop="removeProject(scope.$index, scope.row)"
             title="确定要删除此项目吗？">
-            <el-button
+            <el-button plain
             icon="el-icon-delete"
               size="mini"
               type="danger"
@@ -82,7 +82,7 @@
           </el-popconfirm> -->
                   <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
                     @confirm="removeProject(scope.$index, scope.row)" title="确定要删除此项目吗？">
-                    <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+                    <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                     </el-button>
                   </el-popconfirm>
                 </el-dropdown-item>
@@ -123,8 +123,8 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="handleDialogClose">取消</el-button>
-          <el-button type="primary" @click="handleEditProject">确定</el-button>
+          <el-button plain @click="handleDialogClose">取消</el-button>
+          <el-button plain type="primary" @click="handleEditProject">确定</el-button>
         </span>
       </el-dialog>
     </template>

@@ -4,7 +4,7 @@
     <!-- <h3 style="letter-spacing: 1px;font-weight: 400;padding-bottom: 0px;text-align: center">数据集配置</h3>
 
     <div style="display: flex; justify-content: flex-end; padding-bottom: 20px;">
-      <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加数据集
+      <el-button plain icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加数据集
       </el-button>
     </div> -->
 
@@ -12,7 +12,7 @@
     <div style="flex: 1; display: flex; justify-content: center;">
         <h3 style="letter-spacing: 1px; font-weight: 400; margin: 0;">数据集配置</h3>
     </div>
-    <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加数据集</el-button>
+    <el-button plain icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加数据集</el-button>
 </div>
 
     <div class="table-container">
@@ -34,7 +34,7 @@
           <template slot-scope="scope">
             <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
               @confirm="removeDataSet(scope.$index, scope.row)" title="确定要删除此数据集吗？">
-              <el-button style="margin-left: 8px" size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+              <el-button plain style="margin-left: 8px" size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
               </el-button>
             </el-popconfirm>
           </template>
@@ -60,7 +60,7 @@
             <el-form-item label="上传文件">
               <el-upload class="upload-demo" accept="application/zip" :before-upload="beforeUpload" multiple :limit="1">
                 <div style="display: flex; align-items: center;">
-                <el-button size="small" type="primary">
+                <el-button plain size="small" type="primary">
                   <i class="el-icon-upload2"></i> 点击上传
                 </el-button>
                 <div slot="tip" class="el-upload__tip" style="margin-left: 20px;">只能上传zip文件</div>
@@ -76,8 +76,8 @@
       </div>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="showDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleAddDataSet">确 定</el-button>
+        <el-button plain @click="showDialog = false">取 消</el-button>
+        <el-button plain type="primary" @click="handleAddDataSet">确 定</el-button>
       </span>
     </el-dialog>
 

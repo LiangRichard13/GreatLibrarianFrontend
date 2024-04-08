@@ -24,7 +24,7 @@
                 <!-- 使用 el-popconfirm 包裹您的按钮 -->
                 <el-popconfirm title="确定要提交打分吗？" @confirm="submitRate(scope.row, scope.$index)">
                   <!-- slot 中是触发弹出的元素 -->
-                  <el-button icon="el-icon-finished" slot="reference" size="small" type="primary">提交打分</el-button>
+                  <el-button plain icon="el-icon-finished" slot="reference" size="small" type="primary">提交打分</el-button>
                 </el-popconfirm>
               </div>
             </template>
@@ -50,7 +50,7 @@
       </div>
     </template>
     <!-- <div class="button-container" style="text-align: right; margin-top: 20px;">
-      <el-button type="primary" @click="submitRate()">提交打分</el-button>
+      <el-button plain type="primary" @click="submitRate()">提交打分</el-button>
     </div> -->
     <div v-else class="emptyQAList">
       <el-empty description="暂无审核任务"></el-empty>

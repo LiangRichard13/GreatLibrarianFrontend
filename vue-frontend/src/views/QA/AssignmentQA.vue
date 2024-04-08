@@ -11,7 +11,7 @@
       <div class="table-container">
 
            <!-- 截图需要 -->
-        <el-button type="primary" icon="el-icon-user-solid" style="float: right;">一键协作</el-button>
+        <el-button plain type="primary" icon="el-icon-user-solid" style="float: right;">一键协作</el-button>
 
         <el-table :data="pagedQAList" :row-key="row => row.QAid" style="width: 100%" ref="multipleTable"
           tooltip-effect="dark" @selection-change="handleSelectionChange">
@@ -53,11 +53,11 @@
           </el-pagination>
         </div>
         <div style="margin-top: 20px">
-          <el-button @click="toggleSelection()">取消选择</el-button>
+          <el-button plain @click="toggleSelection()">取消选择</el-button>
         </div>
       </div>
       <div class="button-container" style="text-align: right; margin-top: 20px;">
-        <el-button type="success" icon="el-icon-s-promotion" @click="showDialog = true">确认分发</el-button>
+        <el-button plain type="success" icon="el-icon-s-promotion" @click="showDialog = true">确认分发</el-button>
       </div>
 
       <!-- 分发协作者对话框 -->
@@ -75,8 +75,8 @@
         </div>
 
         <span slot="footer" class="dialog-footer">
-          <el-button @click="showDialog = false">取 消</el-button>
-          <el-button type="primary" @click="distributeToCollaborators">确 定</el-button>
+          <el-button plain @click="showDialog = false">取 消</el-button>
+          <el-button plain type="primary" @click="distributeToCollaborators">确 定</el-button>
         </span>
       </el-dialog>
     </template>

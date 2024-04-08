@@ -7,7 +7,7 @@
                 {{ this.thisProject.name }}的测试列表
             </h3>
             <div style="display: flex; justify-content: flex-start; padding-bottom: 20px;">
-                <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">为该项目创建新测试
+                <el-button plain icon="el-icon-circle-plus" type="success" @click="showDialog = true">为该项目创建新测试
                 </el-button>
             </div>
             <el-tabs v-model="currentTab" type="card" @tab-click="handleClick">
@@ -68,34 +68,34 @@
                         <template slot-scope="scope">
                             <el-link type="primary" style="margin-right: 10px;"
                                 @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators)">添加协作者</el-link>
-                            <!-- <el-button size="mini" type="primary"
+                            <!-- <el-button plain size="mini" type="primary"
                                             @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
                                             添加审核协作者
                                         </el-button> -->
                             <el-dropdown>
-                                <el-button size="mini" type="primary">操作
+                                <el-button plain size="mini" type="primary">操作
                                     <i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
                                 <el-dropdown-menu slot="dropdown">
                                     <!-- <el-dropdown-item>
-                                        <el-button size="mini" type="primary"
+                                        <el-button plain size="mini" type="primary"
                                             @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
                                             添加审核协作者
                                         </el-button>
                                     </el-dropdown-item> -->
                                     <el-dropdown-item>
-                                        <el-button icon="el-icon-caret-right" size="mini" type="success"
+                                        <el-button plain icon="el-icon-caret-right" size="mini" type="success"
                                             @click="confirmStart(scope.$index, scope.row)">
                                             开始测试
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" icon="el-icon-edit" type="warning" @click="initialEdit(scope.row)">
+                                        <el-button plain size="mini" icon="el-icon-edit" type="warning" @click="initialEdit(scope.row)">
                                             修改测试配置
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" icon="el-icon-edit" type="primary" @click="handleEditConfigFile(scope.row)">
+                                        <el-button plain size="mini" icon="el-icon-edit" type="primary" @click="handleEditConfigFile(scope.row)">
                                             编辑配置文件
                                         </el-button>
                                     </el-dropdown-item>
@@ -103,10 +103,10 @@
                                         <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                             icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                             title="确定要删除此测试吗？">
-                                            <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+                                            <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                             </el-button>
                                         </el-popconfirm> -->
-                                        <el-button size="mini" icon="el-icon-delete" type="danger"
+                                        <el-button plain size="mini" icon="el-icon-delete" type="danger"
                                             @click="confirmDelete(scope.$index, scope.row)">删除
                                         </el-button>
                                     </el-dropdown-item>
@@ -171,29 +171,29 @@
                     <el-table-column label="" width="180" align="center">
                         <template slot-scope="scope">
                             <el-dropdown>
-                                <el-button size="mini" type="primary">操作
+                                <el-button plain size="mini" type="primary">操作
                                     <i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
-                                        <el-button size="mini" icon="el-icon-s-promotion" type="primary"
+                                        <el-button plain size="mini" icon="el-icon-s-promotion" type="primary"
                                             @click.stop="handleAssignExpirement(scope.row)">
                                             分发协作
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" icon="el-icon-document-checked" type="warning"
+                                        <el-button plain size="mini" icon="el-icon-document-checked" type="warning"
                                             @click.stop="handleReviewExpirement(scope.row)">
                                             审核结果
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" icon="el-icon-refresh" type="info" @click.stop="handleUpdate(scope.row)">
+                                        <el-button plain size="mini" icon="el-icon-refresh" type="info" @click.stop="handleUpdate(scope.row)">
                                             更新报告
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" icon="el-icon-download" type="success" @click.stop="handleDownload(scope.row)">
+                                        <el-button plain size="mini" icon="el-icon-download" type="success" @click.stop="handleDownload(scope.row)">
                                             下载报告
                                         </el-button>
                                     </el-dropdown-item>
@@ -201,10 +201,10 @@
                                         <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                             icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                             title="确定要删除此测试吗？">
-                                            <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+                                            <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                             </el-button>
                                         </el-popconfirm> -->
-                                        <el-button size="mini" icon="el-icon-delete" type="danger"
+                                        <el-button plain size="mini" icon="el-icon-delete" type="danger"
                                             @click="confirmDelete(scope.$index, scope.row)">删除
                                         </el-button>
                                     </el-dropdown-item>
@@ -246,10 +246,10 @@
                             <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                 icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                 title="确定要删除此测试吗？">
-                                <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+                                <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                 </el-button>
                             </el-popconfirm> -->
-                            <el-button size="mini" icon="el-icon-delete" type="danger"
+                            <el-button plain size="mini" icon="el-icon-delete" type="danger"
                                 @click="confirmDelete(scope.$index, scope.row)">删除
                             </el-button>
                         </template>
@@ -293,14 +293,14 @@
 
                     <!-- 进行测试配置文件的编辑 -->
                     <!-- <el-form-item>
-                        <el-button type="primary" @click="showCodeEditorDialog = true">编辑测试配置文件</el-button>
+                        <el-button plain type="primary" @click="showCodeEditorDialog = true">编辑测试配置文件</el-button>
                     </el-form-item> -->
 
                 </el-form>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="showDialog = false">取 消</el-button>
-                <el-button type="primary" @click="handleAddNewExpirement">确 定</el-button>
+                <el-button plain @click="showDialog = false">取 消</el-button>
+                <el-button plain type="primary" @click="handleAddNewExpirement">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -342,8 +342,8 @@
 
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editDialog = false">取 消</el-button>
-                <el-button type="primary" @click="handleEditExperiment">确定</el-button>
+                <el-button plain @click="editDialog = false">取 消</el-button>
+                <el-button plain type="primary" @click="handleEditExperiment">确定</el-button>
             </span>
         </el-dialog>
 
@@ -375,8 +375,8 @@
                 <div id="python-editor_2" style="height: 300px;"></div>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="resetCodeEditor">取消</el-button>
-                <el-button type="primary" @click="savePythonFile">保存文件</el-button>
+                <el-button plain @click="resetCodeEditor">取消</el-button>
+                <el-button plain type="primary" @click="savePythonFile">保存文件</el-button>
             </span>
         </el-dialog>
 
@@ -396,8 +396,8 @@
                 </el-checkbox-group>
 
                 <span slot="footer" class="dialog-footer">
-                    <el-button @click="handleDialogClose">取消</el-button>
-                    <el-button type="primary" @click="handlefriendsToExp">确定</el-button>
+                    <el-button plain @click="handleDialogClose">取消</el-button>
+                    <el-button plain type="primary" @click="handlefriendsToExp">确定</el-button>
                 </span>
             </el-dialog>
         </template>
@@ -419,22 +419,22 @@
                         <el-form >
                     <el-form-item>
                         <el-table :data="downLoadTable">
-                            <el-table-column prop="index" label="版本">
+                            <el-table-column prop="index" label="版本" align="center">
                                 <template slot-scope="scope">
                                     Version-{{ scope.row.index }}
                                 </template>
                             </el-table-column>
-                            <el-table-column label="下载">
+                            <el-table-column label="下载" align="center">
                                 <template slot-scope="scope">
-                                    <el-button icon="el-icon-download" type="info" circle @click="confirmDownload(scope.row.index)"></el-button>
+                                    <el-button icon="el-icon-download" type="primary" style="font-size: 18px;" plain @click="confirmDownload(scope.row.index)"></el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
                     </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                    <el-button @click="downloadClose">取消</el-button>
-                    <!-- <el-button type="primary" @click="confirmDownload">确定</el-button> -->
+                    <el-button plain @click="downloadClose">取消</el-button>
+                    <!-- <el-button plain type="primary" @click="confirmDownload">确定</el-button> -->
                 </span>
             </el-dialog>
         </template>
@@ -894,7 +894,7 @@ export default {
                 .catch(error => {
                     console.error('Error loading the template:', error)
                     this.$message({
-                        message: '加载LL1模板文件出错',
+                        message: '加载L1模板文件出错',
                         type: 'error'
                     });
                 }
@@ -907,7 +907,7 @@ export default {
                 .catch(error => {
                     console.error('Error loading the template:', error)
                     this.$message({
-                        message: '加载LL1模板文件出错',
+                        message: '加载L2模板文件出错',
                         type: 'error'
                     });
                 }

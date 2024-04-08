@@ -18,8 +18,8 @@
             </div>
           </div>
           <div style="margin-top:20px">
-          <el-button type="success" icon="el-icon-check" @click='handleAgree(userFriendsRequestID[index])'>同意申请</el-button>
-          <el-button type="danger" icon="el-icon-close" @click='handleRefuse(userFriendsRequestID[index],index)'>拒绝申请</el-button>
+          <el-button plain type="success" icon="el-icon-check" @click='handleAgree(userFriendsRequestID[index])'>同意申请</el-button>
+          <el-button plain type="danger" icon="el-icon-close" @click='handleRefuse(userFriendsRequestID[index],index)'>拒绝申请</el-button>
         </div>
         </el-card>
       <!-- </div> -->

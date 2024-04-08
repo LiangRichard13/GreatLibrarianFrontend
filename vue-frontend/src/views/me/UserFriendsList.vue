@@ -32,7 +32,7 @@
             </div>
             <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
               @confirm="handleDeleteFriend(row.id, index)" title="确定要删除此好友吗？">
-              <el-button type="danger" slot="reference">删除好友</el-button>
+              <el-button plain type="danger" slot="reference">删除好友</el-button>
             </el-popconfirm>
           </el-card>
           <!-- </div> -->

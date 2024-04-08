@@ -40,7 +40,7 @@ class Progress(Resource):
             try:
                 process = readTemp(os.path.join(BackendPath(), "App", "data", "Logs", tP.tP_id, "process.temp"))
             except Exception:
-                return jsonify({'success': False, 'message': tP.tP_id+'-'+tP.tP_name+'读取进度失败'})
+                return jsonify({'success': False, 'message': tP.tP_id + '-' + tP.tP_name + '读取进度失败'})
             if process >= 0:
                 tP.tP_progress = process
                 # if process == 100:  # 已经完成实验，进行实验状态修改
@@ -58,3 +58,15 @@ class Progress(Resource):
         else:
             print('2')
             return jsonify({'success': True, 'process': tP.tP_progress})
+
+    # 进度条连续获取5次失败后请求的接口
+    def post(self):
+        tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
+        try:
+            tP.tP_status = 0  # 修改实验state状态【0:待实验、1:正在实验、2:待审核、3:已完成】
+            db.session.commit()  # 提交数据库
+            return jsonify({'success': True})
+        except Exception as e:  # 数据库操作异常处理
+            db.session.rollback()  # 回滚
+            db.session.flush()  # 刷新，清空缓存
+            return jsonify({'success': False, 'message': str(e)})

@@ -3,11 +3,11 @@
         <el-page-header @back="goBack" content="我的项目">
         </el-page-header>
         <div class="content">
-            <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-                {{ this.thisProject.id }}-{{ this.thisProject.name }}的测试列表
+            <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 0px; text-align: center">
+                {{ this.thisProject.name }}的测试列表
             </h3>
             <div style="display: flex; justify-content: flex-start; padding-bottom: 20px;">
-                <el-button icon="el-icon-circle-plus" type="success" @click="showDialog = true">为该项目创建新测试
+                <el-button plain icon="el-icon-circle-plus" type="success" @click="showDialog = true">为该项目创建新测试
                 </el-button>
             </div>
             <el-tabs v-model="currentTab" type="card" @tab-click="handleClick">
@@ -20,9 +20,9 @@
             <div class="section" v-if="currentTab === '待测试'">
                 <h4>待测试</h4>
                 <el-table :data="expList" style="width: 100%">
-                    <el-table-column label="测试 ID" prop="id"></el-table-column>
+                    <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
-                    <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
+                    <el-table-column label="被测模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
                     <el-table-column label="创建时间" prop="time">
@@ -56,56 +56,6 @@
                             <el-tag v-else type="danger">无</el-tag>
                         </template>
                     </el-table-column> -->
-                    <el-table-column label="操作" width="180" align="center">
-                        <template slot-scope="scope">
-                            <el-link type="primary" style="margin-right: 10px;"
-                                @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators)">添加协作者</el-link>
-                            <!-- <el-button size="mini" type="primary"
-                                            @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
-                                            添加审核协作者
-                                        </el-button> -->
-                            <el-dropdown>
-                                <el-button size="mini" type="primary">
-                                    操作<i class="el-icon-arrow-down el-icon--right"></i>
-                                </el-button>
-                                <el-dropdown-menu slot="dropdown">
-                                    <!-- <el-dropdown-item>
-                                        <el-button size="mini" type="primary"
-                                            @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
-                                            添加审核协作者
-                                        </el-button>
-                                    </el-dropdown-item> -->
-                                    <el-dropdown-item>
-                                        <el-button size="mini" type="success"
-                                            @click="confirmStart(scope.$index, scope.row)">
-                                            开始测试
-                                        </el-button>
-                                    </el-dropdown-item>
-                                    <el-dropdown-item>
-                                        <el-button size="mini" type="warning" @click="initialEdit(scope.row)">
-                                            修改测试配置
-                                        </el-button>
-                                    </el-dropdown-item>
-                                    <el-dropdown-item>
-                                        <el-button size="mini" type="primary" @click="handleEditConfigFile(scope.row)">
-                                            编辑配置文件
-                                        </el-button>
-                                    </el-dropdown-item>
-                                    <el-dropdown-item>
-                                        <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
-                                            icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
-                                            title="确定要删除此测试吗？">
-                                            <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
-                                            </el-button>
-                                        </el-popconfirm> -->
-                                        <el-button size="mini" icon="el-icon-delete" type="danger"
-                                            @click="confirmDelete(scope.$index, scope.row)">删除
-                                        </el-button>
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                            </el-dropdown>
-                        </template>
-                    </el-table-column>
                     <el-table-column label="配置文件">
                         <template slot-scope="scope">
                             <div v-if="scope.row.configURL !== null">
@@ -114,15 +64,65 @@
                             <el-tag v-else type="danger">无</el-tag>
                         </template>
                     </el-table-column>
+                    <el-table-column label="" width="180" align="center">
+                        <template slot-scope="scope">
+                            <el-link type="primary" style="margin-right: 10px;"
+                                @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators)">添加协作者</el-link>
+                            <!-- <el-button plain size="mini" type="primary"
+                                            @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
+                                            添加审核协作者
+                                        </el-button> -->
+                            <el-dropdown>
+                                <el-button plain size="mini" type="primary">操作
+                                    <i class="el-icon-arrow-down el-icon--right"></i>
+                                </el-button>
+                                <el-dropdown-menu slot="dropdown">
+                                    <!-- <el-dropdown-item>
+                                        <el-button plain size="mini" type="primary"
+                                            @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
+                                            添加审核协作者
+                                        </el-button>
+                                    </el-dropdown-item> -->
+                                    <el-dropdown-item>
+                                        <el-button plain icon="el-icon-caret-right" size="mini" type="success"
+                                            @click="confirmStart(scope.$index, scope.row)">
+                                            开始测试
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
+                                        <el-button plain size="mini" icon="el-icon-edit" type="warning" @click="initialEdit(scope.row)">
+                                            修改测试配置
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
+                                        <el-button plain size="mini" icon="el-icon-edit" type="primary" @click="handleEditConfigFile(scope.row)">
+                                            编辑配置文件
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
+                                        <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
+                                            icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
+                                            title="确定要删除此测试吗？">
+                                            <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+                                            </el-button>
+                                        </el-popconfirm> -->
+                                        <el-button plain size="mini" icon="el-icon-delete" type="danger"
+                                            @click="confirmDelete(scope.$index, scope.row)">删除
+                                        </el-button>
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </template>
+                    </el-table-column>
                 </el-table>
             </div>
 
             <div class="section" v-if="currentTab === '正在测试'">
                 <h4>正在测试</h4>
                 <el-table :data="proceeding" style="width: 100%">
-                    <el-table-column label="测试 ID" prop="id"></el-table-column>
+                    <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
-                    <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
+                    <el-table-column label="被测模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
                     <el-table-column label="创建时间" prop="time">
@@ -142,9 +142,9 @@
             <div class="section" v-if="currentTab === '待审核'">
                 <h4>待审核</h4>
                 <el-table :data="reviewList" style="width: 100%">
-                    <el-table-column label="测试 ID" prop="id"></el-table-column>
+                    <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
-                    <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
+                    <el-table-column label="被测模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
                     <el-table-column label="创建时间" prop="time">
@@ -168,37 +168,32 @@
                             <el-tag v-else type="warning">无协作者</el-tag>
                         </template>
                     </el-table-column>
-                    <el-table-column label="总待审核条数" prop="thisExpQA">
-                        <template slot-scope="scope">
-                            <el-tag type="warning"> {{ scope.row.thisExpQA }}</el-tag>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="180" align="center">
+                    <el-table-column label="" width="180" align="center">
                         <template slot-scope="scope">
                             <el-dropdown>
-                                <el-button size="mini" type="primary">
-                                    操作<i class="el-icon-arrow-down el-icon--right"></i>
+                                <el-button plain size="mini" type="primary">操作
+                                    <i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="primary"
+                                        <el-button plain size="mini" icon="el-icon-s-promotion" type="primary"
                                             @click.stop="handleAssignExpirement(scope.row)">
                                             分发协作
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="warning"
+                                        <el-button plain size="mini" icon="el-icon-document-checked" type="warning"
                                             @click.stop="handleReviewExpirement(scope.row)">
                                             审核结果
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="info" @click.stop="handleUpdate(scope.row)">
+                                        <el-button plain size="mini" icon="el-icon-refresh" type="info" @click.stop="handleUpdate(scope.row)">
                                             更新报告
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button size="mini" type="success" @click.stop="handleDownload(scope.row)">
+                                        <el-button plain size="mini" icon="el-icon-download" type="success" @click.stop="handleDownload(scope.row)">
                                             下载报告
                                         </el-button>
                                     </el-dropdown-item>
@@ -206,15 +201,20 @@
                                         <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                             icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                             title="确定要删除此测试吗？">
-                                            <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+                                            <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                             </el-button>
                                         </el-popconfirm> -->
-                                        <el-button size="mini" icon="el-icon-delete" type="danger"
+                                        <el-button plain size="mini" icon="el-icon-delete" type="danger"
                                             @click="confirmDelete(scope.$index, scope.row)">删除
                                         </el-button>
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="总待审核条数" prop="thisExpQA">
+                        <template slot-scope="scope">
+                            <el-tag type="warning"> {{ scope.row.thisExpQA }}</el-tag>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -223,9 +223,9 @@
             <div class="section" v-if="currentTab === '已完成'">
                 <h4>已完成</h4>
                 <el-table :data="doneList" style="width: 100%">
-                    <el-table-column label="测试 ID" prop="id"></el-table-column>
+                    <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
-                    <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
+                    <el-table-column label="被测模型" prop="AK1.name"></el-table-column>
                     <el-table-column label="评估模型" prop="AK2.name"></el-table-column>
                     <el-table-column label="数据集" prop="dataSet.name"></el-table-column>
                     <el-table-column label="创建时间" prop="time">
@@ -246,10 +246,10 @@
                             <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                 icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                 title="确定要删除此测试吗？">
-                                <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+                                <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                 </el-button>
                             </el-popconfirm> -->
-                            <el-button size="mini" icon="el-icon-delete" type="danger"
+                            <el-button plain size="mini" icon="el-icon-delete" type="danger"
                                 @click="confirmDelete(scope.$index, scope.row)">删除
                             </el-button>
                         </template>
@@ -267,7 +267,7 @@
                         <el-input v-model="newExpirement.name"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="指定测试模型API Key">
+                    <el-form-item label="指定被测模型API Key">
                         <el-select v-model="newExpirement.AK1" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
@@ -293,19 +293,20 @@
 
                     <!-- 进行测试配置文件的编辑 -->
                     <!-- <el-form-item>
-                        <el-button type="primary" @click="showCodeEditorDialog = true">编辑测试配置文件</el-button>
+                        <el-button plain type="primary" @click="showCodeEditorDialog = true">编辑测试配置文件</el-button>
                     </el-form-item> -->
 
                 </el-form>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="showDialog = false">取 消</el-button>
-                <el-button type="primary" @click="handleAddNewExpirement">确 定</el-button>
+                <el-button plain @click="showDialog = false">取 消</el-button>
+                <el-button plain type="primary" @click="handleAddNewExpirement">确 定</el-button>
             </span>
         </el-dialog>
 
         <!-- 修改测试对话框 -->
         <el-dialog title="修改测试配置" :visible.sync="editDialog" width="50%" @close="resetEditDialog">
+            <h4>当前测试:{{ editExperiment.name }}</h4>
             <div>
                 <el-form ref="form" :model="editExperiment" label-width="200px">
 
@@ -313,7 +314,7 @@
                         <el-input v-model="editExperiment.name"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="指定测试模型API Key">
+                    <el-form-item label="指定被测模型API Key">
                         <el-select v-model="editExperiment.AK1" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
@@ -341,20 +342,20 @@
 
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editDialog = false">取 消</el-button>
-                <el-button type="primary" @click="handleEditExperiment">确定</el-button>
+                <el-button plain @click="editDialog = false">取 消</el-button>
+                <el-button plain type="primary" @click="handleEditExperiment">确定</el-button>
             </span>
         </el-dialog>
 
         <!-- 代码编辑器 -->
         <el-dialog title="编辑 Python测试配置文件" :visible.sync="showCodeEditorDialog" width="50%" @opened="loadTemplate">
             <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
+                <h4>当前测试:{{ currentExpName }}</h4>
             </div>
             <div>
                 <!-- 这里放置你的代码编辑器组件 -->
                 <!-- 代码组件1 -->
-                <h3> 编辑测试模型call函数</h3>
+                <h3> 编辑被测模型call函数</h3>
                 <!-- <el-form ref="form">
                     <el-form-item label="测试模型类名">
                         <el-input v-model="LL1ClassName" style="width:200px"></el-input>
@@ -374,8 +375,8 @@
                 <div id="python-editor_2" style="height: 300px;"></div>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="resetCodeEditor">取消</el-button>
-                <el-button type="primary" @click="savePythonFile">保存文件</el-button>
+                <el-button plain @click="resetCodeEditor">取消</el-button>
+                <el-button plain type="primary" @click="savePythonFile">保存文件</el-button>
             </span>
         </el-dialog>
 
@@ -385,7 +386,7 @@
             <el-dialog title="请为当前测试添加协作者" :visible.sync="friendsToExp" @close="handleDialogClose">
 
                 <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                    <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
+                    <h4>当前测试:{{ currentExpName }}</h4>
                 </div>
 
                 <el-checkbox-group v-model="selectFriendsId">
@@ -395,8 +396,8 @@
                 </el-checkbox-group>
 
                 <span slot="footer" class="dialog-footer">
-                    <el-button @click="handleDialogClose">取消</el-button>
-                    <el-button type="primary" @click="handlefriendsToExp">确定</el-button>
+                    <el-button plain @click="handleDialogClose">取消</el-button>
+                    <el-button plain type="primary" @click="handlefriendsToExp">确定</el-button>
                 </span>
             </el-dialog>
         </template>
@@ -407,21 +408,33 @@
             <el-dialog title="下载测试报告" :visible.sync="downloader" @close="downloadClose">
 
                 <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                    <h4>当前测试:{{ currentExpName }} - {{ currentExpId }}</h4>
+                    <h4>当前测试:{{ currentExpName }}</h4>
                 </div>
 
-                <el-form>
-                    <el-form-item label="选择下载版本">
-                        <el-select v-model="selectVersion" placeholder="请选择">
+                <!-- <el-select v-model="selectVersion" placeholder="请选择">
                             <el-option v-for="index in reportCount" :key="index" :label="`V-${index}`" :value="index">
                             </el-option>
-                        </el-select>
+                        </el-select> -->
+
+                        <el-form >
+                    <el-form-item>
+                        <el-table :data="downLoadTable">
+                            <el-table-column prop="index" label="版本" align="center">
+                                <template slot-scope="scope">
+                                    Version-{{ scope.row.index }}
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="下载" align="center">
+                                <template slot-scope="scope">
+                                    <el-button icon="el-icon-download" type="primary" style="font-size: 18px;" plain @click="confirmDownload(scope.row.index)"></el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
                     </el-form-item>
                 </el-form>
-
                 <span slot="footer" class="dialog-footer">
-                    <el-button @click="downloadClose">取消</el-button>
-                    <el-button type="primary" @click="confirmDownload">确定</el-button>
+                    <el-button plain @click="downloadClose">取消</el-button>
+                    <!-- <el-button plain type="primary" @click="confirmDownload">确定</el-button> -->
                 </span>
             </el-dialog>
         </template>
@@ -450,6 +463,7 @@ export default {
     name: "ExperimentList",
     data() {
         return {
+            downLoadTable: [],
             currentTab: '待测试', // 默认选中的选项卡
             friendsToExp: false,
             showCodeEditorDialog: false,
@@ -475,7 +489,7 @@ export default {
             currentExpId: '',
             thisRowCollaborators: [],
             reportCount: null,
-            selectVersion: null,
+            // selectVersion: null,
             // LL1ClassName: '',
             // LL2ClassName: ''
         }
@@ -729,7 +743,7 @@ export default {
             if (row.configURL != null) {
                 this.editExperiment.name = row.name
                 this.editExperiment.tPid = row.id
-                console.log('当前进行修改的测试id', this.editExperiment.tPid)
+                // console.log('当前进行修改的测试id', this.editExperiment.tPid)
                 this.editDialog = true
             }
             else {
@@ -857,7 +871,7 @@ export default {
                 }
                 else {
                     this.$message({
-                        message: '测试模型call函数编译失败,请检查语法错误',
+                        message: '被测模型call函数编译失败,请检查语法错误',
                         type: 'error'
                     })
 
@@ -880,7 +894,7 @@ export default {
                 .catch(error => {
                     console.error('Error loading the template:', error)
                     this.$message({
-                        message: '加载LL1模板文件出错',
+                        message: '加载L1模板文件出错',
                         type: 'error'
                     });
                 }
@@ -893,7 +907,7 @@ export default {
                 .catch(error => {
                     console.error('Error loading the template:', error)
                     this.$message({
-                        message: '加载LL1模板文件出错',
+                        message: '加载L2模板文件出错',
                         type: 'error'
                     });
                 }
@@ -1078,7 +1092,7 @@ export default {
         afterDeleteExp(row, index) {
             localStorage.removeItem(row.id + '_1')
             localStorage.removeItem(row.id + '_2')
-            localStorage.removeItem(row.id + 'report')
+            // localStorage.removeItem(row.id + 'report')
             this.$message({
                 message: '删除成功',
                 type: 'success',
@@ -1118,13 +1132,14 @@ export default {
         handleDownload(row) {
             getReportNum(row.id).then(res => {
                 this.reportCount = res.count
+                this.initDownLoadTable()
             })
             this.currentExpId = row.id
             this.currentExpName = row.name
             this.downloader = true
         },
-        confirmDownload() {
-            genReport(this.currentExpId, this.selectVersion).then(res => {
+        confirmDownload(selectVersion) {
+            genReport(this.currentExpId, selectVersion).then(res => {
                 if (res.success) {
                     this.$message({
                         type: 'success',
@@ -1152,9 +1167,14 @@ export default {
             })
         },
         downloadClose() {
-            this.selectVersion = null,
-                this.downloader = false
-        }
+            // this.selectVersion = null,
+            this.downloader = false
+        },
+        initDownLoadTable() {
+            this.downLoadTable = Array.from({ length: this.reportCount }, (_, i) => ({
+                index: i + 1, // 生成从1开始的行数
+            }));
+        },
     }
 }
 

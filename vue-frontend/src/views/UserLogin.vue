@@ -28,7 +28,7 @@
             </el-tooltip>
           </div>
         </div>
-        <el-button @click="postLogin" class="login-form-button" type="primary">SIGN IN</el-button>
+        <el-button plain @click="postLogin" class="login-form-button" type="primary">SIGN IN</el-button>
       </div>
       <div class="login-form-footer">
         <el-link href="/register" style="font-weight: bolder;font-size: 16px;color: #91949c;" :underline="false">

@@ -1,4 +1,8 @@
-def __call__(self, prompt: str, history=None) -> str:
-    #请从下面开始编辑
-    print('我是修改后的代code-------------------')
-    return True
+def __call__(self, prompt: str) -> str:
+    zhipuai.api_key = self.apikey
+    response = zhipuai.model_api.invoke(model='glm-3-turbo', prompt=[{'role': 'user', 'content': prompt}],top_p=0.7, temperature=0.95)
+    if response:
+        if response['code'] == 200:
+            return response['data']['choices'][0]['content']
+    else:
+        return 'API Problem'

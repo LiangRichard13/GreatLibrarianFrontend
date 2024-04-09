@@ -5,7 +5,7 @@
 
     <div class="table-container">
       <el-table :data="projectList" style="width: 100%">
-        <el-table-column label="项目 ID" prop="id"></el-table-column>
+        <!-- <el-table-column label="项目 ID" prop="id"></el-table-column> -->
         <el-table-column label="项目名称" prop="name"></el-table-column>
         <el-table-column label="测试说明" prop="info"></el-table-column>
 
@@ -22,7 +22,8 @@
         <el-table-column label="LLM">
           <template slot-scope="scope">
             <div v-for="apiKey in scope.row.apiKey" :key="apiKey.id">
-              {{ apiKey.id }} - {{ apiKey.name }}
+              <!-- {{ apiKey.id }} - {{ apiKey.name }} -->
+           {{ apiKey.name }}
             </div>
           </template>
         </el-table-column>
@@ -31,25 +32,26 @@
         <el-table-column label="数据集">
           <template slot-scope="scope">
             <div v-for="data in scope.row.dataSet" :key="data.id">
-              {{ data.id }} - {{ data.name }}
+              <!-- {{ data.id }} - {{ data.name }} -->
+          {{ data.name }}
             </div>
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" width="180" align="center">
+        <el-table-column label="" width="180" align="center">
           <template slot-scope="scope">
             <el-dropdown>
-              <el-button size="mini" type="primary">
+              <el-button plain size="mini" type="primary">
                 操作<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <el-button size="mini" type="primary" @click.stop="handleExperiment(scope.row)"> <!-- 阻止冒泡 -->
+                  <el-button plain icon="el-icon-tickets" size="mini" type="primary" @click.stop="handleExperiment(scope.row)"> <!-- 阻止冒泡 -->
                     测试列表
                   </el-button>
                 </el-dropdown-item>
                 <!-- <el-dropdown-item>
-          <el-button
+          <el-button plain
             size="mini"
             type="success"
             @click.stop="setCurrentProjectID(scope.row.id, scope.row.name)">
@@ -57,7 +59,7 @@
           </el-button>
         </el-dropdown-item> -->
                 <el-dropdown-item>
-                  <el-button size="mini" type="warning" @click.stop="showEditDialog(scope.row)"> <!-- 阻止冒泡 -->
+                  <el-button plain icon="el-icon-edit" size="mini" type="warning" @click.stop="showEditDialog(scope.row)"> <!-- 阻止冒泡 -->
                     修改项目配置
                   </el-button>
                 </el-dropdown-item>
@@ -69,7 +71,7 @@
             icon-color="red"
             @confirm.stop="removeProject(scope.$index, scope.row)"
             title="确定要删除此项目吗？">
-            <el-button
+            <el-button plain
             icon="el-icon-delete"
               size="mini"
               type="danger"
@@ -80,7 +82,7 @@
           </el-popconfirm> -->
                   <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
                     @confirm="removeProject(scope.$index, scope.row)" title="确定要删除此项目吗？">
-                    <el-button size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
+                    <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                     </el-button>
                   </el-popconfirm>
                 </el-dropdown-item>
@@ -95,7 +97,7 @@
       <el-dialog title="修改当前项目" :visible.sync="showDialog" @close="handleDialogClose">
 
         <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-          <h4>当前项目：{{ currentProjectId }} - {{ currentProjectName }}</h4>
+          <h4>当前项目:{{ currentProjectId }} - {{ currentProjectName }}</h4>
         </div>
         <el-form ref="form" :model="editProject" label-width="100px">
           <el-form-item label="项目名称">
@@ -121,8 +123,8 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="handleDialogClose">取消</el-button>
-          <el-button type="primary" @click="handleEditProject">确定</el-button>
+          <el-button plain @click="handleDialogClose">取消</el-button>
+          <el-button plain type="primary" @click="handleEditProject">确定</el-button>
         </span>
       </el-dialog>
     </template>
@@ -221,6 +223,7 @@ export default {
     //   this.handleDialogClose(); // 关闭对话框
     // },
     handleExperiment(project) {
+      console.log('该项目',project)
       if(project.apiKey.length===0)
      {
       this.$message({
@@ -229,7 +232,7 @@ export default {
                   });
        return
      }
-     else if(project.dataset.length===0)
+     else if(project.dataSet.length===0)
       {
         this.$message({
                     message: '请重新配置数据集',

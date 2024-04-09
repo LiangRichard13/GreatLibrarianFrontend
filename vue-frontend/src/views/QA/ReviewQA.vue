@@ -4,13 +4,13 @@
     </el-page-header>
     <div class="content">
       <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-        {{ this.thisExperiment.id }}-{{ this.thisExperiment.name }} 测试的QA记录
+       {{ this.thisExperiment.name }}的存疑记录
       </h3>
     </div>
     <template v-if="QAList.length">
       <div class="table-container">
         <el-table :data="pagedQAList" style="width: 100%">
-          <el-table-column label="QA ID" prop="QAid"></el-table-column>
+          <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
           <el-table-column label="问题" prop="Q"></el-table-column>
           <el-table-column label="打分" prop="score">
             <template slot-scope="scope">
@@ -24,14 +24,14 @@
                 <!-- 使用 el-popconfirm 包裹您的按钮 -->
                 <el-popconfirm title="确定要提交打分吗？" @confirm="submitRate(scope.row, scope.$index)">
                   <!-- slot 中是触发弹出的元素 -->
-                  <el-button slot="reference" size="small" type="primary">提交打分</el-button>
+                  <el-button plain icon="el-icon-finished" slot="reference" size="small" type="primary">提交打分</el-button>
                 </el-popconfirm>
               </div>
             </template>
           </el-table-column>
 
 
-          <el-table-column type="expand" lable="回答">
+          <el-table-column type="expand" label="回答">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="回答:">
@@ -50,7 +50,7 @@
       </div>
     </template>
     <!-- <div class="button-container" style="text-align: right; margin-top: 20px;">
-      <el-button type="primary" @click="submitRate()">提交打分</el-button>
+      <el-button plain type="primary" @click="submitRate()">提交打分</el-button>
     </div> -->
     <div v-else class="emptyQAList">
       <el-empty description="暂无审核任务"></el-empty>

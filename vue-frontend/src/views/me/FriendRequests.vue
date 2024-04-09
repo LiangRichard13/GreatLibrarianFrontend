@@ -10,15 +10,17 @@
             <img :src="row.data.iconUrl" style="width: 50px; height: 50px; border-radius: 50%;" />
             <div style="margin-left: 10px;">
               <p>用户名:{{ row.data.name }}</p>
-              <p>用户ID:{{ userFriendsRequestID[index] }}</p>
+              <!-- <p>用户ID:{{ userFriendsRequestID[index] }}</p> -->
               <!-- <p>
                 IP地址:{{ row.data.ip }}
                 <span v-if="row.data.ip == null" style="color: red; margin-right: 10px;">用户已登出</span>
               </p> -->
             </div>
           </div>
-          <el-button type="success" @click='handleAgree(userFriendsRequestID[index])'>同意申请</el-button>
-          <el-button type="danger" @click='handleRefuse(userFriendsRequestID[index],index)'>拒绝申请</el-button>
+          <div style="margin-top:20px">
+          <el-button plain type="success" icon="el-icon-check" @click='handleAgree(userFriendsRequestID[index])'>同意申请</el-button>
+          <el-button plain type="danger" icon="el-icon-close" @click='handleRefuse(userFriendsRequestID[index],index)'>拒绝申请</el-button>
+        </div>
         </el-card>
       <!-- </div> -->
       </el-col>

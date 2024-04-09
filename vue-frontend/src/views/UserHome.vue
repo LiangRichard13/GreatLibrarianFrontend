@@ -13,7 +13,7 @@
                   <el-link style="float: right;" @click="pushToProject()">我的项目列表</el-link>
                 </div>
                 <el-table :data="myProjects">
-                  <el-table-column label="项目 ID" prop="id"></el-table-column>
+                  <!-- <el-table-column label="项目 ID" prop="id"></el-table-column> -->
                   <el-table-column label="项目名称" prop="name"></el-table-column>
                   <el-table-column label="测试说明" prop="info"></el-table-column>
                 </el-table>
@@ -25,7 +25,7 @@
                 </div>
                 <el-table :data="participatedExp">
                   <!-- 表格内容 -->
-                  <el-table-column label="测试 ID" prop="id"></el-table-column>
+                  <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                   <el-table-column label="测试名称" prop="name"></el-table-column>
                   <el-table-column label="待审核条数" prop="thisExpQA">
                     <template slot-scope="scope">
@@ -40,12 +40,12 @@
           </el-col>
 
           <!-- 下载链接 -->
-          <!-- <el-button type="primary" @click="downloadFile()">下载文件</el-button> -->
+          <!-- <el-button plain type="primary" @click="downloadFile()">下载文件</el-button> -->
 
           <!-- 右侧好友列表区域 -->
           <el-col :span="6">
             <el-badge :value="friendRequestNumebr" class="item" style="margin-top: 20px;">
-              <el-button size="large" @click="pushToFriendRequest">待处理的好友请求</el-button>
+              <el-button plain icon="el-icon-bell" size="large" @click="pushToFriendRequest">待处理的好友请求</el-button>
             </el-badge>
             <el-card class="box-card">
               <div slot="header" class="clearfix">

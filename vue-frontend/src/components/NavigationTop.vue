@@ -41,7 +41,7 @@
                 </el-link>
               </el-dropdown-item>
               <el-dropdown-item divided>
-                <el-button type="text" @click="handleLogout" :underline="false">
+                <el-button plain type="text" @click="handleLogout" :underline="false">
                   <i style="font-size: 15px; padding-right: 3px" class="el-icon-switch-button"></i>退出登录
                 </el-button>
               </el-dropdown-item>

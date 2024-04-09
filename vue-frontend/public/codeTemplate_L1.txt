@@ -1,4 +1,8 @@
 def __call__(self, prompt: str, history=None) -> str:
-    #请从下面开始编辑
-    print('我是修改后的代code-------------------')
-    return True
+    dashscope.api_key = self.apikey
+    response = dashscope.Generation.call(model=dashscope.Generation.Models.qwen_turbo, prompt=prompt, history=history)
+    if response:
+        if response['output']:
+            if response['output']['text']:
+                return response['output']['text']
+    return 'API Problem'

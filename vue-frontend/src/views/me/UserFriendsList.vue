@@ -10,7 +10,7 @@
               <img :src="row.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
               <div style="margin-left: 10px;">
                 <p>用户名:{{ row.name }}</p>
-                <p>用户ID:{{ row.id }}</p>
+                <!-- <p>用户ID:{{ row.id }}</p> -->
                 <p>IP地址:{{ row.ip }}
                   <span v-if="row.ip == null" style="color: red; margin-right: 10px;">用户已登出</span>
                   <span v-else-if="row.ip != null && row.state == -1" style="color: red;">用户不在同一局域网下</span>
@@ -32,7 +32,7 @@
             </div>
             <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
               @confirm="handleDeleteFriend(row.id, index)" title="确定要删除此好友吗？">
-              <el-button type="danger" slot="reference">删除好友</el-button>
+              <el-button plain type="danger" slot="reference">删除好友</el-button>
             </el-popconfirm>
           </el-card>
           <!-- </div> -->

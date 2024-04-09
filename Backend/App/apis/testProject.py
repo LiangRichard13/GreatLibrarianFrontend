@@ -16,7 +16,7 @@ from App.utils.config_operation import add_call_function, update_code_to_class, 
 
 def getAK(AKid):
     x = APIKey.query.filter(APIKey.AK_id == AKid).first()
-    return {'id': x.AK_id, 'name': x.AK_name, 'value': x.AK_value, 'auth': x.AK_auth}
+    return {'id': x.AK_id, 'name': x.AK_name, 'value': x.AK_value, 'intro': x.AK_intro}
 
 
 def getDS(DSid):

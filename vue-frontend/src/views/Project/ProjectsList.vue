@@ -16,14 +16,14 @@
               {{collaborator.name}}
             </div>
           </template>
-        </el-table-column> -->
+</el-table-column> -->
 
         <!-- LLM 列 -->
         <el-table-column label="LLM">
           <template slot-scope="scope">
             <div v-for="apiKey in scope.row.apiKey" :key="apiKey.id">
               <!-- {{ apiKey.id }} - {{ apiKey.name }} -->
-           {{ apiKey.name }}
+              {{ apiKey.name }}
             </div>
           </template>
         </el-table-column>
@@ -33,7 +33,7 @@
           <template slot-scope="scope">
             <div v-for="data in scope.row.dataSet" :key="data.id">
               <!-- {{ data.id }} - {{ data.name }} -->
-          {{ data.name }}
+              {{ data.name }}
             </div>
           </template>
         </el-table-column>
@@ -46,7 +46,8 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <el-button plain icon="el-icon-tickets" size="mini" type="primary" @click.stop="handleExperiment(scope.row)"> <!-- 阻止冒泡 -->
+                  <el-button plain icon="el-icon-tickets" size="mini" type="primary"
+                    @click.stop="handleExperiment(scope.row)"> <!-- 阻止冒泡 -->
                     测试列表
                   </el-button>
                 </el-dropdown-item>
@@ -59,7 +60,8 @@
           </el-button>
         </el-dropdown-item> -->
                 <el-dropdown-item>
-                  <el-button plain icon="el-icon-edit" size="mini" type="warning" @click.stop="showEditDialog(scope.row)"> <!-- 阻止冒泡 -->
+                  <el-button plain icon="el-icon-edit" size="mini" type="warning"
+                    @click.stop="showEditDialog(scope.row)"> <!-- 阻止冒泡 -->
                     修改项目配置
                   </el-button>
                 </el-dropdown-item>
@@ -92,12 +94,11 @@
         </el-table-column>
       </el-table>
     </div>
-    <!-- 将好友加入到项目协作的对话框 -->
     <template>
       <el-dialog title="修改当前项目" :visible.sync="showDialog" @close="handleDialogClose">
 
         <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-          <h4>当前项目:{{ currentProjectId }} - {{ currentProjectName }}</h4>
+          <h4>当前项目:{{ currentProjectName }}</h4>
         </div>
         <el-form ref="form" :model="editProject" label-width="100px">
           <el-form-item label="项目名称">
@@ -124,7 +125,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button plain @click="handleDialogClose">取消</el-button>
-          <el-button plain type="primary" @click="handleEditProject">确定</el-button>
+          <el-button plain type="primary" @click="confirmEdit">确定</el-button>
         </span>
       </el-dialog>
     </template>
@@ -136,7 +137,7 @@
 <script>
 
 import { getProjectsByUserId, deleteById } from '@/api/project'
-import { addProject,addApiKeyToProject,addDataSetToProject } from "@/api/project";
+import { addProject, addApiKeyToProject, addDataSetToProject } from "@/api/project";
 import { findApiKeyByUserId } from "@/api/apiConfig";
 import { findDataSetByUserId } from "@/api/dataSetConfig"
 // import {addFriendsToProject} from '@/api/project' 
@@ -223,26 +224,23 @@ export default {
     //   this.handleDialogClose(); // 关闭对话框
     // },
     handleExperiment(project) {
-      console.log('该项目',project)
-      if(project.apiKey.length===0)
-     {
-      this.$message({
-                    message: '请重新配置API KEY',
-                    type: 'warning'
-                  });
-       return
-     }
-     else if(project.dataSet.length===0)
-      {
+      console.log('该项目', project)
+      if (project.apiKey.length === 0) {
         this.$message({
-                    message: '请重新配置数据集',
-                    type: 'warning'
-                  });
+          message: '请重新配置API KEY',
+          type: 'warning'
+        });
+        return
       }
-      else
-      {
-      localStorage.setItem('thisProject', JSON.stringify(project));
-      this.$router.push("/experimentList")
+      else if (project.dataSet.length === 0) {
+        this.$message({
+          message: '请重新配置数据集',
+          type: 'warning'
+        });
+      }
+      else {
+        localStorage.setItem('thisProject', JSON.stringify(project));
+        this.$router.push("/experimentList")
       }
     },
     showEditDialog(row) {
@@ -252,57 +250,76 @@ export default {
       this.editProject.info = row.info
       this.showDialog = true
     },
+    confirmEdit(){
+      this.$confirm('是否修改该项目？这样做会清空其中的所有测试', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.handleEditProject()
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消修改'
+                });
+            });
+    },
     handleEditProject() {
       if (this.editProject.name.trim() && this.editProject.info.trim()) {
         if (this.editProject.apiKey.length > 0 && this.editProject.dataset.length > 0) {
-          const data = {
-            uid: localStorage.getItem('uid'),
-            name: this.editProject.name,
-            info: this.editProject.info,
-            // LLM: this.newProject.apiKey, // 确保包括了 apiKey
-            // DSid: this.newProject.dataset // 确保包括了 dataset
+          const dataDelete = {
+            id: this.currentProjectId
           }
-          addProject(data).then(res => {
+          deleteById(dataDelete).then(res => {
             if (res.success) {
-              this.editProject.name = '';
-              this.editProject.info = ''; // 清空输入框
-              let projectId = res.id
-              // this.newProject.apiKey = [];
-              // this.newProject.dataset = [];
-
-              //将用户选择的apiKeys加入到project里面
-              Promise.all(this.editProject.apiKey.map(AK_id => {
-                const addApi = {
-                  pid: projectId,
-                  AKid: AK_id
-                }
-                addApiKeyToProject(addApi)
-              }))
-              this.editProject.apiKey = []//将用户选择的apikey列表置空
-
-              //将用户选择的dataSet加入到project里面
-              Promise.all(this.editProject.dataset.map(DS_id => {
-                const addDS = {
-                  pid: projectId,
-                  DSid: DS_id
-                }
-                addDataSetToProject(addDS)
-              }))
-              this.editProject.dataset = []//将用户选择的dataset列表置空
-              const data = {
-                id: this.currentProjectId
+              const dataAdd = {
+                uid: localStorage.getItem('uid'),
+                name: this.editProject.name,
+                info: this.editProject.info,
               }
-              deleteById(data).then(res => {
+              addProject(dataAdd).then(res => {
                 if (res.success) {
-                  this.projectList=[]
+                  this.editProject.name = '';
+                  this.editProject.info = ''; // 清空输入框
+                  let projectId = res.id
+                  // this.newProject.apiKey = [];
+                  // this.newProject.dataset = [];
+
+                  //将用户选择的apiKeys加入到project里面
+                  Promise.all(this.editProject.apiKey.map(AK_id => {
+                    const addApi = {
+                      pid: projectId,
+                      AKid: AK_id
+                    }
+                    addApiKeyToProject(addApi)
+                  }))
+                  this.editProject.apiKey = []//将用户选择的apikey列表置空
+
+                  //将用户选择的dataSet加入到project里面
+                  Promise.all(this.editProject.dataset.map(DS_id => {
+                    const addDS = {
+                      pid: projectId,
+                      DSid: DS_id
+                    }
+                    addDataSetToProject(addDS)
+                  }))
+                  this.editProject.dataset = []//将用户选择的dataset列表置空
+                  this.projectList = []
                   this.load()
                   this.$message({
                     message: '修改成功',
                     type: 'success'
                   });
-                  this.showDialog=false
+                  this.showDialog = false
                 }
               })
+            }
+            else
+            {
+              this.$message({
+                    message: '修改出错',
+                    type: 'error'
+                  });
             }
           })
         }

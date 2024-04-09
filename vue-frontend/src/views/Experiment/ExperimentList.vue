@@ -391,7 +391,7 @@
 
                 <el-checkbox-group v-model="selectFriendsId">
                     <el-checkbox v-for="friend in userFriends" :label="friend.id" :key="friend.id">
-                        {{ friend.id }} - {{ friend.name }}
+                        {{ friend.name }}
                     </el-checkbox>
                 </el-checkbox-group>
 
@@ -426,7 +426,7 @@
                             </el-table-column>
                             <el-table-column label="下载" align="center">
                                 <template slot-scope="scope">
-                                    <el-button icon="el-icon-download" type="primary" style="font-size: 18px;" plain @click="confirmDownload(scope.row.index)"></el-button>
+                                    <el-button class="down-load" icon="el-icon-download" circle style="font-size: 18px;" @click="confirmDownload(scope.row.index)"></el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -1214,4 +1214,9 @@ export default {
     top: 10px;
     left: 10px;
 }
+.down-load {
+    /* background-image: linear-gradient(to right, #4facfe, #00f2fe); Gradient background */
+    border-color:dodgerblue; /* Removes the border */
+    border-width: 3px;
+  }
 </style>

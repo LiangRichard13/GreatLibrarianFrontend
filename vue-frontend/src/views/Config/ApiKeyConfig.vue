@@ -36,7 +36,7 @@
         <el-table-column label="操作" width="180" align="center">
           <template slot-scope="scope">
             <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
-              @confirm="removeKey(scope.$index, scope.row)" title="确定要删除此API_KEY吗?">
+              @confirm="removeKey(scope.$index, scope.row)" title="确定要删除此API KEY吗?">
               <el-button plain style="margin-left: 8px" size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
               </el-button>
             </el-popconfirm>

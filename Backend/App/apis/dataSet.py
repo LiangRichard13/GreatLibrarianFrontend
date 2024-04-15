@@ -48,7 +48,7 @@ class DataSetCRUD(Resource):
     # 删除数据集
     def delete(self):
         try:
-            db.session.delete(DataSet.query.filter(DataSet.DS_id == request.args['id']).first())
+            db.session.delete(DataSet.query.filter(DataSet.DS_id == request.json['id']).first())
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:

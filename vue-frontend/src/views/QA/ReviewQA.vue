@@ -44,7 +44,7 @@
       </div>
       <div class="pagination-container" style="margin-top: 20px;">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
+          :page-sizes="[5, 10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
           layout="total, sizes, prev, pager, next, jumper">
         </el-pagination>
       </div>

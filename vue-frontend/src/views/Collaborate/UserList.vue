@@ -40,12 +40,7 @@ export default {
   data() {
     return {
       defaultAvatar: require('@/assets/avatar.png'), // 设置默认头像路径
-      userList: [
-      {icon:null,name:'Richard',id:'377dbf961d73f74'},
-      {icon:null,name:'Richard',id:'377dbf961d73f74'},
-      {icon:null,name:'Richard',id:'377dbf961d73f74'},
-      {icon:null,name:'Richard',id:'377dbf961d73f74'},
-    ]
+      userList: []
     }
   },
   methods: {
@@ -54,7 +49,7 @@ export default {
       getUserList(id).then(res => {
         // this.userList = res.data;
         this.userList = res.data.filter(user => user.state === 0);
-        // console.log('获取可添加好友列表',this.userList)
+        console.log('获取可添加好友列表',this.userList)
         //设置用户头像
         this.userList = this.userList.map(user => {
           if (user.icon) {
@@ -86,7 +81,7 @@ export default {
     }
   },
   mounted() {
-    // this.load()
+    this.load()
   },
 }
 </script>

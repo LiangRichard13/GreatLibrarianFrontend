@@ -62,6 +62,10 @@ class TPOperation(Resource):
     def get(self):
         dir_r = os.path.join(BackendPath(), 'APP', 'data', 'Logs', request.args['tPid'])  # 报告目录
         if request.args['choose'] == '1':  # 报告数量
-            return jsonify({'count': sum(1 for file in os.listdir(dir_r) if file.startswith('report-v')),'success': True})
+            try:
+                report_num= sum(1 for file in os.listdir(dir_r)if file.startswith('report-v'))
+                return jsonify({'count': report_num,'success': True})
+            except:
+                return jsonify({'message': '找不到报告路径', 'success': False})
         if request.args['choose'] == '2':  # 报告路径
             return jsonify({'url': os.path.join('App', 'data', 'Logs', request.args['tPid'],'report-v' + request.args['n'] + '.pdf'),'success': True})

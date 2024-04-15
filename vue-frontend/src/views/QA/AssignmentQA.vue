@@ -11,20 +11,20 @@
       <div class="table-container">
 
         <!-- 截图需要 -->
-        <el-button plain type="primary" icon="el-icon-user-solid" style="float: right;">一键协作</el-button>
+        <!-- <el-button plain type="primary" icon="el-icon-user-solid" style="float: right;">一键协作</el-button> -->
 
         <el-table :data="pagedQAList" :row-key="row => row.QAid" style="width: 100%" ref="multipleTable"
           tooltip-effect="dark" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55">
           </el-table-column>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
-          <el-table-column label="问题" width="500%">
+          <el-table-column label="问题">
             <template slot-scope="scope">
-              <div style="height: 70px; overflow: auto;">{{ scope.row.Q }}</div>
+              <div style="height: 50px; overflow: auto;">{{ scope.row.Q }}</div>
             </template>
           </el-table-column>
 
-          <!-- <el-table-column type="expand" label="回答">
+          <el-table-column type="expand" label="回答">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="回答:">
@@ -32,23 +32,23 @@
                 </el-form-item>
               </el-form>
             </template>
-          </el-table-column> -->
+          </el-table-column>
 
-          <el-table-column label="回答">
+          <!-- <el-table-column label="回答">
             <template slot-scope="scope">
               <div style="height: 70px; overflow: auto;">{{ scope.row.A }}</div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
           <!-- 截图需要 -->
-          <el-table-column label="选择协作者" prop="reviewId" width="200">
+          <!-- <el-table-column label="选择协作者" prop="reviewId" width="200">
             <template slot-scope="scope">
               <el-select  placeholder="请选择" v-model="scope.row.reviewId">
                 <el-option v-for="item in thisCollaborators" :key="item.id" :label="item.name" :value="item.id">
                 </el-option>
               </el-select>
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
         </el-table>
         <div class="pagination-container" style="margin-top: 20px;">

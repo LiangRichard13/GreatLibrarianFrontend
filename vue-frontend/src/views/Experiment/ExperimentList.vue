@@ -447,7 +447,7 @@ import { getExperimentByProjectId } from '@/api/experiment'
 import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOperationFile, addOperationFile, updateOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
-import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum } from '@/api/expOperation'
+import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum, errorHandle } from '@/api/expOperation'
 // import { genReport, getReportNum } from '@/api/expOperation'
 import { startExp, updateReport } from '@/api/expOperation'
 import config from "@/services/conf"
@@ -1023,14 +1023,16 @@ export default {
                     clearInterval(this.interval);
                     return;
                 }
-                if (this.currentTab !== '正在测试') {
-                    clearInterval(this.interval);
-                    return;
-                }
+                // if (this.currentTab !== '正在测试') {
+                //     clearInterval(this.interval);
+                //     return;
+                // }
 
                 // 遍历 this.proceeding 中的每个测试
                 this.proceeding.forEach((experiment, index) => {
                     getExperimentProgress(experiment.id).then(res => {
+                        if(res.success)
+                        {
                         this.proceeding[index].progress = res.process
                         if (this.proceeding[index].progress === 100) {
                             // 更新测试状态
@@ -1047,8 +1049,21 @@ export default {
                                 }
                             });
                         }
-
-
+                    }
+                    else
+                    {
+                        errorHandle(experiment.id ).then(res=>{
+                            if(res.success)
+                            {
+                                this.$message({
+                                        type: 'error',
+                                        message: experiment.id + '-' + experiment.name + '获取进度失败，请检查测试配置再重新开始测试'
+                                    });
+                                    clearInterval(this.interval);
+                                    this.setExpEmpty()
+                            }
+                        })
+                    }
                     })
                 });
             }, 5000); // 设置轮询间隔为 5 秒
@@ -1083,12 +1098,12 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
-            if (this.currentTab === '正在测试') {
-                if (this.interval) {
-                    clearInterval(this.interval)
-                }
-                this.proceedingExp()
-            }
+            // if (this.currentTab === '正在测试') {
+            //     if (this.interval) {
+            //         clearInterval(this.interval)
+            //     }
+            //     this.proceedingExp()
+            // }
         },
         afterDeleteExp(row, index) {
             localStorage.removeItem(row.id + '_1')

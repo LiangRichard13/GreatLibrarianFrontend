@@ -448,6 +448,7 @@ import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOp
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
 import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum } from '@/api/expOperation'
+// import { genReport, getReportNum } from '@/api/expOperation'
 import { startExp, updateReport } from '@/api/expOperation'
 import config from "@/services/conf"
 import ace from 'ace-builds/src-noconflict/ace';
@@ -1063,7 +1064,7 @@ export default {
         //         // 遍历 this.proceeding 中的每个测试
         //         this.proceeding.forEach((experiment, index) => {
 
-        //             this.proceeding[index].progress = this.proceeding[index].progress + 20
+        //             this.proceeding[index].progress = this.proceeding[index].progress + 1
 
 
         //             if (this.proceeding[index].progress === 100) {

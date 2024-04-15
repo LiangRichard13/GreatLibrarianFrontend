@@ -13,7 +13,7 @@ export function deleteById(id) {
     return service({
         url: '/dataSet',
         method: 'delete',
-           params: {
+           data: {
             id: id
         }
     })

@@ -4,23 +4,27 @@
     </el-page-header>
     <div class="content">
       <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-       {{ this.thisExperiment.name }}的存疑记录
+        {{ this.thisExperiment.name }}的存疑记录
       </h3>
     </div>
     <template v-if="QAList.length">
       <div class="table-container">
 
-           <!-- 截图需要 -->
-        <el-button plain type="primary" icon="el-icon-user-solid" style="float: right;">一键协作</el-button>
+        <!-- 截图需要 -->
+        <!-- <el-button plain type="primary" icon="el-icon-user-solid" style="float: right;">一键协作</el-button> -->
 
         <el-table :data="pagedQAList" :row-key="row => row.QAid" style="width: 100%" ref="multipleTable"
           tooltip-effect="dark" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55">
           </el-table-column>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
-          <el-table-column label="问题" prop="Q" width="500%"></el-table-column>
+          <el-table-column label="问题">
+            <template slot-scope="scope">
+              <div style="height: 50px; overflow: auto;">{{ scope.row.Q }}</div>
+            </template>
+          </el-table-column>
 
-          <!-- <el-table-column type="expand" label="回答">
+          <el-table-column type="expand" label="回答">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="回答:">
@@ -28,27 +32,28 @@
                 </el-form-item>
               </el-form>
             </template>
-          </el-table-column> -->
+          </el-table-column>
 
-          <el-table-column label="回答">
+          <!-- <el-table-column label="回答">
             <template slot-scope="scope">
               <div style="height: 70px; overflow: auto;">{{ scope.row.A }}</div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
           <!-- 截图需要 -->
-          <el-table-column label="选择协作者" prop="" width="300%">
-            <el-select v-model="distributeUserId" placeholder="请选择">
-                <el-option v-for="item in this.thisCollaborators" :key="item.id" :label="`${item.name}`"
-                  :value="item.id">
+          <!-- <el-table-column label="选择协作者" prop="reviewId" width="200">
+            <template slot-scope="scope">
+              <el-select  placeholder="请选择" v-model="scope.row.reviewId">
+                <el-option v-for="item in thisCollaborators" :key="item.id" :label="item.name" :value="item.id">
                 </el-option>
               </el-select>
-          </el-table-column>
+            </template>
+          </el-table-column> -->
 
         </el-table>
         <div class="pagination-container" style="margin-top: 20px;">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
+            :current-page="currentPage" :page-sizes="[5, 10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
             layout="total, sizes, prev, pager, next, jumper">
           </el-pagination>
         </div>
@@ -123,7 +128,13 @@ export default {
   methods: {
     load() {
       getQAByExpirenceId(this.thisExperiment.id, localStorage.getItem('uid')).then(res => {
-        this.QAList = res.data
+        // this.QAList = res.data
+
+        //截图需要
+        this.QAList = res.data.map(qa => {
+        return { ...qa, reviewId: null }; // 使用展开运算符复制原始对象，并添加新字段
+    });
+
         this.updatePagedQAList(); // 初始加载
       })
 

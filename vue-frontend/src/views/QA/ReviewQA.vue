@@ -11,7 +11,11 @@
       <div class="table-container">
         <el-table :data="pagedQAList" style="width: 100%">
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
-          <el-table-column label="问题" prop="Q"></el-table-column>
+          <el-table-column label="问题">
+            <template slot-scope="scope">
+              <div style="height: 50px; overflow: auto;">{{ scope.row.Q }}</div>
+            </template>
+          </el-table-column>
           <el-table-column label="打分" prop="score">
             <template slot-scope="scope">
               <el-rate v-model="scope.row.score"></el-rate>
@@ -44,7 +48,7 @@
       </div>
       <div class="pagination-container" style="margin-top: 20px;">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
+          :page-sizes="[5, 10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
           layout="total, sizes, prev, pager, next, jumper">
         </el-pagination>
       </div>

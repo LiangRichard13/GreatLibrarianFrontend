@@ -10,6 +10,16 @@ export function getExperimentProgress(expId) {
     })
 }
 
+export function errorHandle(expId) {
+    return service({
+        url: '/progress',
+        method: 'post',
+        params: {
+            tPid: expId,
+        }
+    })
+}
+
 export function updateExperimentStatus(data) {
     return service({
         url: '/QA',

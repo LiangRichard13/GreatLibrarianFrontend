@@ -180,6 +180,7 @@ export default {
 .friend {
   display: flex;
   align-items: center;
+  margin-bottom: 10px;
   /* 垂直居中 */
 }
 

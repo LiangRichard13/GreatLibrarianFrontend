@@ -19,7 +19,7 @@
       <el-table :data="dataSet" style="width: 100%">
         <!-- <el-table-column label="数据集 ID" prop="id">
         </el-table-column> -->
-        <el-table-column label="测试对象" prop="name" width="300%">
+        <el-table-column label="数据集名称" prop="name" width="300%">
         </el-table-column>
         <el-table-column label="上传文件名称" prop="url" width="300%">
         </el-table-column>
@@ -47,7 +47,7 @@
 
       <div>
         <el-form ref="form" :model="newDataItem" label-width="100px">
-          <el-form-item label="测试对象">
+          <el-form-item label="数据集名称">
             <el-input v-model="newDataItem.name"></el-input>
           </el-form-item>
 
@@ -111,10 +111,11 @@ export default {
         findDataSetByUserId(id).then(res => {
           this.dataSet = res.data;
           this.dataSet.forEach(item=>{
-            item.url=item.url.replace(/App/g, '')
-            item.url=item.url.replace(/data/g, '')
-            item.url=item.url.replace(/DataSet/g, '')
-            item.url=item.url.replace(/\\/g, '')
+            // item.url=item.url.replace(/App/g, '')
+            // item.url=item.url.replace(/data/g, '')
+            // item.url=item.url.replace(/DataSet/g, '')
+            // item.url=item.url.replace(/\\/g, '')
+            item.url=item.url.replace(/^App\\data\\DataSet\\/, '');
 
           })
         })

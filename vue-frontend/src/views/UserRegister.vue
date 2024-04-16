@@ -16,7 +16,7 @@
         <el-input class="login-form-input" placeholder="密 码" v-model="password" show-password></el-input>
         <p>Check Password</p>
         <el-input class="login-form-input" placeholder="确 认 密 码" v-model="checkPassword" show-password></el-input>
-        <el-button plain @click="postLogin" class="login-form-button" type="primary">SIGN UP</el-button>
+        <el-button @click="postLogin" class="login-form-button" type="primary">SIGN UP</el-button>
       </div>
       <div class="login-form-footer">
         <el-link href="/login" style="font-weight: bolder;font-size: 16px;color: #91949c;" :underline="false">
@@ -139,7 +139,7 @@ export default {
   letter-spacing: 2px;
   height: 60px;
   background: black;
-  box-shadow: 0 5px 30px rgb(0 66 8.5%);
+  /* box-shadow: 0 5px 30px rgb(0 66 8.5%); */
   margin-top: 35px;
 }
 

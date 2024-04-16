@@ -28,7 +28,7 @@
             </el-tooltip>
           </div>
         </div>
-        <el-button plain @click="postLogin" class="login-form-button" type="primary">SIGN IN</el-button>
+        <el-button @click="postLogin" class="login-form-button" type="info">SIGN IN</el-button>
       </div>
       <div class="login-form-footer">
         <el-link href="/register" style="font-weight: bolder;font-size: 16px;color: #91949c;" :underline="false">
@@ -49,9 +49,9 @@ export default {
   data() {
     return {
       activeTab: "emailLogin", // 默认选中的选项卡
-      phoneNumber: '18457096496',
-      email: '1760268004@qq.com',
-      password: '123456',
+      phoneNumber: '',
+      email: '',
+      password: '',
       remember: false,
     }
   },
@@ -140,7 +140,7 @@ export default {
   letter-spacing: 2px;
   height: 60px;
   background: black;
-  box-shadow: 0 5px 30px rgb(0 66 8.5%);
+  /* box-shadow: 0 5px 30px rgb(0 66 8.5%); */
   margin-top: 35px;
 }
 

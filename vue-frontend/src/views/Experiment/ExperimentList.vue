@@ -90,12 +90,14 @@
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button plain size="mini" icon="el-icon-edit" type="warning" @click="initialEdit(scope.row)">
+                                        <el-button plain size="mini" icon="el-icon-edit" type="warning"
+                                            @click="initialEdit(scope.row)">
                                             修改测试配置
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button plain size="mini" icon="el-icon-edit" type="primary" @click="handleEditConfigFile(scope.row)">
+                                        <el-button plain size="mini" icon="el-icon-edit" type="primary"
+                                            @click="handleEditConfigFile(scope.row)">
                                             编辑配置文件
                                         </el-button>
                                     </el-dropdown-item>
@@ -188,12 +190,14 @@
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button plain size="mini" icon="el-icon-refresh" type="info" @click.stop="handleUpdate(scope.row)">
+                                        <el-button plain size="mini" icon="el-icon-refresh" type="info"
+                                            @click.stop="handleUpdate(scope.row)">
                                             更新报告
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button plain size="mini" icon="el-icon-download" type="success" @click.stop="handleDownload(scope.row)">
+                                        <el-button plain size="mini" icon="el-icon-download" type="success"
+                                            @click.stop="handleDownload(scope.row)">
                                             下载报告
                                         </el-button>
                                     </el-dropdown-item>
@@ -236,13 +240,20 @@
                     </el-table-column>
                     <el-table-column label="协作者">
                         <template slot-scope="scope">
-                            <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
-                                {{ collaborator.name }}
+                            <div v-if="scope.row.collaborators && scope.row.collaborators.length > 0">
+                                <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
+                                    {{ collaborator.name }}
+                                </div>
                             </div>
+                            <el-tag v-else type="warning">无协作者</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
+                            <el-button plain size="mini" icon="el-icon-download" type="success" style="margin-bottom: 10px;"
+                                @click.stop="handleDownload(scope.row)">
+                                下载报告
+                            </el-button>
                             <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                 icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                 title="确定要删除此测试吗？">
@@ -391,7 +402,7 @@
 
                 <el-checkbox-group v-model="selectFriendsId">
                     <el-checkbox v-for="friend in userFriends" :label="friend.id" :key="friend.id">
-                        {{ friend.id }} - {{ friend.name }}
+                        {{ friend.name }}
                     </el-checkbox>
                 </el-checkbox-group>
 
@@ -416,7 +427,7 @@
                             </el-option>
                         </el-select> -->
 
-                        <el-form >
+                <el-form>
                     <el-form-item>
                         <el-table :data="downLoadTable">
                             <el-table-column prop="index" label="版本" align="center">
@@ -426,7 +437,8 @@
                             </el-table-column>
                             <el-table-column label="下载" align="center">
                                 <template slot-scope="scope">
-                                    <el-button icon="el-icon-download" type="primary" style="font-size: 18px;" plain @click="confirmDownload(scope.row.index)"></el-button>
+                                    <el-button class="down-load" icon="el-icon-download" circle style="font-size: 18px;"
+                                        @click="confirmDownload(scope.row.index)"></el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -447,7 +459,8 @@ import { getExperimentByProjectId } from '@/api/experiment'
 import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOperationFile, addOperationFile, updateOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
-import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum } from '@/api/expOperation'
+import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum, errorHandle } from '@/api/expOperation'
+// import { genReport, getReportNum } from '@/api/expOperation'
 import { startExp, updateReport } from '@/api/expOperation'
 import config from "@/services/conf"
 import ace from 'ace-builds/src-noconflict/ace';
@@ -623,10 +636,10 @@ export default {
         },
         handleRemoveExpirement(index, row) {
             const deleteData = { tPid: row.id }
-            deleteById(deleteData).then(res => {
+            deleteOperationFile(deleteData).then(res => {
                 if (res.success) {
                     if (row.configURL !== null) {
-                        deleteOperationFile(deleteData).then(res => {
+                        deleteById(deleteData).then(res => {
                             if (res.success) {
                                 this.afterDeleteExp(row, index)
                             }
@@ -1022,32 +1035,44 @@ export default {
                     clearInterval(this.interval);
                     return;
                 }
-                if (this.currentTab !== '正在测试') {
-                    clearInterval(this.interval);
-                    return;
-                }
+                // if (this.currentTab !== '正在测试') {
+                //     clearInterval(this.interval);
+                //     return;
+                // }
 
                 // 遍历 this.proceeding 中的每个测试
                 this.proceeding.forEach((experiment, index) => {
                     getExperimentProgress(experiment.id).then(res => {
-                        this.proceeding[index].progress = res.process
-                        if (this.proceeding[index].progress === 100) {
-                            // 更新测试状态
-                            const updateExp = { TPid: experiment.id, uid: localStorage.getItem('uid') }
-                            updateExperimentStatus(updateExp).then(res => {
+                        if (res.success) {
+                            this.proceeding[index].progress = res.process
+                            if (this.proceeding[index].progress === 100) {
+                                // 更新测试状态
+                                const updateExp = { TPid: experiment.id, uid: localStorage.getItem('uid') }
+                                updateExperimentStatus(updateExp).then(res => {
+                                    if (res.success) {
+                                        this.$message({
+                                            type: 'info',
+                                            message: experiment.id + '-' + experiment.name + '执行完成'
+                                        });
+                                        // 停止当前轮询
+                                        clearInterval(this.interval);
+                                        this.setExpEmpty()
+                                    }
+                                });
+                            }
+                        }
+                        else {
+                            errorHandle(experiment.id).then(res => {
                                 if (res.success) {
                                     this.$message({
-                                        type: 'info',
-                                        message: experiment.id + '-' + experiment.name + '执行完成'
+                                        type: 'error',
+                                        message: experiment.id + '-' + experiment.name + '获取进度失败，请检查测试配置再重新开始测试'
                                     });
-                                    // 停止当前轮询
                                     clearInterval(this.interval);
                                     this.setExpEmpty()
                                 }
-                            });
+                            })
                         }
-
-
                     })
                 });
             }, 5000); // 设置轮询间隔为 5 秒
@@ -1063,7 +1088,7 @@ export default {
         //         // 遍历 this.proceeding 中的每个测试
         //         this.proceeding.forEach((experiment, index) => {
 
-        //             this.proceeding[index].progress = this.proceeding[index].progress + 20
+        //             this.proceeding[index].progress = this.proceeding[index].progress + 1
 
 
         //             if (this.proceeding[index].progress === 100) {
@@ -1082,12 +1107,12 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
-            if (this.currentTab === '正在测试') {
-                if (this.interval) {
-                    clearInterval(this.interval)
-                }
-                this.proceedingExp()
-            }
+            // if (this.currentTab === '正在测试') {
+            //     if (this.interval) {
+            //         clearInterval(this.interval)
+            //     }
+            //     this.proceedingExp()
+            // }
         },
         afterDeleteExp(row, index) {
             localStorage.removeItem(row.id + '_1')
@@ -1213,5 +1238,12 @@ export default {
     position: absolute;
     top: 10px;
     left: 10px;
+}
+
+.down-load {
+    /* background-image: linear-gradient(to right, #4facfe, #00f2fe); Gradient background */
+    border-color: dodgerblue;
+    /* Removes the border */
+    border-width: 3px;
 }
 </style>

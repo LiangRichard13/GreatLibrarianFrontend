@@ -111,10 +111,11 @@ export default {
         findDataSetByUserId(id).then(res => {
           this.dataSet = res.data;
           this.dataSet.forEach(item=>{
-            item.url=item.url.replace(/App/g, '')
-            item.url=item.url.replace(/data/g, '')
-            item.url=item.url.replace(/DataSet/g, '')
-            item.url=item.url.replace(/\\/g, '')
+            // item.url=item.url.replace(/App/g, '')
+            // item.url=item.url.replace(/data/g, '')
+            // item.url=item.url.replace(/DataSet/g, '')
+            // item.url=item.url.replace(/\\/g, '')
+            item.url=item.url.replace(/^App\\data\\DataSet\\/, '');
 
           })
         })

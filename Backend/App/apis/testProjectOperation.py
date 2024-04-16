@@ -19,12 +19,12 @@ class TPOperation(Resource):
         tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         # 命令中的参数
         testcase_path = os.path.join(BackendPath(), DataSet.query.filter(DataSet.DS_id == tP.DS).first().DS_url)  # DS路径
-        config_path = os.path.join(BackendPath(), 'APP', 'data', 'config', 'config_' + tP.tP_id + '.py')  # 配置文件路径
+        config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tP.tP_id + '.py')  # 配置文件路径
         project_name = Project.query.filter(Project.project_id == tP.Pid).first().project_name  # 项目名称
         # 执行实验命令
         command = 'conda run -n GL gltest --testcase_path=' + testcase_path + ' --config_path=' + config_path + \
                   ' --project_name=' + project_name + ' --test_name=' + tP.tP_name + ' --test_id=' + tP.tP_id + \
-                  ' --logs_path=' + os.path.join(BackendPath(), 'APP', 'data')
+                  ' --logs_path=' + os.path.join(BackendPath(), 'App', 'data')
         print(command)
         try:
             thread = threading.Thread(
@@ -46,10 +46,10 @@ class TPOperation(Resource):
     # 更新报告
     def put(self):
         tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
-        config_path = os.path.join(BackendPath(), 'APP', 'data', 'config', 'config_' + tP.tP_id + '.py')  # 配置文件路径
+        config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tP.tP_id + '.py')  # 配置文件路径
         # 更新报告命令
         command = 'conda run -n GL glupdate --config_path=' + config_path + ' --test_id=' + tP.tP_id + \
-                  ' --logs_path=' + os.path.join(BackendPath(), 'APP', 'data')
+                  ' --logs_path=' + os.path.join(BackendPath(), 'App', 'data')
         print(command)
         try:
             subprocess.run(command, shell=True, capture_output=True, text=True, check=True, encoding='utf-8')
@@ -60,7 +60,7 @@ class TPOperation(Resource):
 
     # 下载pdf报告
     def get(self):
-        dir_r = os.path.join(BackendPath(), 'APP', 'data', 'Logs', request.args['tPid'])  # 报告目录
+        dir_r = os.path.join(BackendPath(), 'App', 'data', 'Logs', request.args['tPid'])  # 报告目录
         if request.args['choose'] == '1':  # 报告数量
             return jsonify({'count': sum(1 for file in os.listdir(dir_r) if file.startswith('report-v')),'success': True})
         if request.args['choose'] == '2':  # 报告路径

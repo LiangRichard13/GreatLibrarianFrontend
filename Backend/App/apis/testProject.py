@@ -96,9 +96,9 @@ class ConfigCRUD(Resource):
     def get(self):
         tp = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         # 配置文件临时区路径
-        temp_path = os.path.join(BackendPath(), 'APP', 'data', 'config', 'Temp', 'config_' + tp.tP_id + '.py')
+        temp_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'Temp', 'config_' + tp.tP_id + '.py')
         # 配置文件路径
-        config_path = os.path.join('APP', 'data', 'config', 'config_' + tp.tP_id + '.py')
+        config_path = os.path.join('App', 'data', 'config', 'config_' + tp.tP_id + '.py')
         tp.tP_configURL = config_path  # 修改数据库数据
         config_path = os.path.join(BackendPath(), config_path)
         try:
@@ -126,7 +126,7 @@ class ConfigCRUD(Resource):
     # 删除配置文件
     def delete(self):
         tp = TestProject.query.filter(TestProject.tP_id == request.json['tPid']).first()
-        config_path = os.path.join(BackendPath(), 'APP', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
+        config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
         tp.tP_configURL = None
         try:
             os.remove(config_path)

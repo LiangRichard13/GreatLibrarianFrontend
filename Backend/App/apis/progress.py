@@ -36,7 +36,7 @@ class Progress(Resource):
         #           state=3 已完成【直接返回100】
         tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         if tP.tP_status == 1:
-            # process = readTemp('APP/data/Logs/' + tP.tP_id + '/process.temp')
+            # process = readTemp('App/data/Logs/' + tP.tP_id + '/process.temp')
             try:
                 process = readTemp(os.path.join(BackendPath(), "App", "data", "Logs", tP.tP_id, "process.temp"))
             except Exception:

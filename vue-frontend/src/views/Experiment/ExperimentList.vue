@@ -240,13 +240,20 @@
                     </el-table-column>
                     <el-table-column label="协作者">
                         <template slot-scope="scope">
-                            <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
-                                {{ collaborator.name }}
+                            <div v-if="scope.row.collaborators && scope.row.collaborators.length > 0">
+                                <div v-for="collaborator in scope.row.collaborators" :key="collaborator.id">
+                                    {{ collaborator.name }}
+                                </div>
                             </div>
+                            <el-tag v-else type="warning">无协作者</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
+                            <el-button plain size="mini" icon="el-icon-download" type="success" style="margin-bottom: 10px;"
+                                @click.stop="handleDownload(scope.row)">
+                                下载报告
+                            </el-button>
                             <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                 icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                 title="确定要删除此测试吗？">

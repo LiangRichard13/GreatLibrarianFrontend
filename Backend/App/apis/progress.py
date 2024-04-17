@@ -47,7 +47,6 @@ class Progress(Resource):
                 #     tP.tP_status = 2
                 try:
                     db.session.commit()  # 提交数据库
-                    print('1')
                     return jsonify({'success': True, 'process': process})
                 except Exception as e:  # 数据库操作异常处理
                     db.session.rollback()  # 回滚
@@ -56,7 +55,6 @@ class Progress(Resource):
             else:
                 return jsonify({'success': False, 'message': 'not find'})
         else:
-            print('2')
             return jsonify({'success': True, 'process': tP.tP_progress})
 
     # 进度条连续获取5次失败后请求的接口

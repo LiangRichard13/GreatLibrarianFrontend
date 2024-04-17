@@ -16,12 +16,12 @@ from App.utils.config_operation import add_call_function, update_code_to_class, 
 
 def getAK(AKid):
     x = APIKey.query.filter(APIKey.AK_id == AKid).first()
-    return {'id': x.AK_id, 'name': x.AK_name, 'value': x.AK_value, 'intro': x.AK_intro}
+    return None if x is None else {'id': x.AK_id, 'name': x.AK_name, 'value': x.AK_value, 'intro': x.AK_intro}
 
 
 def getDS(DSid):
     x = DataSet.query.filter(DataSet.DS_id == DSid).first()
-    return {'id': x.DS_id, 'name': x.DS_name, 'info': x.DS_info, 'url': x.DS_url}
+    return None if x is None else {'id': x.DS_id, 'name': x.DS_name, 'info': x.DS_info, 'url': x.DS_url}
 
 
 # 项目下的实验配置

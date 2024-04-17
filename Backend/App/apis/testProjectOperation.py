@@ -43,7 +43,8 @@ class TPOperation(Resource):
         config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tP.tP_id + '.py')  # 配置文件路径
         project_name = Project.query.filter(Project.project_id == tP.Pid).first().project_name  # 项目名称
         # 执行实验命令
-        command = 'conda run -n ' + request.args['env'] + ' gltest --testcase_path=' + testcase_path \
+        # command = 'conda run -n ' + request.args['env'] + ' gltest --testcase_path=' + testcase_path \
+        command = 'conda run -n ' + 'GL' + ' gltest --testcase_path=' + testcase_path \
                   + ' --config_path=' + config_path + ' --project_name=' + project_name + ' --test_name=' + tP.tP_name \
                   + ' --test_id=' + tP.tP_id + ' --logs_path=' + os.path.join(BackendPath(), 'App', 'data')
         print(command)

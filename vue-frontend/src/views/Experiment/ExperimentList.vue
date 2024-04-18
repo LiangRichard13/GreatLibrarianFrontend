@@ -250,8 +250,8 @@
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
-                            <el-button plain size="mini" icon="el-icon-download" type="success" style="margin-bottom: 10px;"
-                                @click.stop="handleDownload(scope.row)">
+                            <el-button plain size="mini" icon="el-icon-download" type="success"
+                                style="margin-bottom: 10px;" @click.stop="handleDownload(scope.row)">
                                 下载报告
                             </el-button>
                             <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
@@ -636,20 +636,24 @@ export default {
         },
         handleRemoveExpirement(index, row) {
             const deleteData = { tPid: row.id }
-            deleteOperationFile(deleteData).then(res => {
-                if (res.success) {
-                    if (row.configURL !== null) {
+            if (row.configURL !== null) {
+                deleteOperationFile(deleteData).then(res => {
+                    if (res.success) {
                         deleteById(deleteData).then(res => {
                             if (res.success) {
                                 this.afterDeleteExp(row, index)
                             }
                         })
                     }
-                    else {
-                        this.afterDeleteExp(row, index)
-                    }
-                }
-            })
+                })
+            }
+            else {
+                deleteById(deleteData).then(res => {
+                            if (res.success) {
+                                this.afterDeleteExp(row, index)
+                            }
+                        })
+            }
         },
         handleStartExpirement(index, row) {
             const id = { tPid: row.id }

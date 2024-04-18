@@ -53,7 +53,9 @@ class TestProjectCRUD(Resource):
     # 删除实验
     def delete(self):
         try:
-            db.session.delete(TestProject.query.filter(TestProject.tP_id == request.json['tPid']).first())
+            tp = TestProject.query.filter(TestProject.tP_id == request.json['tPid']).first()
+            shutil.rmtree(os.path.join(BackendPath(), 'App', 'data', 'Logs', tp.tP_id), ignore_errors=True)  # 删除Logs
+            db.session.delete(tp)
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:
@@ -129,7 +131,7 @@ class ConfigCRUD(Resource):
         config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
         tp.tP_configURL = None
         try:
-            os.remove(config_path)
+            shutil.rmtree(config_path, ignore_errors=True)
             db.session.commit()
             return jsonify({'success': True})
         except OSError as e:

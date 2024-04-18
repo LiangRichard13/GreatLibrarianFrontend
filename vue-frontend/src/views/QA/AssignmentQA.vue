@@ -14,7 +14,7 @@
         <!-- <el-button plain type="primary" icon="el-icon-user-solid" style="float: right;">一键协作</el-button> -->
 
         <el-table :data="pagedQAList" :row-key="row => row.QAid" style="width: 100%" ref="multipleTable"
-          tooltip-effect="dark" @selection-change="handleSelectionChange">
+          tooltip-effect="dark" @selection-change="handleSelectionChange" v-loading="loading">
           <el-table-column type="selection" width="55">
           </el-table-column>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
@@ -99,6 +99,7 @@ export default {
   name: "AssignmentQA",
   data() {
     return {
+      loading:true,
       showDialog: false,
       QAList: [],
       thisExperiment: {},
@@ -122,6 +123,9 @@ export default {
       this.$router.push("/projectsList")
     }
     this.load();
+         setTimeout(() => {
+      this.loading=false
+        }, 300);
     // this.thisExperiment = this.$route.query;
 
   },

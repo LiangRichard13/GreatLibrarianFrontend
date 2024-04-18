@@ -16,7 +16,7 @@
 </div>
 
     <div class="table-container">
-      <el-table :data="dataSet" style="width: 100%">
+      <el-table :data="dataSet" style="width: 100%" v-loading="loading">
         <!-- <el-table-column label="数据集 ID" prop="id">
         </el-table-column> -->
         <el-table-column label="数据集名称" prop="name" width="300%">
@@ -93,6 +93,7 @@ export default {
   name: "DataSetConfig",
   data() {
     return {
+      loading:true,
       dataSet: [],
       showDialog: false,
       newDataItem: { name: '', info: '' },
@@ -102,6 +103,9 @@ export default {
   },
   mounted() {
     this.load()
+         setTimeout(() => {
+      this.loading=false
+        }, 300);
   },
   methods:
   {

@@ -19,7 +19,7 @@
 
             <div class="section" v-if="currentTab === '待测试'">
                 <h4>待测试</h4>
-                <el-table :data="expList" style="width: 100%">
+                <el-table :data="expList" style="width: 100%"  v-loading="loading">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="被测模型">
@@ -103,9 +103,9 @@
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
-                                        <el-button plain size="mini" icon="el-icon-edit" type="warning"
+                                        <el-button plain size="mini" icon="el-icon-s-tools" type="warning"
                                             @click="initialEdit(scope.row)">
-                                            测试配置
+                                            修改测试配置
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
@@ -134,7 +134,7 @@
 
             <div class="section" v-if="currentTab === '正在测试'">
                 <h4>正在测试</h4>
-                <el-table :data="proceeding" style="width: 100%">
+                <el-table :data="proceeding" style="width: 100%"  v-loading="loading">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="被测模型">
@@ -177,7 +177,7 @@
 
             <div class="section" v-if="currentTab === '待审核'">
                 <h4>待审核</h4>
-                <el-table :data="reviewList" style="width: 100%">
+                <el-table :data="reviewList" style="width: 100%"  v-loading="loading">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="被测模型">
@@ -281,7 +281,7 @@
 
             <div class="section" v-if="currentTab === '已完成'">
                 <h4>已完成</h4>
-                <el-table :data="doneList" style="width: 100%">
+                <el-table :data="doneList" style="width: 100%"  v-loading="loading">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="被测模型">
@@ -458,22 +458,24 @@
         <template>
 
             <el-dialog title="请为当前测试添加协作者" :visible.sync="friendsToExp" @close="handleDialogClose">
+  <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
+    <h4>当前测试:{{ currentExpName }}</h4>
+  </div>
+  
+  <div v-if="userFriends && userFriends.length > 0">
+    <el-checkbox-group v-model="selectFriendsId">
+      <el-checkbox v-for="friend in userFriends" :label="friend.id" :key="friend.id">
+        {{ friend.name }}
+      </el-checkbox>
+    </el-checkbox-group>
+  </div>
+  <el-empty v-else description="暂无好友"></el-empty>
 
-                <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
-                    <h4>当前测试:{{ currentExpName }}</h4>
-                </div>
-
-                <el-checkbox-group v-model="selectFriendsId">
-                    <el-checkbox v-for="friend in userFriends" :label="friend.id" :key="friend.id">
-                        {{ friend.name }}
-                    </el-checkbox>
-                </el-checkbox-group>
-
-                <span slot="footer" class="dialog-footer">
-                    <el-button plain @click="handleDialogClose">取消</el-button>
-                    <el-button plain type="primary" @click="handlefriendsToExp">确定</el-button>
-                </span>
-            </el-dialog>
+  <span slot="footer" class="dialog-footer">
+    <el-button plain @click="handleDialogClose">取消</el-button>
+    <el-button plain type="primary" @click="handlefriendsToExp">确定</el-button>
+  </span>
+</el-dialog>
         </template>
 
         <!-- 测试报告下载对话框 -->
@@ -524,6 +526,7 @@ import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@
 import { getQACount } from '@/api/qa'
 import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum, errorHandle } from '@/api/expOperation'
 import { startExp, updateReport } from '@/api/expOperation'
+import {getCallFunction} from "@/api/apiConfig"
 import config from "@/services/conf"
 // import ace from 'ace-builds/src-noconflict/ace';
 // import 'ace-builds/src-noconflict/mode-python';
@@ -538,6 +541,7 @@ export default {
     name: "ExperimentList",
     data() {
         return {
+            loading: true,
             downLoadTable: [],
             currentTab: '待测试', // 默认选中的选项卡
             friendsToExp: false,
@@ -584,6 +588,9 @@ export default {
             this.$router.push("/projectsList")
         }
         this.load();
+             setTimeout(() => {
+      this.loading=false
+        }, 300);
     },
     methods:
     {
@@ -637,7 +644,6 @@ export default {
                                 };
                             });
                         })).then(updatedExperimentList => {
-                            console.log('待审核', updatedExperimentList)
                             // 这里的updatedExperimentList包含了修改后的experimentList
                             // 可以在这里处理或更新状态
                             this.reviewList = updatedExperimentList;
@@ -650,12 +656,12 @@ export default {
                         console.error("Error fetching collaborators: ", error);
                     });
                 }
+            //开始轮询
+            this.proceedingExp()
             })
             getUserList(localStorage.getItem('uid')).then(res => {
                 this.userFriends = res.data.filter(user => user.state === 1 || user.state === -1);
             })
-            //开始轮询
-            this.proceedingExp()
         },
         handleAddNewExpirement() {
             if (this.newExpirement.name.trim()) {
@@ -723,6 +729,14 @@ export default {
             }
         },
         handleStartExpirement(index, row) {
+            if(row.AK1===null||row.AK2===null)
+            {
+                this.$message({
+                        message:'测试的API key已丢失，请修改配置或重新配置API key',
+                        type: 'warning'
+                    });
+                    return
+            }
             const id = { tPid: row.id }
             startExp(id).then(res => {
                 if (res.success) {
@@ -854,7 +868,7 @@ export default {
         handleGenerateConfig(thisTest) {
             if (thisTest.configURL) {
                 this.$message({
-                    message: '已有配置文件，无需重复配置',
+                    message: '已有配置文件，无需重复生成',
                     type: 'warning'
                 });
                 return
@@ -871,12 +885,16 @@ export default {
                 this.initialEdit(thisTest)
             }
         },
-        generateConfig(thisTest){
-            if (localStorage.getItem(thisTest.AK1.id + '_call') !== null && localStorage.getItem(thisTest.AK2.id + '_call') !== null) {
-                    let checkData = { tPid: thisTest.id, code: localStorage.getItem(thisTest.AK1.id + '_call'), className: 'new_llm1' }
+        async generateConfig(thisTest){
+            var AK1_callFunction = await this.getCode(thisTest.AK1.id);
+            var AK2_callFunction = await this.getCode(thisTest.AK2.id);
+    console.log("AK1 的调用函数代码：", AK1_callFunction);
+    console.log("AK2 的调用函数代码：", AK2_callFunction);
+            if (AK1_callFunction !== null && AK2_callFunction !== null) {
+                    let checkData = { tPid: thisTest.id, code: AK1_callFunction, className: 'new_llm1' }
                     checkOperationFile(checkData).then(res => {
                         if (res.success) {
-                            checkData = { tPid: thisTest.id, code: localStorage.getItem(thisTest.AK2.id + '_call'), className: 'new_llm2' }
+                            checkData = { tPid: thisTest.id, code: AK2_callFunction, className: 'new_llm2' }
                             checkOperationFile(checkData).then(res => {
                                 if (res.success) {
                                     generateOperationFile(thisTest.id).then(res => {
@@ -886,6 +904,13 @@ export default {
                                                 type: 'success'
                                             });
                                             this.setExpEmpty()
+                                        }
+                                        else
+                                        {
+                                            this.$message({
+                                                message: '配置文件生成错误',
+                                                type: 'error'
+                                            });
                                         }
                                     })
                                 }
@@ -906,7 +931,7 @@ export default {
                     })
                 }
                 else {
-                    if (localStorage.getItem(thisTest.AK1.id + '_call') === null&&localStorage.getItem(thisTest.AK2.id + '_call')!==null) {
+                    if (AK1_callFunction === null&& AK2_callFunction!==null) {
                         this.$confirm(`还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',
@@ -915,7 +940,7 @@ export default {
                             this.$router.push("/keyConfig")
                         })
                     }
-                    else if (localStorage.getItem(thisTest.AK2.id + '_call') === null&&localStorage.getItem(thisTest.AK1.id + '_call')!==null) {
+                    else if (AK1_callFunction !== null&&AK2_callFunction===null) {
                         this.$confirm(`还没有编辑评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',
@@ -934,6 +959,12 @@ export default {
                         })
                     }
                 }
+        },
+        getCode(id){
+            console.log('错误排查')
+           return getCallFunction(id).then(res=>{
+              return res.code
+            })
         },
         // resetCodeEditor() {
         //     this.pythonCode_1 = '',
@@ -1241,7 +1272,7 @@ export default {
                         }
                     })
                 });
-            }, 5000); // 设置轮询间隔为 5 秒
+            }, 100000); // 设置轮询间隔为 5 秒
         },
         // proceedingExp() {
         //     const interval = setInterval(() => {

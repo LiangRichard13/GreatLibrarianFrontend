@@ -35,7 +35,7 @@ export function distributeToOthers(data) {
 
 export function rateQA(QAid,score) {
     return service({
-        url: '/testProjectUser',
+        url: '/QA',
         method: 'delete',
         params:{
             QAid:QAid,

@@ -4,7 +4,7 @@
     <h3 style="letter-spacing: 1px;font-weight: 400;padding-bottom: 20px;text-align: center">我的项目</h3>
 
     <div class="table-container">
-      <el-table :data="projectList" style="width: 100%">
+      <el-table :data="projectList" style="width: 100%" v-loading="loading">
         <!-- <el-table-column label="项目 ID" prop="id"></el-table-column> -->
         <el-table-column label="项目名称" prop="name"></el-table-column>
         <el-table-column label="测试说明" prop="info"></el-table-column>
@@ -146,6 +146,7 @@ export default {
   name: "ProjectList",
   data() {
     return {
+      loading:true,
       showDialog: false,
       currentProjectId: '',
       currentProjectName: '',
@@ -159,6 +160,9 @@ export default {
   },
   mounted() {
     this.load()
+       setTimeout(() => {
+      this.loading=false
+        }, 300);
   },
   methods:
   {

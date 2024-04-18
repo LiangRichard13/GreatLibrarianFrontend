@@ -2,7 +2,7 @@
   <el-container style="height: 100vh;">
     <el-container>
       <!-- 主体部分 -->
-      <el-main>
+      <el-main v-loading="loading">
         <el-row :gutter="20">
           <!-- 左侧项目列表区域 -->
           <el-col :span="18">
@@ -81,7 +81,7 @@ export default {
   name: "userHome",
   data() {
     return {
-
+      loading:true,
       defaultAvatar: require('@/assets/avatar.png'),
       userFriends: [],
       myProjects: [],
@@ -173,6 +173,9 @@ export default {
   mounted() {
     if (localStorage.getItem("uid") !== null)
       this.load()
+         setTimeout(() => {
+      this.loading=false
+        }, 300);
   },
 }
 </script>

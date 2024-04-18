@@ -7,7 +7,7 @@
                 我参与协作的测试
             </h3>
             <div class="section">
-                <el-table :data="experimentList" style="width: 100%">
+                <el-table :data="experimentList" style="width: 100%" v-loading="loading">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <!-- <el-table-column label="测试模型" prop="AK1.name"></el-table-column>
@@ -48,6 +48,7 @@ export default {
     data() {
         return {
             // showDialog: false,
+            loading:true,
             experimentList: [],
             // reviewList: [], // 待审核列表数据
             // thisProject: {}
@@ -61,6 +62,9 @@ export default {
         //     this.$router.push("/myCollaborate")
         // }
         this.load();
+             setTimeout(() => {
+      this.loading=false
+        }, 300);
     },
     methods:
     {

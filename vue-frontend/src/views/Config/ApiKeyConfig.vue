@@ -12,13 +12,13 @@
 
 
     <div class="table-container">
-      <el-table :data="apiKeys" style="width: 100%">
+      <el-table :data="apiKeys" style="width: 100%" v-loading="loading">
         <!-- <el-table-column prop="id" label="API_KEY ID" width="300%"></el-table-column> -->
         <el-table-column prop="name" label="大模型名称" width="300%"></el-table-column>
         <el-table-column prop="value" label="密钥"></el-table-column>
         <el-table-column label="调用函数" width="300%">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.callFunction === 1" type="success">已保存</el-tag>
+            <el-tag v-if="scope.row.callFunction" type="success">已保存</el-tag>
             <el-tag v-else type="warning">未编辑</el-tag>
           </template>
         </el-table-column>
@@ -46,7 +46,7 @@
           </template> -->
           <template slot-scope="scope">
             <el-button plain style="margin-bottom: 10px" size="mini" icon="el-icon-s-tools" type="primary"
-              @click="handleCodeEdit(scope.row.id, scope.row.name)">编辑调用函数
+              @click="handleCodeEdit(scope.row.id, scope.row.name, scope.row.callFunction)">编辑调用函数
             </el-button>
             <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
               @confirm="removeKey(scope.$index, scope.row)" title="确定要删除此API KEY吗?">
@@ -96,10 +96,12 @@
     </el-dialog>
 
     <!-- 编辑API Key的调用函数的对话框 -->
-    <el-dialog title="编辑API Key对应的Call函数" :visible.sync="showCodeEditorDialog" width="50%" @opened="loadTemplate">
+    <el-dialog title="编辑API Key对应的Call函数" :visible.sync="showCodeEditorDialog" width="50%" @opened="initPythonEditor()">
       <div style="text-align:left; margin-top: 5px;margin-bottom: 10px;">
         <h4>当前API Key:{{ currentAkName }}</h4>
       </div>
+      <el-button plain @click="loadTemplate(1)">加载被测模型调用函数模板</el-button>
+      <el-button plain @click="loadTemplate(2)">加载评估模型调用函数模板</el-button>
       <div>
         <!-- 代码组件 -->
         <h3> 编辑调用函数</h3>
@@ -115,7 +117,7 @@
 
 
 <script>
-import { addApiKey, deleteById, findApiKeyByUserId } from "@/api/apiConfig";
+import { addApiKey, deleteById, findApiKeyByUserId, getCallFunction, addCallFunction } from "@/api/apiConfig";
 // import {checkOperationFile} from "@/api/experiment"
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
@@ -125,17 +127,22 @@ export default {
   name: "ApiConfig",
   data() {
     return {
+      loading: true,
       apiKeys: [],
       showDialog: false,
       newApiKey: { name: '', value: '', intro: '' },
       currentAkId: '',
       currentAkName: '',
+      currentAkCallFunction: '',
       showCodeEditorDialog: false,
       pythonCode: '',
     }
   },
   mounted() {
     this.load()
+         setTimeout(() => {
+      this.loading=false
+        }, 300);
   },
   methods:
   {
@@ -144,13 +151,17 @@ export default {
         const id = localStorage.getItem("uid")
         findApiKeyByUserId(id).then(res => {
           this.apiKeys = res.data;
-          this.apiKeys.forEach(item => {
-            if (localStorage.getItem(item.id + '_call'))
-              item.callFunction = 1;
-            else
-              item.callFunction = 0;
+          // 使用 Promise.all 等待所有 getCallFunction 调用完成
+          Promise.all(this.apiKeys.map(item => {
+            return getCallFunction(item.id).then(res => {
+              item.callFunction = res.code;
+              return item; // 返回更新后的 item
+            });
+          })).then(updatedApiKeys => {
+
+            this.apiKeys = updatedApiKeys;
           });
-        })
+        });
       }
     },
     addKey() {
@@ -187,7 +198,7 @@ export default {
       deleteById(deleteId).then(res => {
         if (res.success) {
           this.apiKeys.splice(index, 1);
-          localStorage.removeItem(row.id + '_call')
+          // localStorage.removeItem(row.id + '_call')
           this.$message({
             message: '删除成功',
             type: 'success',
@@ -200,25 +211,43 @@ export default {
       this.newApiKey.value = '';// 重置输入
       this.newApiKey.intro = '';
     },
-    handleCodeEdit(id, name) {
+    handleCodeEdit(id, name, code) {
       this.currentAkId = id;
       this.currentAkName = name;
+      this.currentAkCallFunction = code;
       this.showCodeEditorDialog = true
     },
-    loadTemplate() {
-      fetch('/codeTemplate_L1.txt')
-        .then(response => response.text())
-        .then(data => {
-          this.initPythonEditor(data);
-        })
-        .catch(error => {
-          console.error('Error loading the template:', error)
-          this.$message({
-            message: '加载调用函数模板文件出错',
-            type: 'error'
-          });
-        }
-        );
+    loadTemplate(choose) {
+      if (choose === 1) {
+        fetch('/codeTemplate_L1.txt')
+          .then(response => response.text())
+          .then(data => {
+            this.initPythonEditor(data);
+          })
+          .catch(error => {
+            console.error('Error loading the template:', error)
+            this.$message({
+              message: '加载被测模型调用函数模板文件出错',
+              type: 'error'
+            });
+          }
+          );
+      }
+      else if (choose === 2) {
+        fetch('/codeTemplate_L2.txt')
+          .then(response => response.text())
+          .then(data => {
+            this.initPythonEditor(data);
+          })
+          .catch(error => {
+            console.error('Error loading the template:', error)
+            this.$message({
+              message: '加载评估模型调用函数模板文件出错',
+              type: 'error'
+            });
+          }
+          );
+      }
     },
     initPythonEditor(template) {
       if (document.getElementById('python-editor')) {
@@ -228,19 +257,17 @@ export default {
         this.editor.session.setMode("ace/mode/python");
         this.editor.setFontSize(18); // 设置字体大小为18px
 
-        if (localStorage.getItem(this.currentAkId + '_call'))
-        {
-          this.editor.setValue(localStorage.getItem(this.currentAkId + '_call'), 1);
+        if (this.currentAkCallFunction) {
+          this.editor.setValue(this.currentAkCallFunction, 1);
         }
-        else
-        {
-            this.editor.setValue(template, 1);
+        else {
+          this.editor.setValue(template, 1);
         }
-        
+
 
         this.pythonCode = this.editor.getValue();
         this.editor.session.on('change', () => {
-        this.pythonCode = this.editor.getValue();
+          this.pythonCode = this.editor.getValue();
         });
       } else {
         console.log('The #python-editor element does not exist.')
@@ -258,13 +285,23 @@ export default {
         });
         return
       }
-      localStorage.setItem(this.currentAkId + '_call', this.pythonCode)
-      this.$message({
-        message: '保存成功',
-        type: 'success'
-      });
+      // localStorage.setItem(this.currentAkId + '_call', this.pythonCode)
+      addCallFunction(this.currentAkId, this.pythonCode).then(res => {
+        if (res.success) {
+          this.$message({
+            message: '保存成功',
+            type: 'success'
+          });
+          this.load()
+        }
+        else {
+          this.$message({
+            message: 'API key调用函数编译失败，请检查语法错误',
+            type: 'warning'
+          });
+        }
+      })
       this.resetCodeEditor()
-      this.load()
 
       //检查语法错误 
       //let checkData={code: this.pythonCode}

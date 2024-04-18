@@ -25,3 +25,23 @@ export function addApiKey(data) {
         data: data
     })
 }
+
+export function addCallFunction(id,code) {
+    return service({
+        url: '/APIKey',
+        method: 'put',
+        data: {
+            choose:"1",
+            id:id,
+            code:code
+        }
+    })
+}
+
+export function getCallFunction(id) {
+    return service({
+        url: '/APIKey',
+        method: 'put',
+        data: {choose:"2",id:id}
+    })
+}

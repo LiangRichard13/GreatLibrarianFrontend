@@ -222,7 +222,7 @@ export default {
         fetch('/codeTemplate_L1.txt')
           .then(response => response.text())
           .then(data => {
-            this.initPythonEditor(data);
+            this.editorWithTemplate(data);
           })
           .catch(error => {
             console.error('Error loading the template:', error)
@@ -237,7 +237,7 @@ export default {
         fetch('/codeTemplate_L2.txt')
           .then(response => response.text())
           .then(data => {
-            this.initPythonEditor(data);
+            this.editorWithTemplate(data);
           })
           .catch(error => {
             console.error('Error loading the template:', error)
@@ -265,6 +265,22 @@ export default {
         }
 
 
+        this.pythonCode = this.editor.getValue();
+        this.editor.session.on('change', () => {
+          this.pythonCode = this.editor.getValue();
+        });
+      } else {
+        console.log('The #python-editor element does not exist.')
+      }
+    },
+    editorWithTemplate(template) {
+      if (document.getElementById('python-editor')) {
+        // 初始化 Ace Editor1
+        this.editor = ace.edit("python-editor");
+        this.editor.setTheme("ace/theme/chrome"); // 使用亮色主题
+        this.editor.session.setMode("ace/mode/python");
+        this.editor.setFontSize(18); // 设置字体大小为18px
+        this.editor.setValue(template, 1);
         this.pythonCode = this.editor.getValue();
         this.editor.session.on('change', () => {
           this.pythonCode = this.editor.getValue();

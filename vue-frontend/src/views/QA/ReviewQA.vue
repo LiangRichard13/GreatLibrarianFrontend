@@ -115,7 +115,7 @@ export default {
       rateQA(row.QAid, row.score).then(res => {
         if (res.success) {
           this.$message({
-            message: '打分成功!',
+            message: '打分成功',
             type: 'success'
           });
           this.QAList.splice(index, 1)

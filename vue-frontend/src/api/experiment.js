@@ -53,7 +53,7 @@ export function checkOperationFile(data) {
     })
 }
 
-export function addOperationFile(id) {
+export function generateOperationFile(id) {
     return service({
         url: '/testProjectConfig',
         method: 'get',

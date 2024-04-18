@@ -2,7 +2,7 @@
   <el-container>
     <el-header style="padding: 0">
       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-        <el-menu-item index="/keyConfig">APIKEY</el-menu-item>
+        <el-menu-item index="/keyConfig">API Key</el-menu-item>
         <el-menu-item index="/dataSetConfig">数据集</el-menu-item>
       </el-menu>
     </el-header>

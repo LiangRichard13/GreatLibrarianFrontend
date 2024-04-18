@@ -113,7 +113,7 @@ export default {
         }
         else {
           this.$message({
-            message: '请选择apikey和数据集!',
+            message: '请选择apikey和数据集',
             type: 'warning'
           });
         }

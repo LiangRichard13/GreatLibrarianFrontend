@@ -7,13 +7,13 @@
       </div>
       <div style="color: #91949c;font-weight: bolder">
         <el-tabs v-model="activeTab" @tab-click="handleClick">
-          <el-tab-pane label="邮箱登录" name="emailLogin">
-            <p>E-mail</p>
-            <el-input class="login-form-input" v-model="email" placeholder="邮箱"></el-input>
-          </el-tab-pane>
           <el-tab-pane label="手机号登录" name="phoneLogin">
             <p>Phone Number</p>
             <el-input class="login-form-input" v-model="phoneNumber" placeholder="手机号"></el-input>
+          </el-tab-pane>
+          <el-tab-pane label="邮箱登录" name="emailLogin">
+            <p>E-mail</p>
+            <el-input class="login-form-input" v-model="email" placeholder="邮箱"></el-input>
           </el-tab-pane>
         </el-tabs>
         <p>Password</p>
@@ -48,7 +48,7 @@ import { Notification } from "element-ui";
 export default {
   data() {
     return {
-      activeTab: "emailLogin", // 默认选中的选项卡
+      activeTab: "phoneLogin", // 默认选中的选项卡
       phoneNumber: '',
       email: '',
       password: '',

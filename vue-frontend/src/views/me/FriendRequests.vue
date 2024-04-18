@@ -99,7 +99,7 @@ export default {
       handleFriendRequest(agreedData).then(res => {
         if (res.success) {
           this.$message({
-            message: '已同意好友请求！',
+            message: '已同意好友申请',
             type: 'success'
           });
           this.load()
@@ -116,7 +116,7 @@ export default {
         if (res.success) {
           this.userFriendsRequest.splice(index, 1);
           this.$message({
-            message: '已拒绝好友申请！',
+            message: '已拒绝好友申请',
             type: 'warning'
           });
           this.load()

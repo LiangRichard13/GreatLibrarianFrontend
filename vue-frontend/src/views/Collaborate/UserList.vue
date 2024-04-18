@@ -72,7 +72,7 @@ export default {
         if (res.success) {
           this.userList.splice(index, 1);
           this.$message({
-            message: '好友请求发送成功！',
+            message: '好友请求发送成功',
             type: 'success'
           });
           this.load()

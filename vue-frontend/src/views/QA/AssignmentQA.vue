@@ -170,14 +170,14 @@ export default {
     distributeToCollaborators() {
       if (this.distributeUserId === null) {
         this.$message({
-          message: '请选择分发的对象！',
+          message: '请选择分发的对象',
           type: 'warning'
         });
       }
       else {
         if (this.selectedIds.length === 0) {
           this.$message({
-            message: '还未选择审核记录！',
+            message: '还未选择审核记录',
             type: 'warning'
           });
         }
@@ -213,7 +213,7 @@ export default {
             // 所有请求处理完毕后，根据成功和失败的计数器显示消息
             if (successCount > 0) {
               this.$message({
-                message: `分发成功${successCount}条！`,
+                message: `分发成功${successCount}条`,
                 type: 'success'
               });
             }

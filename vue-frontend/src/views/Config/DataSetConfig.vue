@@ -23,7 +23,7 @@
         </el-table-column>
         <el-table-column label="上传文件名称" prop="url" width="300%">
         </el-table-column>
-        <el-table-column label="详细描述" prop="info">
+        <el-table-column label="详细描述" prop="info" align="center">
           <template slot-scope="scope">
             <div style="height: 70px; overflow: auto;">{{ scope.row.info }}</div>
           </template>
@@ -152,7 +152,7 @@ export default {
       addDateSet(formData).then(res => {
         if (res.success) {
           this.$message({
-            message: '添加成功！',
+            message: '添加成功',
             type: 'success'
           });
           this.resetDialog

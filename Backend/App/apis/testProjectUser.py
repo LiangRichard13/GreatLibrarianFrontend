@@ -3,7 +3,8 @@
 # @version: 1.0
 from flask import jsonify, request
 from flask_restful import Resource
-from App.models import db, TestProjectUser, User, TestProject
+
+from App.models import db, TestProjectUser, User, TestProject, QA
 
 
 # 实验--协作者配置管理
@@ -39,7 +40,8 @@ class TestProjectUserCRUD(Resource):
 
     # 删除协作者【参数：TPid实验ID,uid协作者用户ID】
     def delete(self):
-        tPU = TestProjectUser.query.filter(TestProjectUser.TPid == request.json['TPid'],TestProjectUser.uid == request.json['uid']).first()
+        tPU = TestProjectUser.query.filter(TestProjectUser.TPid == request.json['TPid'],
+                                           TestProjectUser.uid == request.json['uid']).first()
         try:
             db.session.delete(tPU)
             db.session.commit()
@@ -48,3 +50,12 @@ class TestProjectUserCRUD(Resource):
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
             return jsonify({'success': False, 'message': str(e)})
+
+    # “一键分发”to协作者
+    def put(self):
+        # 获取所有协作者的id
+        collaborators = [x.uid for x in TestProjectUser.query.filter(TestProjectUser.TPid == request.args['TPid'])]
+        # 统计协作的剩余审核数量
+        collaborators_counts = {uid: QA.query.filter(QA.uid == uid).count() for uid in collaborators}
+        # 打印结果查看
+        print(collaborators_counts)

@@ -25,6 +25,12 @@ class DataSetCRUD(Resource):
         try:
             f = request.files.get('dataSetFile')  # 获取到前端的zip文件
             file_dir = os.path.join("App", "data", "DataSet", f.filename.replace(('.' + f.filename.split('.')[-1]), ''))
+            # 如果目标文件夹已存在，则添加一个随机后缀以避免冲突
+            if os.path.exists(os.path.join(BackendPath(), file_dir)):
+                count = 1
+                while os.path.exists(os.path.join(BackendPath(), file_dir + '(' + str(count) + ')')):
+                    count += 1
+                file_dir = file_dir + '(' + str(count) + ')'
             DS.DS_url = file_dir  # 存储数据集保存的url
 
             file_dir = os.path.join(BackendPath(), file_dir)
@@ -48,7 +54,9 @@ class DataSetCRUD(Resource):
     # 删除数据集
     def delete(self):
         try:
-            db.session.delete(DataSet.query.filter(DataSet.DS_id == request.json['id']).first())
+            DS = DataSet.query.filter(DataSet.DS_id == request.json['id']).first()
+            shutil.rmtree(os.path.join(BackendPath(), DS.DS_url), ignore_errors=True)  # 删除数据集文件
+            db.session.delete(DS)
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:

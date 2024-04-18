@@ -9,10 +9,11 @@ echo "当前目录是：$GLF_Root"
 export GLF_Root
 
 # 启动后端
-./Backend/venv/Scripts/python ./Backend/app.py &
+#./Backend/venv/Scripts/python ./Backend/app.py &
+cd Backend && python app.py &
 
 # 启动前端
-cd vue-frontend && npm run serve &
+cd vue-frontend && npm install && npm run serve &
 
 # 无限循环以防止脚本结束
 while true; do

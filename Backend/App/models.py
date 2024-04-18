@@ -74,7 +74,7 @@ class Project(db.Model):
 class ProjectAPIKey(db.Model):
     __tablename__ = 'tb_ProjectAPIKey'
     Project_APIKey_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # project项目---外键
+    Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id, ondelete='CASCADE'))  # project项目---外键
     AKid = db.Column(db.String(30), db.ForeignKey(APIKey.AK_id, ondelete='CASCADE'))  # apiKey---外键
 
 
@@ -82,7 +82,7 @@ class ProjectAPIKey(db.Model):
 class ProjectDataSet(db.Model):
     __tablename__ = 'tb_ProjectDataSet'
     Project_DataSet_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # project项目---外键
+    Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id, ondelete='CASCADE'))  # project项目---外键
     DSid = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id, ondelete='CASCADE'))  # 数据集---外键
 
 
@@ -95,10 +95,10 @@ class TestProject(db.Model):
     tP_status = db.Column(db.Integer, default=0)  # 实验状态   【0:待实验、1:正在实验、2:待审核、3:已完成】
     tP_progress = db.Column(db.Float, default=0)  # 实验进度
     tP_configURL = db.Column(db.String(80))  # 实验配置文件Url
-    Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id))  # 项目ID---外键
-    AK1 = db.Column(db.String(30), db.ForeignKey(APIKey.AK_id))  # APIKey1---外键
-    AK2 = db.Column(db.String(30), db.ForeignKey(APIKey.AK_id))  # APIKey2---外键
-    DS = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id))  # 数据集---外键
+    Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id, ondelete='CASCADE'))  # 项目ID---外键
+    AK1 = db.Column(db.String(30), db.ForeignKey(APIKey.AK_id, ondelete='SET NULL'))  # APIKey1---外键
+    AK2 = db.Column(db.String(30), db.ForeignKey(APIKey.AK_id, ondelete='SET NULL'))  # APIKey2---外键
+    DS = db.Column(db.Integer, db.ForeignKey(DataSet.DS_id, ondelete='SET NULL'))  # 数据集---外键
 
     # 该实验下的协作者
     collaborators = db.relationship('TestProjectUser', backref='testProject', cascade='all, delete-orphan')
@@ -122,7 +122,7 @@ class QA(db.Model):
     QA_score = db.Column(db.Float)  # 审核打分
     QA_thread = db.Column(db.Integer)  # 线程号
     QA_field = db.Column(db.String(80))  # 领域
-    TPid = db.Column(db.String(30), db.ForeignKey(TestProject.tP_id))  # 实验ID---外键【ondelete='CASCADE'】
+    TPid = db.Column(db.String(30), db.ForeignKey(TestProject.tP_id, ondelete='CASCADE'))
     uid = db.Column(db.String(30), db.ForeignKey(User.user_id))  # 审核人---外键
 
     def __str__(self):

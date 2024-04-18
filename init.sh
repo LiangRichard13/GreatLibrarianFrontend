@@ -12,9 +12,7 @@ read -p "Go ahead and delete it?(y/n): " choice
 case "$choice" in 
   y|Y ) 
     # 用户选择了"是"，执行清空操作
-
-    # 清空以tb开头的表
-    # 连接到SQLite数据库，并执行一个删除操作
+    # 连接到SQLite数据库，并执行一个删除操作,清空以tb开头的表
     echo "clearing database data......"
     sqlite3 $DATABASE_PATH <<EOF
     $(echo "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'tb%';" | sqlite3 $DATABASE_PATH | awk '{print "DELETE FROM " $1 ";"}')

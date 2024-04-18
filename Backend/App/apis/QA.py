@@ -46,16 +46,23 @@ class QAOperation(Resource):
         if tP.tP_progress == 100:  # 已经完成实验，进行实验状态修改
             tP.tP_status = 2  # 进行实验状态修改
             url = os.path.join(BackendPath(), "App", "data", "Logs", TPid, "human_evaluation.log")
-            for index, row in readLog(url).iterrows():
-                qa = QA(uid=uid, TPid=TPid, QA_time=datetime.strptime(row['T'], "%Y-%m-%d %H:%M:%S"),
-                        QA_question=row['Q'], QA_answer=row['A'], QA_field=row['field'], QA_thread=row['thread'])
+            if os.path.exists(url):
+                for index, row in readLog(url).iterrows():
+                    qa = QA(uid=uid, TPid=TPid, QA_time=datetime.strptime(row['T'], "%Y-%m-%d %H:%M:%S"),
+                            QA_question=row['Q'], QA_answer=row['A'], QA_field=row['field'], QA_thread=row['thread'])
+                    try:
+                        db.session.add(qa)  # 加入数据库
+                        db.session.commit()
+                    except Exception as e:  # 数据库操作异常处理
+                        db.session.rollback()  # 回滚
+                        return jsonify({'success': False, 'message': str(e)})
+            else:
                 try:
-                    db.session.add(qa)  # 加入数据库
+                    tP.tP_status = 3  # 进行实验状态修改
                     db.session.commit()
                 except Exception as e:  # 数据库操作异常处理
                     db.session.rollback()  # 回滚
-                    db.session.flush()  # 刷新，清空缓存
-                    return jsonify({'success': False, 'message': str(e)})
+                return jsonify({'success': False, 'message': str(e)})
             return jsonify({'success': True})
         else:
             return jsonify({'success': False, 'message': 'TestProject not completed.'})

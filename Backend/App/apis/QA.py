@@ -62,7 +62,7 @@ class QAOperation(Resource):
                     db.session.commit()
                 except Exception as e:  # 数据库操作异常处理
                     db.session.rollback()  # 回滚
-                return jsonify({'success': False, 'message': str(e)})
+                    return jsonify({'success': False, 'message': str(e)})
             return jsonify({'success': True})
         else:
             return jsonify({'success': False, 'message': 'TestProject not completed.'})

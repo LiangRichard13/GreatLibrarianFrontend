@@ -61,6 +61,7 @@ class APIKeyCRUD(Resource):
                 exec(compiled_code, {})  # 在一个空的局部和全局命名空间中执行编译后的代码
                 return jsonify({'success': True})
             except Exception:
+                os.remove(os.path.join(BackendPath(), 'App', 'data', 'call', AKid + '.py'))
                 return jsonify({'success': False, 'message': '存在语法错误'})
         elif request.json['choose'] == '2':  # 查询
             try:

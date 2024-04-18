@@ -3,6 +3,7 @@
 # @version: 1.0
 from flask import jsonify, request
 from flask_restful import Resource
+
 from App.models import db, APIKey, DataSet, Project, ProjectAPIKey, ProjectDataSet
 
 
@@ -52,3 +53,15 @@ class ProjectCRUD(Resource):
             data.append({'id': project.project_id, 'name': project.project_name, 'info': project.project_info,
                          'apiKey': project_apikey, 'dataSet': project_dataset})
         return jsonify({'data': data, 'success': True})
+
+    # 修改
+    def put(self):
+        project = Project.query.filter(Project.project_id == request.json['id']).first()
+        project.project_name, project.project_info = request.json['name'], request.json['info']
+        try:
+            db.session.commit()
+            return jsonify({'success': True, 'id': project.project_id})
+        except Exception as e:  # 数据库插入操作异常处理
+            db.session.rollback()  # 回滚
+            db.session.flush()  # 刷新，清空缓存
+            return jsonify({'success': False})

@@ -1,7 +1,9 @@
 # @Author: LiXiang
 # @Time: 2023/11/2 14:56
 # @version: 1.0
-from flask import Flask, send_from_directory
+import os
+
+from flask import Flask
 from .extensions import init_extensions
 # 导入url路由【重要！！！】
 from .urls import *
@@ -16,6 +18,8 @@ def create_app():
     db_uri = 'sqlite:///sqlite3.db'  # sqlite配置
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # 禁止对象追踪修改
+    app.config['conda_env'] = 'GL'  # 选择conda环境
+    # app.config['conda_env'] = os.environ.get('SELECTED_ENV')  # 选择conda环境【使用start.sh启动】
     # 初始化插件
     init_extensions(app=app)
     # 初始化CORS扩展并配置允许的来源
@@ -31,7 +35,3 @@ def create_app():
             cursor.close()
 
     return app
-
-# @app.route('/data/<path:filename>')
-# def icon(filename):
-#     return send_from_directory(app.static_folder, filename)

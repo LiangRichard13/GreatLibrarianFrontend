@@ -68,4 +68,6 @@ class APIKeyCRUD(Resource):
                 with open(os.path.join(BackendPath(), 'App', 'data', 'call', request.json['id'] + '.py'), 'r') as file:
                     return jsonify({'success': True, 'code': file.read()})
             except FileNotFoundError:
-                return jsonify({'success': False, 'message': '读取call函数失败'})
+                return jsonify({'success': True, 'code': None})
+            except Exception as e:
+                return jsonify({'success': False, 'message': str(e)})

@@ -98,4 +98,4 @@ def add_call_function(file_path, flag, updated_code, class_name):
                     return False
             else:
                 print(f"Class '{class_name}' already has a __call__ function.")
-            break
+                return update_code_to_class(file_path, updated_code, class_name)

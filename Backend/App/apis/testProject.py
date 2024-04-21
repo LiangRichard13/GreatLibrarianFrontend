@@ -89,39 +89,35 @@ class TestProjectCRUD(Resource):
 # 配置文件的相关操作
 class ConfigCRUD(Resource):
     """
-        生成配置文件整体流程：
-            1、获取到配置脚本中call函数代码,添加至temp配置文件,并检验该代码是否符合python语法要求【post接口】,无误则继续
-            2、【生成配置脚本:传实验id】代码均正确无误添加完成后，移动temp配置文件,并添加文件中的类实例化信息【get接口】,信息来源数据库
+    生成配置文件整体流程：
+        1、从对应的apikey中读取到call函数文件，将文件内容作为code参数进行传递
+        2、第1次请求post生成测试模型【class=new_llm1】:读取template模板内容,补充new_llm1类中的call,并在config文件下生成一个config_XXX.py
+        3、第2次请求post生成评估模型【class=new_llm2】:读取2中config_XXX.py,补充new_llm2类中的call
+        4、第3次请求get进行实例化:读取config_XXX.py,补充config实例
     """
 
-    # 添加配置文件(加入到数据库)
+    # 实例化配置文件(加入到数据库)
     def get(self):
         tp = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
-        # 配置文件临时区路径
-        temp_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'Temp', 'config_' + tp.tP_id + '.py')
-        # 配置文件路径
-        config_path = os.path.join('App', 'data', 'config', 'config_' + tp.tP_id + '.py')
-        tp.tP_configURL = config_path  # 修改数据库数据
-        config_path = os.path.join(BackendPath(), config_path)
-        try:
-            shutil.move(temp_path, config_path)  # 移动配置文件
-            update_instance(request.args['tPid'])  # 补充配置文件的实例化
-            db.session.commit()
-            return jsonify({'success': True})
-        except shutil.Error as e:
-            return jsonify({'success': False, 'message': "移动文件时出错:" + str(e)})
-        except Exception as e:
-            db.session.rollback()  # 回滚
-            db.session.flush()  # 刷新，清空缓存
-            return jsonify({'success': False, 'message': str(e)})
+        tp.tP_configURL = os.path.join('App', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
+        if update_instance(request.args['tPid']):  # 补充配置文件的实例化
+            try:
+                db.session.commit()
+                return jsonify({'success': True})
+            except Exception as e:
+                db.session.rollback()  # 回滚
+                db.session.flush()  # 刷新，清空缓存
+                return jsonify({'success': False, 'message': str(e)})
+        else:
+            return jsonify({'success': False})
 
     # 修改配置文件
     def put(self):
         choose = request.args['choose']  # 修改内容选项【1:call函数,2:实例化参数】
         if choose == '1':  # 修改call函数
             tPid, code, className = request.json['tPid'], request.json['code'], request.json['className']
-            temp_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件临时区路径
-            return jsonify({'success': update_code_to_class(temp_path, code, className)})
+            path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件路径
+            return jsonify({'success': update_code_to_class(path, code, className)})
         elif choose == '2':  # 修改实例化参数
             return jsonify({'success': update_instance(request.json['tPid'])})  # 补充配置文件的实例化
 
@@ -144,7 +140,6 @@ class ConfigCRUD(Resource):
     # 添加相应代码至配置文件并进行代码语法检查【参数：tPid实验id,code函数代码,className类名】
     def post(self):
         tPid, code, className = request.json['tPid'], request.json['code'], request.json['className']
-        # 配置文件临时区路径
-        temp_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'Temp', 'config_' + tPid + '.py')
-        flag = 1 if os.path.exists(temp_path) else -1
-        return jsonify({'success': add_call_function(temp_path, flag, code, className)})
+        config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tPid + '.py')
+        flag = 1 if os.path.exists(config_path) else -1
+        return jsonify({'success': add_call_function(config_path, flag, code, className)})

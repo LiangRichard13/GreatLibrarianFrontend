@@ -593,8 +593,6 @@ export default {
         setTimeout(() => {
             this.loading = false
         }, 300);
-        //开始轮询
-        this.proceedingExp()
     },
     methods:
     {
@@ -659,6 +657,8 @@ export default {
                         // 处理可能出现的错误
                         console.error("Error fetching collaborators: ", error);
                     });
+                    //开始轮询
+                    this.proceedingExp()
                 }
             })
             getUserList(localStorage.getItem('uid')).then(res => {
@@ -743,27 +743,24 @@ export default {
                 message: row.id + '-' + row.name + '准备生成测试执行的配置文件',
                 type: 'info'
             });
-           this.handleGenerateConfig(row).then(result=>{
-            if(result)
-            {
-                const id = { tPid: row.id }
-                startExp(id).then(res => {
-                if (res.success) {
-                    this.$message({
-                        message: row.id + '-' + row.name + '开始执行',
-                        type: 'info'
-                    });
-                    this.setExpEmpty()
+            this.handleGenerateConfig(row).then(result => {
+                if (result) {
+                    const id = { tPid: row.id }
+                    startExp(id).then(res => {
+                        if (res.success) {
+                            this.$message({
+                                message: row.id + '-' + row.name + '开始执行',
+                                type: 'info'
+                            });
+                            this.setExpEmpty()
+                        }
+                        this.isTesting = false
+                    })
+                }
+                else {
+                    this.isTesting = false
                 }
             })
-            }
-            else
-            {
-            this.isTesting = false
-            }
-            })
-            this.isTesting=false
-
         },
         handleAssignExpirement(experiment) {
             // 保存到 LocalStorage
@@ -892,12 +889,12 @@ export default {
             // }
             return new Promise((resolve, reject) => {
                 if (thisTest.AK1 !== null && thisTest.AK2 !== null) {
-                    
-                    this.generateConfig(thisTest).then(result=>{
-                        if(result)
-                        resolve(true);
-                    else
-                        reject(false)
+
+                    this.generateConfig(thisTest).then(result => {
+                        if (result)
+                            resolve(true);
+                        else
+                            reject(false)
                     })
                     // if (this.generateConfig(thisTest))
                     //     resolve(true);
@@ -916,32 +913,41 @@ export default {
             });
 
         },
-         generateConfig(thisTest) {
-            return new Promise((resolve, reject)=>{
-            var AK1_callFunction =  this.getCode(thisTest.AK1.id);
-            var AK2_callFunction =  this.getCode(thisTest.AK2.id);
-            Promise.all([AK1_callFunction, AK2_callFunction]).then(values => {
-                console.log("AK1 的调用函数代码：", values[0]);
-            console.log("AK2 的调用函数代码：", values[1]);
-            if (values[0] !== null && values[1] !== null) {
-                let checkData = { tPid: thisTest.id, code: values[0], className: 'new_llm1' }
-                checkOperationFile(checkData).then(res => {
-                    if (res.success) {
-                        checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2' }
+        generateConfig(thisTest) {
+            return new Promise((resolve, reject) => {
+                var AK1_callFunction = this.getCode(thisTest.AK1.id);
+                var AK2_callFunction = this.getCode(thisTest.AK2.id);
+                Promise.all([AK1_callFunction, AK2_callFunction]).then(values => {
+                    console.log("AK1 的调用函数代码：", values[0]);
+                    console.log("AK2 的调用函数代码：", values[1]);
+                    if (values[0] !== null && values[1] !== null) {
+                        let checkData = { tPid: thisTest.id, code: values[0], className: 'new_llm1' }
                         checkOperationFile(checkData).then(res => {
                             if (res.success) {
-                                generateOperationFile(thisTest.id).then(res => {
+                                checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2' }
+                                checkOperationFile(checkData).then(res => {
                                     if (res.success) {
-                                        this.$message({
-                                            message: '已生成新配置文件',
-                                            type: 'success'
-                                        });
-                                        // this.setExpEmpty()
-                                        resolve (true)
+                                        generateOperationFile(thisTest.id).then(res => {
+                                            if (res.success) {
+                                                this.$message({
+                                                    message: '已生成新配置文件',
+                                                    type: 'success'
+                                                });
+                                                // this.setExpEmpty()
+                                                resolve(true)
+                                            }
+                                            else {
+                                                this.$message({
+                                                    message: '配置文件生成错误',
+                                                    type: 'error'
+                                                });
+                                                reject(false)
+                                            }
+                                        })
                                     }
                                     else {
                                         this.$message({
-                                            message: '配置文件生成错误',
+                                            message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
                                             type: 'error'
                                         });
                                         reject(false)
@@ -950,7 +956,7 @@ export default {
                             }
                             else {
                                 this.$message({
-                                    message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
+                                    message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
                                     type: 'error'
                                 });
                                 reject(false)
@@ -958,47 +964,38 @@ export default {
                         })
                     }
                     else {
-                        this.$message({
-                            message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
-                            type: 'error'
-                        });
-                        reject(false)
+                        if (values[0] === null && values[1] !== null) {
+                            this.$confirm(`还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
+                                confirmButtonText: '确定',
+                                cancelButtonText: '取消',
+                                type: 'warning'
+                            }).then(() => {
+                                this.$router.push("/keyConfig")
+                                reject(false)
+                            })
+                        }
+                        else if (values[0] !== null && values[1] === null) {
+                            this.$confirm(`还没有编辑评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
+                                confirmButtonText: '确定',
+                                cancelButtonText: '取消',
+                                type: 'warning'
+                            }).then(() => {
+                                this.$router.push("/keyConfig")
+                                reject(false)
+                            })
+                        }
+                        else {
+                            this.$confirm(`还没有编辑评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}和被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
+                                confirmButtonText: '确定',
+                                cancelButtonText: '取消',
+                                type: 'warning'
+                            }).then(() => {
+                                this.$router.push("/keyConfig")
+                                reject(false)
+                            })
+                        }
                     }
                 })
-            }
-            else {
-                if (values[0] === null && values[1] !== null) {
-                    this.$confirm(`还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.$router.push("/keyConfig")
-                        reject(false)
-                    })
-                }
-                else if (values[0] !== null && values[1] === null) {
-                    this.$confirm(`还没有编辑评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.$router.push("/keyConfig")
-                        reject(false)
-                    })
-                }
-                else {
-                    this.$confirm(`还没有编辑评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}和被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.$router.push("/keyConfig")
-                        reject(false)
-                    })
-                }
-            }
-            })
             })
         },
         getCode(id) {

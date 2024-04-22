@@ -160,7 +160,7 @@ export default {
     }
     if (this.password !== this.checkPassword) {
       this.$message({
-        message: '您两次输入的密码不同!',
+        message: '您两次输入的密码不同',
         type: 'warning'
       });
       return
@@ -196,7 +196,7 @@ export default {
     editPassword(updatePassoword).then(res => {
       if (res.success) {
         this.$message({
-          message: '你已成功修改密码！',
+          message: '已成功修改密码',
           type: 'success'
         });
         this.resetDialog()

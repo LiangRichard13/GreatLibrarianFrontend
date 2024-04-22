@@ -4,12 +4,12 @@
     </el-page-header>
     <div class="content">
       <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
-       {{ this.thisExperiment.name }}的存疑记录
+        {{ this.thisExperiment.name }}的存疑记录
       </h3>
     </div>
     <template v-if="QAList.length">
       <div class="table-container">
-        <el-table :data="pagedQAList" style="width: 100%">
+        <el-table :data="pagedQAList" style="width: 100%" v-loading="loading">
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
           <el-table-column label="问题">
             <template slot-scope="scope">
@@ -18,7 +18,7 @@
           </el-table-column>
           <el-table-column label="打分" prop="score">
             <template slot-scope="scope">
-              <el-rate v-model="scope.row.score"></el-rate>
+              <el-rate v-model="scope.row.score" :colors="colors"></el-rate>
             </template>
           </el-table-column>
 
@@ -61,13 +61,15 @@
     </div>
   </div>
 </template>
-   
+
 <script>
 import { getQAByExpirenceId, rateQA } from '@/api/qa'
+import { updateReport } from '@/api/expOperation'
 export default {
   name: "ReviewQA",
   data() {
     return {
+      loading:true,
       showDialog: false,
       QAList: [
         // { QAid: '1', Q: '世界上最高的峰是哪个峰 ?', A: '世界上最高的山峰是珠穆朗玛峰（Mount Everest），它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。' },
@@ -80,7 +82,8 @@ export default {
       selectedIds: [],
       currentPage: 1,
       pageSize: 10,
-      pagedQAList: [] // 用于显示当前页的数据
+      pagedQAList: [], // 用于显示当前页的数据
+      colors: ['#99A9BF', '#F7BA2A', '#FF9900']
     }
   },
   mounted() {
@@ -93,6 +96,9 @@ export default {
       this.$router.push("/projectsList")
     }
     this.load()
+         setTimeout(() => {
+      this.loading=false
+        }, 300);
   },
   methods: {
     load() {
@@ -104,7 +110,7 @@ export default {
             score: 0 // 添加新的字段score，并设其值为0
           };
         });
-        console.log('该测试下的QA',this.QAList)
+        // console.log('该测试下的QA', this.QAList)
         this.updatePagedQAList(); // 初始加载
       })
     },
@@ -114,11 +120,25 @@ export default {
     submitRate(row, index) {
       rateQA(row.QAid, row.score).then(res => {
         if (res.success) {
+          this.QAList.splice(index, 1)
           this.$message({
-            message: '打分成功!',
+            message: '打分成功',
             type: 'success'
           });
-          this.QAList.splice(index, 1)
+          if (res.lastOne) {
+            this.$message({
+              message: '已完成该测试所有存疑记录的审核',
+              type: 'success'
+            });
+            updateReport(this.thisExperiment.id).then(res => {
+              if (res.success) {
+                this.$message({
+                  type: 'success',
+                  message: this.thisExperiment.id + '-' + this.thisExperiment.name + '测试报告更新成功'
+                });
+              }
+            })
+          }
           // this.load()
         }
       })
@@ -142,7 +162,7 @@ export default {
   }
 }
 </script>
-   
+
 <style scoped>
 .table-container {
   max-width: 2000px;

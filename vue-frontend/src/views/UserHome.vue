@@ -2,7 +2,7 @@
   <el-container style="height: 100vh;">
     <el-container>
       <!-- 主体部分 -->
-      <el-main>
+      <el-main v-loading="loading">
         <el-row :gutter="20">
           <!-- 左侧项目列表区域 -->
           <el-col :span="18">
@@ -15,7 +15,31 @@
                 <el-table :data="myProjects">
                   <!-- <el-table-column label="项目 ID" prop="id"></el-table-column> -->
                   <el-table-column label="项目名称" prop="name"></el-table-column>
-                  <el-table-column label="测试说明" prop="info"></el-table-column>
+                  <!-- <el-table-column label="测试说明" prop="info"></el-table-column> -->
+                  <el-table-column label="LLM">
+                    <template slot-scope="scope">
+                      <div v-for="apiKey in scope.row.apiKey" :key="apiKey.id">
+                        <!-- {{ apiKey.id }} - {{ apiKey.name }} -->
+                        {{ apiKey.name }}
+                      </div>
+                    </template>
+                  </el-table-column>
+
+                  <!-- 数据集 列 -->
+                  <el-table-column label="数据集">
+                    <template slot-scope="scope">
+                      <div v-for="data in scope.row.dataSet" :key="data.id">
+                        <!-- {{ data.id }} - {{ data.name }} -->
+                        {{ data.name }}
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="" prop="">
+                    <template slot-scope="scope">
+                    <el-link @click="handleExperiment(scope.row)"
+                      type="primary">测试列表</el-link>
+                    </template>
+                    </el-table-column>
                 </el-table>
               </el-card>
 
@@ -81,7 +105,7 @@ export default {
   name: "userHome",
   data() {
     return {
-
+      loading: true,
       defaultAvatar: require('@/assets/avatar.png'),
       userFriends: [],
       myProjects: [],
@@ -112,7 +136,6 @@ export default {
         // 假设 res.data 是从某个地方获得的数据
         if (res.fid.length)
           this.friendRequestNumebr = res.fid.length;
-
 
       })
       //获取项目信息
@@ -149,30 +172,36 @@ export default {
     pushToFriendRequest() {
       this.$router.push('/FriendRequests')
     },
-    pushToProject(){
+    pushToProject() {
       this.$router.push('/projectsList')
     },
-    // downloadFile() {
-    //   // 文件的URL
-    //   const fileUrl = config.API_URL+'/data/icon/icon_377dbf961d73f74.jpg';
-    //   // 文件名，你可以根据需要从后端获取或自定义
-    //   const fileName = '下载的文件名';
-
-    //   // 创建一个隐藏的<a>标签，设置属性并模拟点击
-    //   const a = document.createElement('a');
-    //   a.style.display = 'none';
-    //   a.href = fileUrl;
-    //   a.download = fileName;
-    //   document.body.appendChild(a);
-    //   a.click();
-
-    //   // 清理：移除<a>标签
-    //   document.body.removeChild(a);
-    // },
+    handleExperiment(project) {
+      console.log('该项目', project)
+      if (project.apiKey.length === 0) {
+        this.$message({
+          message: '请重新配置API KEY',
+          type: 'warning'
+        });
+        return
+      }
+      else if (project.dataSet.length === 0) {
+        this.$message({
+          message: '请重新配置数据集',
+          type: 'warning'
+        });
+      }
+      else {
+        localStorage.setItem('thisProject', JSON.stringify(project));
+        this.$router.push("/experimentList")
+      }
+    },
   },
   mounted() {
     if (localStorage.getItem("uid") !== null)
       this.load()
+    setTimeout(() => {
+      this.loading = false
+    }, 300);
   },
 }
 </script>

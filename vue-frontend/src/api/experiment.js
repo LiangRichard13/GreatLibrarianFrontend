@@ -53,7 +53,7 @@ export function checkOperationFile(data) {
     })
 }
 
-export function addOperationFile(id) {
+export function generateOperationFile(id) {
     return service({
         url: '/testProjectConfig',
         method: 'get',
@@ -61,11 +61,11 @@ export function addOperationFile(id) {
     })
 }
 
-export function updateOperationFile(data) {
-    return service({
-        url: '/testProjectConfig',
-        method: 'put',
-        params: {choose:2},
-        data:data
-    })
-}
+// export function updateOperationFile(data) {
+//     return service({
+//         url: '/testProjectConfig',
+//         method: 'put',
+//         params: {choose:2},
+//         data:data
+//     })
+// }

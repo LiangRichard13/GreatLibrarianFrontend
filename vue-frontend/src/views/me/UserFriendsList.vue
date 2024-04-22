@@ -96,7 +96,7 @@ export default {
         if (res.success) {
           this.userFriends.splice(index, 1);
           this.$message({
-            message: '好友已删除！',
+            message: '好友已删除',
             type: 'warning'
           });
           this.load()

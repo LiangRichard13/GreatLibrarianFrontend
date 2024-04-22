@@ -3,6 +3,7 @@
 # @version: 1.0
 from flask import jsonify, request
 from flask_restful import Resource
+
 from App.models import db, APIKey, ProjectAPIKey
 
 
@@ -26,9 +27,11 @@ class ProjectAK(Resource):
 
     # 项目下删除APIKey
     def delete(self):
+        keys_to_delete = ProjectAPIKey.query.filter(ProjectAPIKey.Pid == request.json['Pid']).all()
         try:
-            db.session.delete(ProjectAPIKey.query.filter(ProjectAPIKey.Project_APIKey_id == request.json['PAKid'])[0])
-            db.session.commit()
+            for key in keys_to_delete:  # 遍历这些记录，并逐一删除
+                db.session.delete(key)
+                db.session.commit()
             return jsonify({'success': True})
         except Exception as e:
             db.session.rollback()  # 回滚

@@ -24,7 +24,7 @@
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="被测模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK1.name !== null">
+                            <div v-if="scope.row.AK1">
                                 {{ scope.row.AK1.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -32,7 +32,7 @@
                     </el-table-column>
                     <el-table-column label="评估模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK2.name !== null">
+                            <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -40,7 +40,7 @@
                     </el-table-column>
                     <el-table-column label="数据集">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.dataSet.name !== null">
+                            <div v-if="scope.row.dataSet">
                                 {{ scope.row.dataSet.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -98,7 +98,7 @@
                                     </el-dropdown-item> -->
                                     <el-dropdown-item>
                                         <el-button plain icon="el-icon-caret-right" size="mini" type="success"
-                                            @click="confirmStart(scope.$index, scope.row)" :loading="isTesting">
+                                            @click="confirmStart(scope.$index, scope.row)">
                                             开始测试
                                         </el-button>
                                     </el-dropdown-item>
@@ -139,7 +139,7 @@
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="被测模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK1.name !== null">
+                            <div v-if="scope.row.AK1">
                                 {{ scope.row.AK1.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -147,7 +147,7 @@
                     </el-table-column>
                     <el-table-column label="评估模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK2.name !== null">
+                            <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -155,7 +155,7 @@
                     </el-table-column>
                     <el-table-column label="数据集">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.dataSet.name !== null">
+                            <div v-if="scope.row.dataSet">
                                 {{ scope.row.dataSet.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -182,7 +182,7 @@
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="被测模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK1.name !== null">
+                            <div v-if="scope.row.AK1">
                                 {{ scope.row.AK1.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -190,7 +190,7 @@
                     </el-table-column>
                     <el-table-column label="评估模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK2.name !== null">
+                            <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -198,7 +198,7 @@
                     </el-table-column>
                     <el-table-column label="数据集">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.dataSet.name !== null">
+                            <div v-if="scope.row.dataSet">
                                 {{ scope.row.dataSet.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -286,7 +286,7 @@
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="被测模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK1.name !== null">
+                            <div v-if="scope.row.AK1.name">
                                 {{ scope.row.AK1.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -294,7 +294,7 @@
                     </el-table-column>
                     <el-table-column label="评估模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK2.name !== null">
+                            <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -302,7 +302,7 @@
                     </el-table-column>
                     <el-table-column label="数据集">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.dataSet.name !== null">
+                            <div v-if="scope.row.dataSet">
                                 {{ scope.row.dataSet.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -348,7 +348,7 @@
         <!-- 创建测试对话框 -->
         <el-dialog title="创建新测试" :visible.sync="showDialog" width="50%" @close="resetDialog">
             <div>
-                <el-form ref="form" :model="newExpirement" label-width="200px">
+                <el-form ref="form" :model="newExpirement" label-width="150px">
 
                     <el-form-item label="测试名称">
                         <el-input v-model="newExpirement.name"></el-input>
@@ -541,7 +541,6 @@ export default {
     name: "ExperimentList",
     data() {
         return {
-            isTesting: false,
             loading: true,
             isUpdate: false,
             downLoadTable: [],
@@ -739,10 +738,10 @@ export default {
             //     return
             // }
             this.isTesting = true
-            this.$message({
-                message: row.id + '-' + row.name + '准备生成测试执行的配置文件',
-                type: 'info'
-            });
+            // this.$message({
+            //     message: row.id + '-' + row.name + '准备生成测试执行的配置文件',
+            //     type: 'info'
+            // });
             this.handleGenerateConfig(row).then(result => {
                 if (result) {
                     const id = { tPid: row.id }
@@ -754,11 +753,7 @@ export default {
                             });
                             this.setExpEmpty()
                         }
-                        this.isTesting = false
                     })
-                }
-                else {
-                    this.isTesting = false
                 }
             })
         },
@@ -889,25 +884,34 @@ export default {
             // }
             return new Promise((resolve, reject) => {
                 if (thisTest.AK1 !== null && thisTest.AK2 !== null) {
-
-                    this.generateConfig(thisTest).then(result => {
-                        if (result)
-                            resolve(true);
-                        else
-                            reject(false)
-                    })
-                    // if (this.generateConfig(thisTest))
-                    //     resolve(true);
-                    // else
-                    //     reject(false);
-                    //    this.setExpEmpty()
+                    if (thisTest.dataSet !== null) {
+                        this.generateConfig(thisTest).then(result => {
+                            if (result)
+                                resolve(true);
+                            else
+                                reject(false)
+                        })
+                        // if (this.generateConfig(thisTest))
+                        //     resolve(true);
+                        // else
+                        //     reject(false);
+                        //    this.setExpEmpty()
+                    }
+                    else {
+                        this.$message({
+                            message: '用于测试或评估大模型的数据集被删除，请重新配置测试或重新添加API key',
+                            type: 'warning'
+                        });
+                        // this.initialEdit(thisTest)
+                        reject(false);
+                    }
                 }
                 else {
                     this.$message({
                         message: '用于测试或评估大模型的API key被删除，请重新配置测试或重新添加API key',
                         type: 'warning'
                     });
-                    this.initialEdit(thisTest)
+                    // this.initialEdit(thisTest)
                     reject(false);
                 }
             });
@@ -985,7 +989,7 @@ export default {
                             })
                         }
                         else {
-                            this.$confirm(`还没有编辑评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}和被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
+                            this.$confirm(`还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK2.name + ' ' : ''}和评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
                                 confirmButtonText: '确定',
                                 cancelButtonText: '取消',
                                 type: 'warning'

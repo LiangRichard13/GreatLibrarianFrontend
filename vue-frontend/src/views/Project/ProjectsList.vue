@@ -137,6 +137,7 @@
 <script>
 
 import { getProjectsByUserId, deleteById } from '@/api/project'
+import { getExperimentByProjectId } from '@/api/experiment'
 import { addProject, addApiKeyToProject, addDataSetToProject } from "@/api/project";
 import { findApiKeyByUserId } from "@/api/apiConfig";
 import { findDataSetByUserId } from "@/api/dataSetConfig"
@@ -146,7 +147,7 @@ export default {
   name: "ProjectList",
   data() {
     return {
-      loading:true,
+      loading: true,
       showDialog: false,
       currentProjectId: '',
       currentProjectName: '',
@@ -154,15 +155,16 @@ export default {
       editProject: { name: '', info: '', apiKey: [], dataset: [] },
       apiKeys: [],
       dataSet: [],
+      experimentList: [],
       // userFriends: [],
       // selectFriendsId: []
     }
   },
   mounted() {
     this.load()
-       setTimeout(() => {
-      this.loading=false
-        }, 300);
+    setTimeout(() => {
+      this.loading = false
+    }, 300);
   },
   methods:
   {
@@ -231,7 +233,7 @@ export default {
       console.log('该项目', project)
       if (project.apiKey.length === 0) {
         this.$message({
-          message: '请重新配置API KEY',
+          message: '请重新配置API key',
           type: 'warning'
         });
         return
@@ -254,19 +256,19 @@ export default {
       this.editProject.info = row.info
       this.showDialog = true
     },
-    confirmEdit(){
+    confirmEdit() {
       this.$confirm('是否修改该项目？这样做会清空其中的所有测试', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                this.handleEditProject()
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消修改'
-                });
-            });
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.handleEditProject()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消修改'
+        });
+      });
     },
     handleEditProject() {
       if (this.editProject.name.trim() && this.editProject.info.trim()) {
@@ -308,22 +310,22 @@ export default {
                     addDataSetToProject(addDS)
                   }))
                   this.editProject.dataset = []//将用户选择的dataset列表置空
-                  this.projectList = []
-                  this.load()
                   this.$message({
                     message: '修改成功',
                     type: 'success'
                   });
                   this.showDialog = false
+                  setTimeout(() => {
+                    this.load()
+                  }, 500);
                 }
               })
             }
-            else
-            {
+            else {
               this.$message({
-                    message: '修改出错',
-                    type: 'error'
-                  });
+                message: '修改出错',
+                type: 'error'
+              });
             }
           })
         }
@@ -339,7 +341,34 @@ export default {
           type: 'warning'
         });
       }
-    }
+    },
+    // deleteConfig(thisProject) {
+    //   return new Promise((resolve, reject) => {
+    //     getExperimentByProjectId(thisProject.id).then(res => {
+    //       this.experimentList = res.data;
+    //       const deletePromises = this.experimentList.map(item => {
+    //         if (item.configURL) {
+    //           const deleteData = { tPid: item.id };
+    //           return deleteOperationFile(deleteData).then(res => {
+    //             if (!res.success) {
+    //               this.$message({
+    //                 message: thisProject.id + '-' + thisProject.name + '测试配置文件删除出错',
+    //                 type: 'error'
+    //               });
+    //               throw new Error('删除配置文件失败');
+    //             }
+    //           });
+    //         } else {
+    //           return Promise.resolve();  // 没有配置文件也须返回resolved promise
+    //         }
+    //       });
+
+    //       Promise.all(deletePromises)
+    //         .then(() => resolve())
+    //         .catch(error => reject(error));
+    //     });
+    //   });
+    // }
   }
 }
 

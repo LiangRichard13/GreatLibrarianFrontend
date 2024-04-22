@@ -36,10 +36,9 @@
                   </el-table-column>
                   <el-table-column label="" prop="">
                     <template slot-scope="scope">
-                    <el-link @click="handleExperiment(scope.row)"
-                      type="primary">测试列表</el-link>
+                      <el-link @click="handleExperiment(scope.row)" type="primary">测试列表</el-link>
                     </template>
-                    </el-table-column>
+                  </el-table-column>
                 </el-table>
               </el-card>
 
@@ -143,7 +142,6 @@ export default {
         this.myProjects = res.data
       })
       //获取参与的测试
-      if (localStorage.getItem("uid") !== null) {
         const id = localStorage.getItem("uid")
         getExperimentsByUserId(id).then(res => {
           this.participatedExp = res.data;
@@ -166,7 +164,6 @@ export default {
             console.error("Error while updating experiment list:", error);
           });
         })
-      }
     },
     //跳转处理好友请求
     pushToFriendRequest() {
@@ -179,7 +176,7 @@ export default {
       console.log('该项目', project)
       if (project.apiKey.length === 0) {
         this.$message({
-          message: '请重新配置API KEY',
+          message: '请重新配置API key',
           type: 'warning'
         });
         return
@@ -197,11 +194,14 @@ export default {
     },
   },
   mounted() {
-    if (localStorage.getItem("uid") !== null)
-      this.load()
     setTimeout(() => {
-      this.loading = false
-    }, 300);
+      if (localStorage.getItem("uid") !== null) {
+        this.load()
+        setTimeout(() => {
+          this.loading = false
+        }, 300);
+      }
+        }, 600);
   },
 }
 </script>

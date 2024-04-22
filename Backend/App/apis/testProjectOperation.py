@@ -5,36 +5,15 @@ import os
 import subprocess
 import threading
 
-from flask import jsonify, request
+from flask import jsonify, request, current_app
 from flask_restful import Resource
 
 from App.models import TestProject, DataSet, Project, db
 from App.utils.backend_path import BackendPath
 
 
-def get_conda_envs():
-    try:
-        result = subprocess.run(['conda', 'env', 'list'], text=True, capture_output=True)
-        if result.returncode != 0:  # 检查命令是否成功执行
-            print("Error: Conda command failed.")
-            return None
-        envs = []  # 输出处理，分割每行，然后解析
-        for line in result.stdout.split('\n'):
-            if line and not line.startswith('#'):
-                env_name = line.split()[0]  # 环境名称在每行的第一列
-                envs.append(env_name)
-        return envs
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None
-
-
 # 实验测试操作
 class TPOperation(Resource):
-    # 获取conda环境列表
-    def delete(self):
-        return jsonify({'success': True, 'envs': get_conda_envs()})
-
     # 开始执行测试实验任务
     def post(self):
         tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
@@ -43,8 +22,7 @@ class TPOperation(Resource):
         config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tP.tP_id + '.py')  # 配置文件路径
         project_name = Project.query.filter(Project.project_id == tP.Pid).first().project_name  # 项目名称
         # 执行实验命令
-        # command = 'conda run -n ' + request.args['env'] + ' gltest --testcase_path=' + testcase_path \
-        command = 'conda run -n ' + 'GL' + ' gltest --testcase_path=' + testcase_path \
+        command = 'conda run -n ' + current_app.config['conda_env'] + ' gltest --testcase_path=' + testcase_path \
                   + ' --config_path=' + config_path + ' --project_name=' + project_name + ' --test_name=' + tP.tP_name \
                   + ' --test_id=' + tP.tP_id + ' --logs_path=' + os.path.join(BackendPath(), 'App', 'data')
         print(command)
@@ -70,7 +48,7 @@ class TPOperation(Resource):
         tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tP.tP_id + '.py')  # 配置文件路径
         # 更新报告命令
-        command = 'conda run -n ' + request.args['env'] + ' glupdate --config_path=' + config_path + \
+        command = 'conda run -n ' + current_app.config['conda_env'] + ' glupdate --config_path=' + config_path + \
                   ' --test_id=' + tP.tP_id + ' --logs_path=' + os.path.join(BackendPath(), 'App', 'data')
         print(command)
         try:

@@ -8,7 +8,7 @@ import zhipuai
 LLM_base = Registry("LLMs")
 
 
-@LLM_base.register_module("chatglm")
+@LLM_base.register_module("testLLM")
 class new_llm1(LLMs):
     def __init__(self, apikey, name, llm_intro) -> None:
         self.apikey = apikey
@@ -22,7 +22,7 @@ class new_llm1(LLMs):
         return self.name
 
 
-@LLM_base.register_module("glm-3-turbo")
+@LLM_base.register_module("evaluationLLM")
 class new_llm2(LLMs):
     def __init__(self, apikey, name, llm_intro) -> None:
         self.apikey = apikey
@@ -42,7 +42,7 @@ llm_cfg1 = dict(
     name="",
     llm_intro=""
 )
-chat = LLM_base.build(llm_cfg1)
+testLLM = LLM_base.build(llm_cfg1)
 
 llm_cfg2 = dict(
     type="",
@@ -50,7 +50,7 @@ llm_cfg2 = dict(
     name="",
     llm_intro=""
 )
-glm_3_turbo = LLM_base.build(llm_cfg2)
-config4 = ExampleConfig(chat, glm_3_turbo)
+evaluationLLM = LLM_base.build(llm_cfg2)
+config4 = ExampleConfig(testLLM, evaluationLLM)
 
 config = config4

@@ -20,16 +20,15 @@ def update_instance(tPid):
         template_content = file.read()
     # 替换模板中的值
     llm_cfg1_updated = re.compile(rf'llm_cfg1\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
-        f'llm_cfg1 = dict(type="{AK1.AK_name}", apikey="{AK1.AK_value}",name="{AK1.AK_name}",'
+        f'llm_cfg1 = dict(type="testLLM", apikey="{AK1.AK_value}",name="{AK1.AK_name}",'
         f' llm_intro="{"" if AK1.AK_intro is None else AK1.AK_intro}")', template_content)
     llm_cfg2_updated = re.compile(rf'llm_cfg2\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
-        f'llm_cfg2 = dict(type="{AK2.AK_name}", apikey="{AK1.AK_value}", name="{AK2.AK_name}", '
+        f'llm_cfg2 = dict(type="evaluationLLM", apikey="{AK2.AK_value}", name="{AK2.AK_name}", '
         f'llm_intro="{"" if AK2.AK_intro is None else AK2.AK_intro}")', llm_cfg1_updated)
     try:
         # 写入更新后的内容到新文件
         with open(temp_path, 'w', encoding='utf-8') as output_file:
             output_file.write(llm_cfg2_updated)
-
         compile(llm_cfg2_updated, temp_path, 'exec')  # 编译新文件以检查语法错误
         return True
     except SyntaxError as e:

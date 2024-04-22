@@ -16,12 +16,12 @@ from App.utils.config_operation import add_call_function, update_code_to_class, 
 
 def getAK(AKid):
     x = APIKey.query.filter(APIKey.AK_id == AKid).first()
-    return {'id': x.AK_id, 'name': x.AK_name, 'value': x.AK_value, 'intro': x.AK_intro}
+    return None if x is None else {'id': x.AK_id, 'name': x.AK_name, 'value': x.AK_value, 'intro': x.AK_intro}
 
 
 def getDS(DSid):
     x = DataSet.query.filter(DataSet.DS_id == DSid).first()
-    return {'id': x.DS_id, 'name': x.DS_name, 'info': x.DS_info, 'url': x.DS_url}
+    return None if x is None else {'id': x.DS_id, 'name': x.DS_name, 'info': x.DS_info, 'url': x.DS_url}
 
 
 # 项目下的实验配置
@@ -53,7 +53,9 @@ class TestProjectCRUD(Resource):
     # 删除实验
     def delete(self):
         try:
-            db.session.delete(TestProject.query.filter(TestProject.tP_id == request.json['tPid']).first())
+            tp = TestProject.query.filter(TestProject.tP_id == request.json['tPid']).first()
+            shutil.rmtree(os.path.join(BackendPath(), 'App', 'data', 'Logs', tp.tP_id), ignore_errors=True)  # 删除Logs
+            db.session.delete(tp)
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:
@@ -96,9 +98,9 @@ class ConfigCRUD(Resource):
     def get(self):
         tp = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         # 配置文件临时区路径
-        temp_path = os.path.join(BackendPath(), 'APP', 'data', 'config', 'Temp', 'config_' + tp.tP_id + '.py')
+        temp_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'Temp', 'config_' + tp.tP_id + '.py')
         # 配置文件路径
-        config_path = os.path.join('APP', 'data', 'config', 'config_' + tp.tP_id + '.py')
+        config_path = os.path.join('App', 'data', 'config', 'config_' + tp.tP_id + '.py')
         tp.tP_configURL = config_path  # 修改数据库数据
         config_path = os.path.join(BackendPath(), config_path)
         try:
@@ -126,10 +128,10 @@ class ConfigCRUD(Resource):
     # 删除配置文件
     def delete(self):
         tp = TestProject.query.filter(TestProject.tP_id == request.json['tPid']).first()
-        config_path = os.path.join(BackendPath(), 'APP', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
+        config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
         tp.tP_configURL = None
         try:
-            os.remove(config_path)
+            shutil.rmtree(config_path, ignore_errors=True)
             db.session.commit()
             return jsonify({'success': True})
         except OSError as e:

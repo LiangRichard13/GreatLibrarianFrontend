@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 11e629d3cf98
+Revision ID: 14aa1630cbb8
 Revises: 
-Create Date: 2024-01-29 15:58:57.770196
+Create Date: 2024-04-17 18:16:03.003813
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '11e629d3cf98'
+revision = '14aa1630cbb8'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,10 +33,9 @@ def upgrade():
     )
     op.create_table('tb_APIKey',
     sa.Column('AK_id', sa.String(length=30), nullable=False),
-    sa.Column('AK_name', sa.String(length=30), nullable=True),
-    sa.Column('AK_value', sa.String(length=30), nullable=True),
-    sa.Column('AK_auth', sa.String(length=30), nullable=True),
-    sa.Column('AK_type', sa.String(length=30), nullable=True),
+    sa.Column('AK_name', sa.String(length=30), nullable=False),
+    sa.Column('AK_value', sa.String(length=30), nullable=False),
+    sa.Column('AK_intro', sa.String(length=600), nullable=True),
     sa.Column('userid', sa.String(length=30), nullable=True),
     sa.ForeignKeyConstraint(['userid'], ['tb_user.user_id'], ),
     sa.PrimaryKeyConstraint('AK_id')
@@ -72,7 +71,7 @@ def upgrade():
     sa.Column('Pid', sa.Integer(), nullable=True),
     sa.Column('AKid', sa.String(length=30), nullable=True),
     sa.ForeignKeyConstraint(['AKid'], ['tb_APIKey.AK_id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['Pid'], ['tb_Project.project_id'], ),
+    sa.ForeignKeyConstraint(['Pid'], ['tb_Project.project_id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('Project_APIKey_id')
     )
     op.create_table('tb_ProjectDataSet',
@@ -80,7 +79,7 @@ def upgrade():
     sa.Column('Pid', sa.Integer(), nullable=True),
     sa.Column('DSid', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['DSid'], ['tb_DataSet.DS_id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['Pid'], ['tb_Project.project_id'], ),
+    sa.ForeignKeyConstraint(['Pid'], ['tb_Project.project_id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('Project_DataSet_id')
     )
     op.create_table('tb_TestProject',
@@ -94,10 +93,10 @@ def upgrade():
     sa.Column('AK1', sa.String(length=30), nullable=True),
     sa.Column('AK2', sa.String(length=30), nullable=True),
     sa.Column('DS', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['AK1'], ['tb_APIKey.AK_id'], ),
-    sa.ForeignKeyConstraint(['AK2'], ['tb_APIKey.AK_id'], ),
-    sa.ForeignKeyConstraint(['DS'], ['tb_DataSet.DS_id'], ),
-    sa.ForeignKeyConstraint(['Pid'], ['tb_Project.project_id'], ),
+    sa.ForeignKeyConstraint(['AK1'], ['tb_APIKey.AK_id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['AK2'], ['tb_APIKey.AK_id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['DS'], ['tb_DataSet.DS_id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['Pid'], ['tb_Project.project_id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('tP_id')
     )
     op.create_table('tb_QA',
@@ -110,7 +109,7 @@ def upgrade():
     sa.Column('QA_field', sa.String(length=80), nullable=True),
     sa.Column('TPid', sa.String(length=30), nullable=True),
     sa.Column('uid', sa.String(length=30), nullable=True),
-    sa.ForeignKeyConstraint(['TPid'], ['tb_TestProject.tP_id'], ),
+    sa.ForeignKeyConstraint(['TPid'], ['tb_TestProject.tP_id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['uid'], ['tb_user.user_id'], ),
     sa.PrimaryKeyConstraint('QA_id')
     )

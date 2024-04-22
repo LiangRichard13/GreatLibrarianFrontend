@@ -156,6 +156,7 @@ export default {
       apiKeys: [],
       dataSet: [],
       experimentList: [],
+      selectProject:null
       // userFriends: [],
       // selectFriendsId: []
     }
@@ -253,6 +254,7 @@ export default {
       }
     },
     showEditDialog(row) {
+      this.selectProject=row
       this.currentProjectId = row.id
       this.currentProjectName = row.name
       this.editProject.name = row.name
@@ -276,7 +278,7 @@ export default {
     handleEditProject() {
       if (this.editProject.name.trim() && this.editProject.info.trim()) {
         if (this.editProject.apiKey.length > 0 && this.editProject.dataset.length > 0) {
-          this.deleteConfig(row)
+          this.deleteConfig(this.selectProject)
             .then(() => {
               const dataDelete = {
                 id: this.currentProjectId

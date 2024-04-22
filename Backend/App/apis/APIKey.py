@@ -9,6 +9,8 @@ from flask_restful import Resource
 from App.models import db, APIKey
 from App.utils.MD5_ID import *
 from App.utils.backend_path import BackendPath
+from App.utils.check import checkllm, new_llm
+from App.utils.config_operation import update_code_to_class
 
 
 class APIKeyCRUD(Resource):
@@ -47,7 +49,7 @@ class APIKeyCRUD(Resource):
             {'id': x.AK_id, 'name': x.AK_name, 'value': x.AK_value, 'intro': x.AK_intro}
             for x in APIKey.query.filter(APIKey.userid == request.args['uid'])], 'success': True})
 
-    # call函数【添加、修改、查看】
+    # call函数【添加、修改(choose=1);查看(choose=2);连通性测试(choose=3)】
     def put(self):
         if request.json['choose'] == '1':  # 添加、修改
             AKid, code = request.json['id'], request.json['code']
@@ -71,3 +73,8 @@ class APIKeyCRUD(Resource):
                 return jsonify({'success': True, 'code': None})
             except Exception as e:
                 return jsonify({'success': False, 'message': str(e)})
+        elif request.json['choose'] == '3':  # 连通性测试
+            value, code = request.json['value'], request.json['code']  # apikey值,call函数
+            path = os.path.join(BackendPath(), 'App', 'utils', 'check.py')
+            update_code_to_class(path, code, 'new_llm')
+            return jsonify({'success': checkllm(new_llm(value))})

@@ -127,7 +127,7 @@ class ConfigCRUD(Resource):
         config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
         tp.tP_configURL = None
         try:
-            shutil.rmtree(config_path, ignore_errors=True)
+            os.remove(config_path)
             db.session.commit()
             return jsonify({'success': True})
         except OSError as e:

@@ -137,7 +137,7 @@
 <script>
 
 import { getProjectsByUserId, deleteById } from '@/api/project'
-import { getExperimentByProjectId } from '@/api/experiment'
+import { getExperimentByProjectId, deleteOperationFile } from '@/api/experiment'
 import { addProject, addApiKeyToProject, addDataSetToProject } from "@/api/project";
 import { findApiKeyByUserId } from "@/api/apiConfig";
 import { findDataSetByUserId } from "@/api/dataSetConfig"
@@ -189,24 +189,27 @@ export default {
       }
     },
     removeProject(index, row) {
-      const data = {
-        id: row.id
-      }
-      deleteById(data).then(res => {
-        if (res.success) {
-          this.projectList.splice(index, 1);
-          this.$message({
-            message: '删除成功',
-            type: 'success',
+      this.deleteConfig(row)
+        .then(() => {
+          // 删除配置文件成功后，进行项目删除
+          const data = {
+            id: row.id
+          };
+          deleteById(data).then(res => {
+            if (res.success) {
+              this.projectList.splice(index, 1);
+              this.$message({
+                message: '删除成功',
+                type: 'success',
+              });
+            }
           });
-        }
-      })
+        })
+        .catch(error => {
+          // 处理删除配置文件时发生的错误
+          console.error('删除配置文件失败:', error);
+        });
     },
-    // setCurrentProjectID(projectId, projectName) {
-    //   this.currentProjectId = projectId
-    //   this.currentProjectName = projectName
-    //   this.showDialog = true
-    // },
     handleDialogClose() {
       this.editProject.name = '',
         this.editProject.info = '',
@@ -273,61 +276,64 @@ export default {
     handleEditProject() {
       if (this.editProject.name.trim() && this.editProject.info.trim()) {
         if (this.editProject.apiKey.length > 0 && this.editProject.dataset.length > 0) {
-          const dataDelete = {
-            id: this.currentProjectId
-          }
-          deleteById(dataDelete).then(res => {
-            if (res.success) {
-              const dataAdd = {
-                uid: localStorage.getItem('uid'),
-                name: this.editProject.name,
-                info: this.editProject.info,
+          this.deleteConfig(row)
+            .then(() => {
+              const dataDelete = {
+                id: this.currentProjectId
               }
-              addProject(dataAdd).then(res => {
+              deleteById(dataDelete).then(res => {
                 if (res.success) {
-                  this.editProject.name = '';
-                  this.editProject.info = ''; // 清空输入框
-                  let projectId = res.id
-                  // this.newProject.apiKey = [];
-                  // this.newProject.dataset = [];
+                  const dataAdd = {
+                    uid: localStorage.getItem('uid'),
+                    name: this.editProject.name,
+                    info: this.editProject.info,
+                  }
+                  addProject(dataAdd).then(res => {
+                    if (res.success) {
+                      this.editProject.name = '';
+                      this.editProject.info = ''; // 清空输入框
+                      let projectId = res.id
+                      // this.newProject.apiKey = [];
+                      // this.newProject.dataset = [];
 
-                  //将用户选择的apiKeys加入到project里面
-                  Promise.all(this.editProject.apiKey.map(AK_id => {
-                    const addApi = {
-                      pid: projectId,
-                      AKid: AK_id
-                    }
-                    addApiKeyToProject(addApi)
-                  }))
-                  this.editProject.apiKey = []//将用户选择的apikey列表置空
+                      //将用户选择的apiKeys加入到project里面
+                      Promise.all(this.editProject.apiKey.map(AK_id => {
+                        const addApi = {
+                          pid: projectId,
+                          AKid: AK_id
+                        }
+                        addApiKeyToProject(addApi)
+                      }))
+                      this.editProject.apiKey = []//将用户选择的apikey列表置空
 
-                  //将用户选择的dataSet加入到project里面
-                  Promise.all(this.editProject.dataset.map(DS_id => {
-                    const addDS = {
-                      pid: projectId,
-                      DSid: DS_id
+                      //将用户选择的dataSet加入到project里面
+                      Promise.all(this.editProject.dataset.map(DS_id => {
+                        const addDS = {
+                          pid: projectId,
+                          DSid: DS_id
+                        }
+                        addDataSetToProject(addDS)
+                      }))
+                      this.editProject.dataset = []//将用户选择的dataset列表置空
+                      this.$message({
+                        message: '修改成功',
+                        type: 'success'
+                      });
+                      this.showDialog = false
+                      setTimeout(() => {
+                        this.load()
+                      }, 500);
                     }
-                    addDataSetToProject(addDS)
-                  }))
-                  this.editProject.dataset = []//将用户选择的dataset列表置空
+                  })
+                }
+                else {
                   this.$message({
-                    message: '修改成功',
-                    type: 'success'
+                    message: '修改出错',
+                    type: 'error'
                   });
-                  this.showDialog = false
-                  setTimeout(() => {
-                    this.load()
-                  }, 500);
                 }
               })
-            }
-            else {
-              this.$message({
-                message: '修改出错',
-                type: 'error'
-              });
-            }
-          })
+            })
         }
         else {
           this.$message({
@@ -342,33 +348,33 @@ export default {
         });
       }
     },
-    // deleteConfig(thisProject) {
-    //   return new Promise((resolve, reject) => {
-    //     getExperimentByProjectId(thisProject.id).then(res => {
-    //       this.experimentList = res.data;
-    //       const deletePromises = this.experimentList.map(item => {
-    //         if (item.configURL) {
-    //           const deleteData = { tPid: item.id };
-    //           return deleteOperationFile(deleteData).then(res => {
-    //             if (!res.success) {
-    //               this.$message({
-    //                 message: thisProject.id + '-' + thisProject.name + '测试配置文件删除出错',
-    //                 type: 'error'
-    //               });
-    //               throw new Error('删除配置文件失败');
-    //             }
-    //           });
-    //         } else {
-    //           return Promise.resolve();  // 没有配置文件也须返回resolved promise
-    //         }
-    //       });
+    deleteConfig(thisProject) {
+      return new Promise((resolve, reject) => {
+        getExperimentByProjectId(thisProject.id).then(res => {
+          this.experimentList = res.data;
+          const deletePromises = this.experimentList.map(item => {
+            if (item.configURL) {
+              const deleteData = { tPid: item.id };
+              return deleteOperationFile(deleteData).then(res => {
+                if (!res.success) {
+                  this.$message({
+                    message: thisProject.id + '-' + thisProject.name + '测试配置文件删除出错',
+                    type: 'error'
+                  });
+                  throw new Error('删除配置文件失败');
+                }
+              });
+            } else {
+              return Promise.resolve();  // 没有配置文件也须返回resolved promise
+            }
+          });
 
-    //       Promise.all(deletePromises)
-    //         .then(() => resolve())
-    //         .catch(error => reject(error));
-    //     });
-    //   });
-    // }
+          Promise.all(deletePromises)
+            .then(() => resolve())
+            .catch(error => reject(error));
+        });
+      });
+    }
   }
 }
 

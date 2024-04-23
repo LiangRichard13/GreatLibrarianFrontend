@@ -47,20 +47,19 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <el-button plain  size="mini" icon="el-icon-edit" type="primary"
+                  <el-button plain size="mini" icon="el-icon-edit" type="primary"
                     @click="handleCodeEdit(scope.row.id, scope.row.name, scope.row.callFunction)">编辑调用函数
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button plain  size="mini" icon="el-icon-s-operation" type="warning"
-                    @click="handleTest(scope.row)" :loading="connectivityTesting">测试连通性
+                  <el-button plain size="mini" icon="el-icon-s-operation" type="warning" @click="handleTest(scope.row)"
+                    :loading="connectivityTesting">测试连通性
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
-                    @confirm="removeKey(scope.$index, scope.row)" title="确定要删除此API KEY吗?">
-                    <el-button plain  size="mini" icon="el-icon-delete" type="danger"
-                      slot="reference">删除
+                    @confirm="removeKey(scope.$index, scope.row)" title="确定要删除此API key吗?">
+                    <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                     </el-button>
                   </el-popconfirm>
                 </el-dropdown-item>
@@ -126,7 +125,7 @@
 
 
 <script>
-import { addApiKey, deleteById, findApiKeyByUserId, getCallFunction, addCallFunction,testConnectivity } from "@/api/apiConfig";
+import { addApiKey, deleteById, findApiKeyByUserId, getCallFunction, addCallFunction, testConnectivity } from "@/api/apiConfig";
 // import {checkOperationFile} from "@/api/experiment"
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
@@ -136,7 +135,7 @@ export default {
   name: "ApiConfig",
   data() {
     return {
-      connectivityTesting:false,
+      connectivityTesting: false,
       loading: true,
       apiKeys: [],
       showDialog: false,
@@ -176,6 +175,14 @@ export default {
     },
     addKey() {
       if (this.newApiKey.value.trim() && this.newApiKey.name.trim()) {
+        if(!this.isValidValue(this.newApiKey.value))
+        {
+          this.$message({
+              message: '密钥形式不符合规范，请检查',
+              type: 'warning'
+            });
+            return
+        }
         const data = {
           uid: localStorage.getItem('uid'),
           name: this.newApiKey.name,
@@ -329,39 +336,39 @@ export default {
       })
       this.resetCodeEditor()
     },
-    handleTest(row)
-    { 
-      
-      if(!row.callFunction)
-      {
+    handleTest(row) {
+
+      if (!row.callFunction) {
         this.$message({
-            message: '还没有编辑API key调用函数',
-            type: 'warning'
-          });
-          return
+          message: '还没有编辑API key调用函数',
+          type: 'warning'
+        });
+        return
       }
-      this.connectivityTesting=true
-      testConnectivity(row.value,row.callFunction).then(res=>{
-        if(res.success)
-        {
-          if(res.result)
-          {
-          this.$message({
-            message:'连通性良好',
-            type: 'success'
-          });
+      this.connectivityTesting = true
+      testConnectivity(row.value, row.callFunction).then(res => {
+        if (res.success) {
+          if (res.result) {
+            this.$message({
+              message: '连通性良好',
+              type: 'success'
+            });
           }
-          else
-        {
-          this.$message({
-            message:'连通性不佳',
-            type: 'warning'
-          });
+          else {
+            this.$message({
+              message: '连通性不佳，请检查网络或API key',
+              type: 'warning'
+            });
+          }
+          this.connectivityTesting = false
         }
-          this.connectivityTesting=false
-        } 
-          this.connectivityTesting=false
+        this.connectivityTesting = false
       })
+    },
+    isValidValue(inputString) {
+      // 使用正则表达式匹配以非空内容开始，中间一个点，后面也是非空内容结束的字符串
+      const formatPattern = /^[^.]+\.[^.]+$/;
+      return formatPattern.test(inputString);
     }
   }
 }

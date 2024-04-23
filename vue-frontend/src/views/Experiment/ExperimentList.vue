@@ -493,7 +493,8 @@
                         <el-table :data="downLoadTable">
                             <el-table-column prop="index" label="版本" align="center">
                                 <template slot-scope="scope">
-                                    Version-{{ scope.row.index }}
+                                    <span v-if="scope.row.index===downLoadTable.length&&currentExpStatus===3">Version-final</span>
+                                    <span v-else>Version-{{ scope.row.index }}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column label="下载" align="center">
@@ -569,6 +570,7 @@ export default {
             selectFriendsId: [],
             currentExpName: '',
             currentExpId: '',
+            currentExpStatus:null,
             thisRowCollaborators: [],
             reportCount: null,
             // selectVersion: null,
@@ -1414,6 +1416,7 @@ export default {
             })
             this.currentExpId = row.id
             this.currentExpName = row.name
+            this.currentExpStatus=row.status
             this.downloader = true
         },
         downloadClose() {

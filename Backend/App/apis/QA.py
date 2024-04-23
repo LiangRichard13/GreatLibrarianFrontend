@@ -94,10 +94,12 @@ class QAOperation(Resource):
     # 提交打分结果(一条一条)   接收参数【url追加  审核id值:QAid， 分数:score】
     def delete(self):
         qa = QA.query.filter(QA.QA_id == request.args['QAid']).first()
+        lastOne = False
         # 判断该审核是否为实验的最后一条提交结果
         if QA.query.filter(QA.TPid == qa.TPid).count() == 1:
             testProject = TestProject.query.filter(TestProject.tP_id == qa.TPid).first()
             testProject.tP_status = 3
+            lastOne = True
         time = qa.QA_time
         logData = str(time) + ' - INFO - To LLM:	 ' + qa.QA_question + ' from thread ' + str(qa.QA_thread) + '\n' + \
                   str(time) + ' - INFO - To User:	 "' + qa.QA_answer + '" from thread ' + str(qa.QA_thread) + '\n' + \
@@ -110,7 +112,7 @@ class QAOperation(Resource):
         try:
             db.session.delete(qa)
             db.session.commit()
-            return jsonify({'success': True})
+            return jsonify({'success': True, 'isLast': lastOne})
         except Exception as e:  # 数据库操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存

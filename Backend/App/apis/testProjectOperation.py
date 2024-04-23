@@ -79,10 +79,17 @@ class TPOperation(Resource):
             r'New Epoch ----------.*?INFO - (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO - '
             r'To LLM:	 (.*?)\n\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*?'
             r'To User:	 "(.*?)"(.*?)'
-            r'The model gets (\d+\.\d+) points in this testcase by keywords method.*?'
-            r'The model gets (\d+\.\d+) points in this testcase by LLMEval method.*?'
+            r'(The model gets .*?)'
             r'(The final score of this testcase is (\d+\.\d+), in (.*?) field\.|Human Evaluation!)',
             re.DOTALL).findall(content)
-        data = [{'time': m[0], 'Q': m[1], 'A': m[2], 'method_score': m[4], 'llm_score': m[5], 'fin_score': m[7],
-                 'keyword': re.compile(r'INFO - keyword:(.*?)\n', re.DOTALL).findall(m[3]), } for m in matches]
+        data = [{'time': m[0], 'Q': m[1], 'A': m[2], 'fin_score': m[6],
+                 'keyword': re.compile(r'INFO - keyword:(.*?)\n', re.DOTALL).findall(m[3]),
+                 'keywords_score': re.compile(r'The model gets (\d+\.\d+) points in this testcase by keywords method',
+                                              re.DOTALL).findall(m[4]),
+                 'llm_score': re.compile(r'The model gets (\d+\.\d+) points in this testcase by LLMEval method',
+                                         re.DOTALL).findall(m[4]),
+                 'blacklist_score': re.compile(r'The model gets (\d+\.\d+) points in this testcase by blacklist method',
+                                               re.DOTALL).findall(m[4]),
+                 'field': re.compile(r'method, in (.*?) field', re.DOTALL).findall(m[4])[0]
+                 } for m in matches]
         return jsonify({'success': True, 'data': pd.DataFrame(data)})

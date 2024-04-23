@@ -11,12 +11,18 @@
       <div class="table-container">
         <el-table :data="pageList" style="width: 100%" v-loading="loading" stripe>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
-          <el-table-column label="打分" type="expand" width="150px">
+          <el-table-column label="详情" type="expand" width="150px">
             <template slot-scope="scope">
               <div>
                 <el-form label-position="left" inline class="demo-table-expand">
-                  <el-form-item label="规则化打分:">
-                    <span>{{ scope.row.method_scored }}</span>
+                  <el-form-item label="关键字:">
+                    <span>{{ scope.row.keyword }}</span>
+                  </el-form-item>
+                  <el-form-item label="关键字打分:">
+                    <span>{{ scope.row.keywords_score }}</span>
+                  </el-form-item>
+                  <el-form-item label="Black List打分:">
+                    <span>{{ scope.row.blacklist_score }}</span>
                   </el-form-item>
                   <el-form-item label="大模型打分:">
                     <span>{{ scope.row.llm_score }}</span>
@@ -33,12 +39,12 @@
               <div style="height: 50px; overflow: auto;">{{ scope.row.Q }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="问题">
+          <el-table-column label="回答">
             <template slot-scope="scope">
               <div style="height: 50px; overflow: auto;">{{ scope.row.A }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="关键字" prop="keyword">
+          <el-table-column label="领域" prop="field">
           </el-table-column>
           <!-- <el-table-column label="规则化打分" prop="method_scored">
             </el-table-column>
@@ -49,7 +55,7 @@
         </el-table>
       </div>
       <div class="pagination-container" style="margin-top: 20px;">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
           :page-sizes="[5, 10, 20, 30, 50]" :page-size="pageSize" :total="interactionList.length"
           layout="total, sizes, prev, pager, next, jumper">
         </el-pagination>
@@ -77,7 +83,8 @@ export default {
           "Q": "什么是机器学习？",
           "A": "机器学习是一种使计算机能够在没有明确编程的情况下学习的科学。",
           "keyword": "机器学习, 计算机, 编程",
-          "method_scored": 85,
+          "keywords_score": 85,
+          "blacklist_score":88,
           "llm_score": 90,
           "fin_score": 88
         },
@@ -85,7 +92,8 @@ export default {
           "Q": "全球变暖的主要原因是什么？",
           "A": "全球变暖的主要原因是大量温室气体，如二氧化碳，由于人类活动而排放到大气中。",
           "keyword": "全球变暖, 温室气体, 二氧化碳",
-          "method_scored": 78,
+          "keywords_score": 85,
+          "blacklist_score":88,
           "llm_score": 81,
           "fin_score": 80
         },
@@ -93,7 +101,8 @@ export default {
           "Q": "如何制作披萨？",
           "A": "制作披萨首先需要准备面团和配料，如奶酪、番茄酱和你喜欢的其他配料，然后在烤箱中烘烤。",
           "keyword": "披萨, 面团, 奶酪",
-          "method_scored": 90,
+          "keywords_score": 85,
+          "blacklist_score":88,
           "llm_score": 88,
           "fin_score": 89
         }

@@ -53,6 +53,10 @@ const routes = [
                 component: () => import("@/views/QA/AssignmentQA.vue")
             },
             {
+                path: '/interaction',
+                component: () => import("@/views/Experiment/InteractionList.vue")
+            },
+            {
                 path: '/configureNavigation',
                 component: () => import("../components/ConfigureNavigation.vue"),
                 children: [

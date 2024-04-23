@@ -91,6 +91,26 @@ export default {
           localStorage.removeItem("thisExperiment")
           this.$router.push("/login");
         }
+        else {
+          //触发一个事件，告诉子组件父组件已经挂载完
+          // this.$emit('nav-mounted');
+          const id = {
+            id: localStorage.getItem("uid")
+          }
+          findById(id).then(res => {
+
+            this.user = res.data;
+            if (!this.user.iconUrl) {
+              this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
+            }
+            else {
+              this.user.iconUrl = this.user.iconUrl.replace(/\\/g, "/");
+              this.user.iconUrl = this.user.iconUrl.replace(/App/g, "");
+              this.user.iconUrl = config.API_URL + this.user.iconUrl;
+            }
+
+          })
+        }
       });
 
 
@@ -100,23 +120,6 @@ export default {
 
       //如果令牌没过期
       //通过取出登录后在本地存储的用户id获取用户信息
-      const id = {
-        id: localStorage.getItem("uid")
-      }
-      findById(id).then(res => {
-
-        this.user = res.data;
-        if (!this.user.iconUrl) {
-          this.user.iconUrl = this.defaultAvatar; // 如果用户没有头像，则使用默认头像
-        }
-        else {
-          this.user.iconUrl = this.user.iconUrl.replace(/\\/g, "/");
-          this.user.iconUrl = this.user.iconUrl.replace(/App/g, "");
-          this.user.iconUrl = config.API_URL + this.user.iconUrl;
-
-        }
-
-      })
     }
     //如果本地没有存储的用户id则说明没有登录，跳转到登录页面
     else {

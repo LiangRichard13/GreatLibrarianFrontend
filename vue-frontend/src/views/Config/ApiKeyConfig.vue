@@ -350,9 +350,9 @@ export default {
             type: 'success'
           });
           }
-          this.connectivityTesting=fasle
+          this.connectivityTesting=false
         } 
-          this.connectivityTesting=fasle
+          this.connectivityTesting=false
       })
     }
   }

@@ -257,6 +257,12 @@
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
+                                        <el-button plain size="mini" icon="el-icon-notebook-2"
+                                            @click.stop="handleInteraction(scope.row)">
+                                            交互记录
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
                                         <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                             icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                             title="确定要删除此测试吗？">
@@ -324,7 +330,7 @@
                             <el-tag v-else type="warning">无协作者</el-tag>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="250" align="center">
+                    <el-table-column label="操作" width="350" align="center">
                         <template slot-scope="scope">
                             <el-button plain size="mini" icon="el-icon-download" type="success"
                                 style="margin-bottom: 10px;" @click.stop="handleDownload(scope.row)">
@@ -336,6 +342,10 @@
                                 <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                 </el-button>
                             </el-popconfirm> -->
+                            <el-button plain size="mini" icon="el-icon-notebook-2"
+                                @click.stop="handleInteraction(scope.row)">
+                                交互记录
+                            </el-button>
                             <el-button plain size="mini" icon="el-icon-delete" type="danger"
                                 @click="confirmDelete(scope.$index, scope.row)">删除
                             </el-button>
@@ -919,7 +929,7 @@ export default {
                             if (res.success) {
                                 checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2' }
                                 checkOperationFile(checkData).then(res => {
-                                    if (res.success) {    
+                                    if (res.success) {
                                         testConnectivity(thisTest.AK1.value, AK1_callFunction).then(res => {
                                             if (res.success) {
                                                 if (!res.result) {
@@ -1448,6 +1458,10 @@ export default {
             this.downLoadTable = Array.from({ length: this.reportCount }, (_, i) => ({
                 index: i + 1, // 生成从1开始的行数
             }));
+        },
+        handleInteraction(experiment) {
+            localStorage.setItem('thisExperiment', JSON.stringify(experiment));
+            this.$router.push("/interaction")
         },
     }
 };

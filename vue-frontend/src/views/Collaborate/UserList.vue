@@ -3,7 +3,7 @@
     <h3 style="letter-spacing: 1px; font-weight: 400; padding-bottom: 20px; text-align: center">
       在同一局域网下的用户
     </h3>
-    <template v-if="userList.length">
+    <template v-if="userList&&userList.length">
       <el-row>
         <el-col :span="6" v-for="(user, index) in userList" :key="user.id">
           <el-card style="margin-bottom: 20px;margin-right: 20px;margin-left: 20px;">

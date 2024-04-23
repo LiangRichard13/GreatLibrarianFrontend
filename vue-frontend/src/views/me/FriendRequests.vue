@@ -1,7 +1,7 @@
 <template lang="">
 <div style="overflow-x: hidden;">
   <h3 style="letter-spacing: 1px;font-weight: 400;padding-bottom: 20px;text-align: center">我的好友申请</h3>
-  <template v-if="userFriendsRequestID.length"> 
+  <template v-if="userFriendsRequestID&&userFriendsRequestID.length"> 
   <el-row :gutter="20">
       <el-col :span="12" v-for="(row,index) in userFriendsRequest" :key="index" class="user-card"> 
         <!-- <div v-for="(fid, index) in userFriendsRequestID" :key="index"> -->

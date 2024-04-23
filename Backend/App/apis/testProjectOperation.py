@@ -2,9 +2,11 @@
 # @Time: 2023/12/22 15:32
 # @version: 1.0
 import os
+import re
 import subprocess
 import threading
 
+import pandas as pd
 from flask import jsonify, request, current_app
 from flask_restful import Resource
 
@@ -67,3 +69,27 @@ class TPOperation(Resource):
         if request.args['choose'] == '2':  # 报告路径
             return jsonify({'url': os.path.join('App', 'data', 'Logs', request.args['tPid'],
                                                 'report-v' + request.args['n'] + '.pdf'), 'success': True})
+
+    # 查询交互记录
+    def delete(self):
+        url = os.path.join(BackendPath(), 'App', 'data', 'Logs', request.args['tPid'], 'dialog.log')
+        with open(url, 'r', encoding='UTF-8') as file:
+            content = file.read()
+        matches = re.compile(
+            r'New Epoch ----------.*?INFO - (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO - '
+            r'To LLM:	 (.*?)\n\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*?'
+            r'To User:	 "(.*?)"(.*?)'
+            r'(The model gets .*?)'
+            r'(The final score of this testcase is (\d+\.\d+), in (.*?) field\.|Human Evaluation!)',
+            re.DOTALL).findall(content)
+        data = [{'time': m[0], 'Q': m[1], 'A': m[2], 'fin_score': m[6],
+                 'keyword': re.compile(r'INFO - keyword:(.*?)\n', re.DOTALL).findall(m[3]),
+                 'keywords_score': re.compile(r'The model gets (\d+\.\d+) points in this testcase by keywords method',
+                                              re.DOTALL).findall(m[4]),
+                 'llm_score': re.compile(r'The model gets (\d+\.\d+) points in this testcase by LLMEval method',
+                                         re.DOTALL).findall(m[4]),
+                 'blacklist_score': re.compile(r'The model gets (\d+\.\d+) points in this testcase by blacklist method',
+                                               re.DOTALL).findall(m[4]),
+                 'field': re.compile(r'method, in (.*?) field', re.DOTALL).findall(m[4])[0]
+                 } for m in matches]
+        return jsonify({'success': True, 'data': pd.DataFrame(data)})

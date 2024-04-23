@@ -3,6 +3,7 @@
 # @version: 1.0
 from flask import jsonify, request
 from flask_restful import Resource
+
 from App.models import db, DataSet, ProjectDataSet
 
 
@@ -26,10 +27,11 @@ class ProjectDS(Resource):
 
     # 项目下删除DataSet
     def delete(self):
-        PDS = ProjectDataSet.query.filter(ProjectDataSet.Project_DataSet_id == request.json['PDSid']).first()
+        keys_to_delete = ProjectDataSet.query.filter(ProjectDataSet.Pid == request.json['Pid']).all()
         try:
-            db.session.delete(PDS)
-            db.session.commit()
+            for key in keys_to_delete:  # 遍历这些记录，并逐一删除
+                db.session.delete(key)
+                db.session.commit()
             return jsonify({'success': True})
         except Exception as e:
             db.session.rollback()  # 回滚

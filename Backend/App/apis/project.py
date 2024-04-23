@@ -55,6 +55,12 @@ class ProjectCRUD(Resource):
         return jsonify({'data': data, 'success': True})
 
     # 修改
+    '''
+        项目的修改：
+            1.项目自身的相关信息【project中put接口】
+            2.项目下的ApiKey信息:(1)先删除原有的AK【ProjectAK中delete接口】,(2)添加新的AK【ProjectAK中post接口】
+            3.项目下的DataSet信息:(1)先删除原有的DS【ProjectDS中delete接口】,(2)添加新的DS【ProjectDS中post接口】
+    '''
     def put(self):
         project = Project.query.filter(Project.project_id == request.json['id']).first()
         project.project_name, project.project_info = request.json['name'], request.json['info']

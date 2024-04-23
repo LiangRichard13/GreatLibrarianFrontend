@@ -105,14 +105,13 @@ class QAOperation(Resource):
                   str(time) + ' - INFO - To User:	 "' + qa.QA_answer + '" from thread ' + str(qa.QA_thread) + '\n' + \
                   str(time) + ' - INFO - The final score of this testcase is ' + request.args['score'] + \
                   ', in ' + qa.QA_field + ' field.from thread ' + str(qa.QA_thread) + '\n'
-
         url = os.path.join(BackendPath(), "App", "data", "Logs", qa.TPid, "human_evaluation.log")
         with open(url, "a", encoding="utf-8") as file:
             file.write(logData)
         try:
             db.session.delete(qa)
             db.session.commit()
-            return jsonify({'success': True, 'isLast': lastOne})
+            return jsonify({'success': True, 'lastOne': lastOne})
         except Exception as e:  # 数据库操作异常处理
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存

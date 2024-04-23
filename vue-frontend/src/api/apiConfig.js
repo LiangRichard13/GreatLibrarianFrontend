@@ -45,3 +45,12 @@ export function getCallFunction(id) {
         data: {choose:"2",id:id}
     })
 }
+
+
+export function testConnectivity(value,code) {
+    return service({
+        url: '/APIKey',
+        method: 'put',
+        data: {choose:"3",value:value,code:code}
+    })
+}

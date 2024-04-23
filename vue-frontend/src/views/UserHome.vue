@@ -74,7 +74,7 @@
               <div slot="header" class="clearfix">
                 <span>我的好友</span>
               </div>
-              <template v-if="userFriends.length">
+              <template v-if="userFriends&&userFriends.length">
                 <div v-for="(friend, index) in userFriends" :key="index" class="friend">
                   <!-- <el-avatar :src="friend.icon"></el-avatar> -->
                   <img :src="friend.icon" style="width: 50px; height: 50px; border-radius: 50%;" class="friend-icon" />

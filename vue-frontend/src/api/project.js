@@ -40,6 +40,14 @@ export function getProjectsByUserId(id) {
     })
 }
 
+export function updateProject(data) {
+    return service({
+        url: '/project',
+        method: 'put',
+        data:data
+    })
+}
+
 export function deleteById(data) {
     return service({
         url: '/project',
@@ -48,6 +56,21 @@ export function deleteById(data) {
     })
 }
 
+export function deleteAPIKeyByPid(data) {
+    return service({
+        url: '/projectAK',
+        method: 'delete',
+        data:data
+    })
+}
+
+export function deleteDataSetByPid(data) {
+    return service({
+        url: '/projectDS',
+        method: 'delete',
+        data:data
+    })
+}
 
 // export function getCollaborateProjectsByUserId(id) {
 //     return service({

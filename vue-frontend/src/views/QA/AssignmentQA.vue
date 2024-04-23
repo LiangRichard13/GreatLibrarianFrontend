@@ -7,7 +7,7 @@
         {{ this.thisExperiment.name }}的存疑记录
       </h3>
     </div>
-    <template v-if="QAList.length">
+    <template v-if="QAList&&QAList.length">
       <div class="table-container">
 
         <!-- 截图需要 -->

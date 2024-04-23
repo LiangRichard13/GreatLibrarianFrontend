@@ -98,7 +98,7 @@
                                     </el-dropdown-item> -->
                                     <el-dropdown-item>
                                         <el-button plain icon="el-icon-caret-right" size="mini" type="success"
-                                            @click="confirmStart(scope.$index, scope.row)">
+                                            @click="confirmStart(scope.$index, scope.row)" :loading="isTesting">
                                             开始测试
                                         </el-button>
                                     </el-dropdown-item>
@@ -257,6 +257,12 @@
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
+                                        <el-button plain size="mini" icon="el-icon-notebook-2"
+                                            @click.stop="handleInteraction(scope.row)">
+                                            交互记录
+                                        </el-button>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item>
                                         <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
                                             icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
                                             title="确定要删除此测试吗？">
@@ -324,7 +330,7 @@
                             <el-tag v-else type="warning">无协作者</el-tag>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="250" align="center">
+                    <el-table-column label="操作" width="350" align="center">
                         <template slot-scope="scope">
                             <el-button plain size="mini" icon="el-icon-download" type="success"
                                 style="margin-bottom: 10px;" @click.stop="handleDownload(scope.row)">
@@ -336,6 +342,10 @@
                                 <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                 </el-button>
                             </el-popconfirm> -->
+                            <el-button plain size="mini" icon="el-icon-notebook-2"
+                                @click.stop="handleInteraction(scope.row)">
+                                交互记录
+                            </el-button>
                             <el-button plain size="mini" icon="el-icon-delete" type="danger"
                                 @click="confirmDelete(scope.$index, scope.row)">删除
                             </el-button>
@@ -526,7 +536,7 @@ import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@
 import { getQACount } from '@/api/qa'
 import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum, errorHandle } from '@/api/expOperation'
 import { startExp, updateReport } from '@/api/expOperation'
-import { getCallFunction } from "@/api/apiConfig"
+import { getCallFunction, testConnectivity } from "@/api/apiConfig"
 import config from "@/services/conf"
 // import ace from 'ace-builds/src-noconflict/ace';
 // import 'ace-builds/src-noconflict/mode-python';
@@ -541,6 +551,7 @@ export default {
     name: "ExperimentList",
     data() {
         return {
+            isTesting: false,
             loading: true,
             isUpdate: false,
             downLoadTable: [],
@@ -686,13 +697,6 @@ export default {
                             this.setExpEmpty()
                         }
                     })
-                    // }
-                    // else {
-                    //     this.$message({
-                    //         message: '测试文件尚未编辑',
-                    //         type: 'warning'
-                    //     });
-                    // }
                 }
                 else {
                     this.$message({
@@ -730,18 +734,7 @@ export default {
             }
         },
         handleStartExpirement(index, row) {
-            // if (row.AK1 === null || row.AK2 === null) {
-            //     this.$message({
-            //         message: '测试的API key已丢失，请修改配置或重新配置API key',
-            //         type: 'warning'
-            //     });
-            //     return
-            // }
             this.isTesting = true
-            // this.$message({
-            //     message: row.id + '-' + row.name + '准备生成测试执行的配置文件',
-            //     type: 'info'
-            // });
             this.handleGenerateConfig(row).then(result => {
                 if (result) {
                     const id = { tPid: row.id }
@@ -751,11 +744,17 @@ export default {
                                 message: row.id + '-' + row.name + '开始执行',
                                 type: 'info'
                             });
+                            this.isTesting = false
                             this.setExpEmpty()
                         }
+                        this.isTesting = false
                     })
                 }
+                else {
+                    this.isTesting = false
+                }
             })
+            this.isTesting = false
         },
         handleAssignExpirement(experiment) {
             // 保存到 LocalStorage
@@ -931,21 +930,47 @@ export default {
                                 checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2' }
                                 checkOperationFile(checkData).then(res => {
                                     if (res.success) {
-                                        generateOperationFile(thisTest.id).then(res => {
+                                        testConnectivity(thisTest.AK1.value, AK1_callFunction).then(res => {
                                             if (res.success) {
-                                                this.$message({
-                                                    message: '已生成新配置文件',
-                                                    type: 'success'
-                                                });
-                                                // this.setExpEmpty()
-                                                resolve(true)
-                                            }
-                                            else {
-                                                this.$message({
-                                                    message: '配置文件生成错误',
-                                                    type: 'error'
-                                                });
-                                                reject(false)
+                                                if (!res.result) {
+                                                    this.$message({
+                                                        message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性不佳`,
+                                                        type: 'error'
+                                                    });
+                                                    reject(false)
+                                                }
+                                                else {
+                                                    testConnectivity(thisTest.AK2.value, AK2_callFunction).then(res => {
+                                                        if (res.success) {
+                                                            if (!res.result) {
+                                                                this.$message({
+                                                                    message: `评估模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性不佳`,
+                                                                    type: 'error'
+                                                                });
+                                                                reject(false)
+                                                            }
+                                                            else {
+                                                                generateOperationFile(thisTest.id).then(res => {
+                                                                    if (res.success) {
+                                                                        this.$message({
+                                                                            message: '已生成新配置文件',
+                                                                            type: 'success'
+                                                                        });
+                                                                        // this.setExpEmpty()
+                                                                        resolve(true)
+                                                                    }
+                                                                    else {
+                                                                        this.$message({
+                                                                            message: '配置文件生成错误',
+                                                                            type: 'error'
+                                                                        });
+                                                                        reject(false)
+                                                                    }
+                                                                })
+                                                            }
+                                                        }
+                                                    })
+                                                }
                                             }
                                         })
                                     }
@@ -1003,7 +1028,6 @@ export default {
             })
         },
         getCode(id) {
-            console.log('错误排查')
             return getCallFunction(id).then(res => {
                 return res.code
             })
@@ -1385,8 +1409,8 @@ export default {
                         type: 'success',
                         message: row.id + '-' + row.name + '测试报告更新成功'
                     });
-                    this.isUpdate = false
                 }
+                this.isUpdate = false
             })
         },
         handleDownload(row) {
@@ -1434,6 +1458,10 @@ export default {
             this.downLoadTable = Array.from({ length: this.reportCount }, (_, i) => ({
                 index: i + 1, // 生成从1开始的行数
             }));
+        },
+        handleInteraction(experiment) {
+            localStorage.setItem('thisExperiment', JSON.stringify(experiment));
+            this.$router.push("/interaction")
         },
     }
 };

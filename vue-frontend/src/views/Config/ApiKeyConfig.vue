@@ -40,24 +40,33 @@
 
         <!-- 操作列 -->
         <el-table-column label="操作" width="250" align="center">
-          <!-- <template slot-scope="scope">
-            <el-button plain style="margin-left: 8px" size="large" icon="el-icon-s-tools" type="primary" @click="handleCodeEdit(scope.row.id,scope.row.name)">编辑调用函数
-            </el-button>
-          </template> -->
           <template slot-scope="scope">
-            <el-button plain style="margin-bottom: 10px" size="mini" icon="el-icon-s-tools" type="primary"
-              @click="handleCodeEdit(scope.row.id, scope.row.name, scope.row.callFunction)">编辑调用函数
-            </el-button>
-            <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
-              @confirm="removeKey(scope.$index, scope.row)" title="确定要删除此API KEY吗?">
-              <el-button plain style="margin-left: 8px" size="mini" icon="el-icon-delete" type="danger"
-                slot="reference">删除
+            <el-dropdown>
+              <el-button plain size="mini" type="primary">
+                操作<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
-            </el-popconfirm>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <el-button plain  size="mini" icon="el-icon-edit" type="primary"
+                    @click="handleCodeEdit(scope.row.id, scope.row.name, scope.row.callFunction)">编辑调用函数
+                  </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button plain  size="mini" icon="el-icon-s-operation" type="warning"
+                    @click="handleTest(row)" :loading="connectivityTesting">测试连通性
+                  </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
+                    @confirm="removeKey(scope.$index, scope.row)" title="确定要删除此API KEY吗?">
+                    <el-button plain  size="mini" icon="el-icon-delete" type="danger"
+                      slot="reference">删除
+                    </el-button>
+                  </el-popconfirm>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
-          <!-- 测试API Key连通性 -->
-          <!-- <el-button plain style="margin-left: 8px" size="mini" icon="el-icon-s-tools" type="warning">测试连通性
-              </el-button> -->
         </el-table-column>
       </el-table>
     </div>
@@ -117,7 +126,7 @@
 
 
 <script>
-import { addApiKey, deleteById, findApiKeyByUserId, getCallFunction, addCallFunction } from "@/api/apiConfig";
+import { addApiKey, deleteById, findApiKeyByUserId, getCallFunction, addCallFunction,testConnectivity } from "@/api/apiConfig";
 // import {checkOperationFile} from "@/api/experiment"
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
@@ -127,6 +136,7 @@ export default {
   name: "ApiConfig",
   data() {
     return {
+      connectivityTesting:false,
       loading: true,
       apiKeys: [],
       showDialog: false,
@@ -140,9 +150,9 @@ export default {
   },
   mounted() {
     this.load()
-         setTimeout(() => {
-      this.loading=false
-        }, 300);
+    setTimeout(() => {
+      this.loading = false
+    }, 300);
   },
   methods:
   {
@@ -318,28 +328,32 @@ export default {
         }
       })
       this.resetCodeEditor()
-
-      //检查语法错误 
-      //let checkData={code: this.pythonCode}
-      // checkOperationFile(checkData).then(res=>{
-      //   if(res.success)
-      //   {
-      //     localStorage.setItem(this.currentAkId+'_call',this.pythonCode)
-      //     this.$message({
-      //               message: '保存成功',
-      //               type: 'success'
-      //           });
-      //     this.resetCodeEditor()
-      //     this.load()
-      //   }
-      //   else
-      //   {
-      //     this.$message({
-      //               message: '编译失败，请检查错误',
-      //               type: 'warning'
-      //           });
-      //   }
-      // })
+    },
+    handleTest(row)
+    { 
+      if(!row.callFunction)
+      {
+        this.$message({
+            message: '还没有编辑API key调用函数',
+            type: 'warning'
+          });
+          return
+      }
+      this.connectivityTesting=true
+      testConnectivity(row.value,row.callFunction).then(res=>{
+        if(res.success)
+        {
+          if(res.result)
+          {
+          this.$message({
+            message: '连通性良好',
+            type: 'success'
+          });
+          }
+          this.connectivityTesting=fasle
+        } 
+          this.connectivityTesting=fasle
+      })
     }
   }
 }

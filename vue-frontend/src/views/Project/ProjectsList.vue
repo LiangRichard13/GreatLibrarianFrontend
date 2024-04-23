@@ -138,7 +138,7 @@
 
 import { getProjectsByUserId, deleteById } from '@/api/project'
 import { getExperimentByProjectId, deleteOperationFile } from '@/api/experiment'
-import { addProject, addApiKeyToProject, addDataSetToProject } from "@/api/project";
+import { addApiKeyToProject, addDataSetToProject,deleteAPIKeyByPid,deleteDataSetByPid,updateProject} from "@/api/project";
 import { findApiKeyByUserId } from "@/api/apiConfig";
 import { findDataSetByUserId } from "@/api/dataSetConfig"
 // import {addFriendsToProject} from '@/api/project' 
@@ -262,46 +262,30 @@ export default {
       this.showDialog = true
     },
     confirmEdit() {
-      this.$confirm('是否修改该项目？这样做会清空其中的所有测试', '提示', {
+      this.$confirm('是否修改该项目?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.handleEditProject()
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消修改'
-        });
-      });
+      })
     },
     handleEditProject() {
       if (this.editProject.name.trim() && this.editProject.info.trim()) {
         if (this.editProject.apiKey.length > 0 && this.editProject.dataset.length > 0) {
-          this.deleteConfig(this.selectProject)
-            .then(() => {
-              const dataDelete = {
-                id: this.currentProjectId
-              }
-              deleteById(dataDelete).then(res => {
-                if (res.success) {
-                  const dataAdd = {
-                    uid: localStorage.getItem('uid'),
-                    name: this.editProject.name,
-                    info: this.editProject.info,
-                  }
-                  addProject(dataAdd).then(res => {
-                    if (res.success) {
-                      this.editProject.name = '';
-                      this.editProject.info = ''; // 清空输入框
-                      let projectId = res.id
-                      // this.newProject.apiKey = [];
-                      // this.newProject.dataset = [];
-
-                      //将用户选择的apiKeys加入到project里面
-                      Promise.all(this.editProject.apiKey.map(AK_id => {
+          const dataUpdate={id:this.currentProjectId,name:this.editProject.name,info:this.editProject.info}       
+          updateProject(dataUpdate).then(res => {
+                        if (res.success) {
+                      const deleteData={Pid:this.currentProjectId}
+                      deleteAPIKeyByPid(deleteData).then(res=>{
+                        if(res.success)
+                        {
+                      deleteDataSetByPid(deleteData).then(res=>{
+                        if(res.success)
+                        {
+                          Promise.all(this.editProject.apiKey.map(AK_id => {
                         const addApi = {
-                          pid: projectId,
+                          pid: this.currentProjectId,
                           AKid: AK_id
                         }
                         addApiKeyToProject(addApi)
@@ -311,7 +295,7 @@ export default {
                       //将用户选择的dataSet加入到project里面
                       Promise.all(this.editProject.dataset.map(DS_id => {
                         const addDS = {
-                          pid: projectId,
+                          pid:  this.currentProjectId,
                           DSid: DS_id
                         }
                         addDataSetToProject(addDS)
@@ -325,17 +309,12 @@ export default {
                       setTimeout(() => {
                         this.load()
                       }, 500);
+                        }
+                      })
+                        }
+                      })
                     }
                   })
-                }
-                else {
-                  this.$message({
-                    message: '修改出错',
-                    type: 'error'
-                  });
-                }
-              })
-            })
         }
         else {
           this.$message({

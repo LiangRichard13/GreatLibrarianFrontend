@@ -9,26 +9,37 @@
     </div>
     <template v-if="interactionList && interactionList.length">
       <div class="table-container">
-        <el-table :data="pageList" style="width: 100%" v-loading="loading" stripe>
+        <el-input v-model="filterKey" placeholder="搜索问题或回答" size="large" clearable @input="updateFilter"
+          style="width: 300px;margin-left: 60px; margin-bottom: 20px;">
+        </el-input>
+        <el-table :data="pageList" style="width: 100%" stripe v-loading="loading"  border>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
           <el-table-column label="详情" type="expand" width="150px">
             <template slot-scope="scope">
               <div>
                 <el-form label-position="left" inline class="demo-table-expand">
+                  <el-form-item label="时间:">
+                    <span>{{ scope.row.time }}</span>
+                  </el-form-item>
                   <el-form-item label="关键字:">
-                    <span>{{ scope.row.keyword }}</span>
+                    <span v-if="scope.row.keyword.length">{{ scope.row.keyword }}</span>
+                    <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
                   <el-form-item label="关键字打分:">
-                    <span>{{ scope.row.keywords_score }}</span>
+                    <span v-if="scope.row.keywords_score.length">{{ scope.row.keywords_score }}</span>
+                    <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
                   <el-form-item label="Black List打分:">
-                    <span>{{ scope.row.blacklist_score }}</span>
+                    <span v-if="scope.row.blacklist_score.length">{{ scope.row.blacklist_score }}</span>
+                    <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
                   <el-form-item label="大模型打分:">
-                    <span>{{ scope.row.llm_score }}</span>
+                    <span v-if="scope.row.llm_score.length">{{ scope.row.llm_score }}</span>
+                    <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
                   <el-form-item label="最终打分:">
-                    <span>{{ scope.row.fin_score }}</span>
+                    <span v-if="scope.row.fin_score">{{ scope.row.fin_score }}</span>
+                    <el-tag type="warning" v-else>暂无</el-tag>
                   </el-form-item>
                 </el-form>
               </div>
@@ -36,15 +47,18 @@
           </el-table-column>
           <el-table-column label="问题">
             <template slot-scope="scope">
-              <div style="height: 50px; overflow: auto;">{{ scope.row.Q }}</div>
+              <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.Q }}</div>
             </template>
           </el-table-column>
           <el-table-column label="回答">
             <template slot-scope="scope">
-              <div style="height: 50px; overflow: auto;">{{ scope.row.A }}</div>
+              <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="领域" prop="field">
+          <el-table-column label="领域" prop="field" width="200px">
+            <!-- <template slot="header" slot-scope="scope">
+              <el-input v-model="search" size="mini" placeholder="输入关键字搜索问题" />
+            </template> -->
           </el-table-column>
           <!-- <el-table-column label="规则化打分" prop="method_scored">
             </el-table-column>
@@ -55,15 +69,12 @@
         </el-table>
       </div>
       <div class="pagination-container" style="margin-top: 20px;">
-        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-sizes="[5, 10, 20, 30, 50]" :page-size="pageSize" :total="interactionList.length"
-          layout="total, sizes, prev, pager, next, jumper">
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :current-page="currentPage" :page-sizes="[5, 10, 20, 30, 50]" :page-size="pageSize"
+          :total="interactionList.length" layout="total, sizes, prev, pager, next, jumper">
         </el-pagination>
       </div>
     </template>
-    <!-- <div class="button-container" style="text-align: right; margin-top: 20px;">
-        <el-button plain type="primary" @click="submitRate()">提交打分</el-button>
-      </div> -->
     <div v-else>
       <el-empty description="暂无交互记录"></el-empty>
     </div>
@@ -77,40 +88,13 @@ export default {
   name: "interactionList",
   data() {
     return {
+      filterKey: '',
       thisExperiment: {},
-      interactionList: [
-        {
-          "Q": "什么是机器学习？",
-          "A": "机器学习是一种使计算机能够在没有明确编程的情况下学习的科学。",
-          "keyword": "机器学习, 计算机, 编程",
-          "keywords_score": 85,
-          "blacklist_score":88,
-          "llm_score": 90,
-          "fin_score": 88
-        },
-        {
-          "Q": "全球变暖的主要原因是什么？",
-          "A": "全球变暖的主要原因是大量温室气体，如二氧化碳，由于人类活动而排放到大气中。",
-          "keyword": "全球变暖, 温室气体, 二氧化碳",
-          "keywords_score": 85,
-          "blacklist_score":88,
-          "llm_score": 81,
-          "fin_score": 80
-        },
-        {
-          "Q": "如何制作披萨？",
-          "A": "制作披萨首先需要准备面团和配料，如奶酪、番茄酱和你喜欢的其他配料，然后在烤箱中烘烤。",
-          "keyword": "披萨, 面团, 奶酪",
-          "keywords_score": 85,
-          "blacklist_score":88,
-          "llm_score": 88,
-          "fin_score": 89
-        }
-      ],
+      interactionList: [],
       currentPage: 1,
       pageSize: 10,
       pageList: [], // 用于显示当前页的数据
-      loading: false
+      loading: true
     }
   },
   mounted() {
@@ -122,39 +106,47 @@ export default {
       // 处理没有数据的情况，可能是跳转到此页面或刷新页面
       this.$router.push("/projectsList")
     }
-    // this.load()
-    this.updatePageList()
+    this.load()
     setTimeout(() => {
       this.loading = false
-    }, 300);
-    console.log("交互记录", this.interactionList)
+    }, 500);
+
   },
   methods: {
     load() {
       getInteraction(this.thisExperiment.id).then(res => {
         if (res.success)
           this.interactionList = res.data
+        console.log("交互记录", this.interactionList)
+        this.updatePageList()
       })
     },
     goBack() {
       this.$router.go(-1); // 返回上一个页面
     },
-    // 用于处理每页显示条目数变化
-    handleSizeChange(newSize) {
-      this.pageSize = newSize;
-      this.updatePageList();
+    updateFilter() {
+      const filteredData = this.interactionList.filter(item => {
+        return item.Q.toLowerCase().includes(this.filterKey.toLowerCase()) ||
+          item.A.toLowerCase().includes(this.filterKey.toLowerCase());
+      });
+      this.updatePageList(filteredData);
     },
     // 用于处理当前页变化
-    handleCurrentChange(newPage) {
-      this.currentPage = newPage;
-      this.updatePageList();
+    handleSizeChange(newSize) {
+      this.pageSize = newSize;
+      this.updateFilter();
     },
     // 更新当前页的 QA 列表
-    updatePageList() {
+    updatePageList(filteredData = this.interactionList) {
       const startIndex = (this.currentPage - 1) * this.pageSize;
       const endIndex = startIndex + this.pageSize;
-      this.pageList = this.interactionList.slice(startIndex, endIndex);
+      this.pageList = (filteredData || []).slice(startIndex, endIndex);  // 确保总是有数组可操作
     },
+    handleCurrentChange(newPage) {
+      this.currentPage = newPage;
+      this.updateFilter();
+    },
+
   }
 }
 </script>
@@ -190,16 +182,17 @@ export default {
 }
 
 .demo-table-expand {
-    font-size: 0;
-  }
-  
+  font-size: 0;
+}
+
 .demo-table-expand label {
-    width: 90px;
-    color: #99a9bf;
-  }
+  width: 90px;
+  color: #99a9bf;
+}
+
 .demo-table-expand .el-form-item {
-    margin-right: 0;
-    margin-bottom: 0;
-    width: 100%;
-  }
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
+}
 </style>

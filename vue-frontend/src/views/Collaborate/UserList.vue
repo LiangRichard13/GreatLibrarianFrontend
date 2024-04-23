@@ -10,8 +10,8 @@
             <div style="display:flex; align-items: center;">
               <img :src="user.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
               <div style="margin-left: 10px;">
-                <p>用户名:{{ user.name }}</p>
                 <p>用户ID:{{ user.id }}</p>
+                <p>用户名:{{ user.name }}</p>
                 <!-- <p>IP地址:{{ user.ip }}</p> -->
 
                 <!-- Conditional rendering for online/offline status -->

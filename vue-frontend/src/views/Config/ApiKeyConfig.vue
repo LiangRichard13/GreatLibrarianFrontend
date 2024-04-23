@@ -53,7 +53,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <el-button plain  size="mini" icon="el-icon-s-operation" type="warning"
-                    @click="handleTest(row)" :loading="connectivityTesting">测试连通性
+                    @click="handleTest(scope.row)" :loading="connectivityTesting">测试连通性
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
@@ -331,6 +331,7 @@ export default {
     },
     handleTest(row)
     { 
+      
       if(!row.callFunction)
       {
         this.$message({
@@ -346,10 +347,17 @@ export default {
           if(res.result)
           {
           this.$message({
-            message: '连通性良好',
+            message:'连通性良好',
             type: 'success'
           });
           }
+          else
+        {
+          this.$message({
+            message:'连通性不佳',
+            type: 'warning'
+          });
+        }
           this.connectivityTesting=false
         } 
           this.connectivityTesting=false

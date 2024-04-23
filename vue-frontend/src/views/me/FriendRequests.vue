@@ -9,8 +9,8 @@
           <div style="display: flex; align-items: center;">
             <img :src="row.data.iconUrl" style="width: 50px; height: 50px; border-radius: 50%;" />
             <div style="margin-left: 10px;">
+               <p>用户ID:{{ userFriendsRequestID[index] }}</p>
               <p>用户名:{{ row.data.name }}</p>
-              <!-- <p>用户ID:{{ userFriendsRequestID[index] }}</p> -->
               <!-- <p>
                 IP地址:{{ row.data.ip }}
                 <span v-if="row.data.ip == null" style="color: red; margin-right: 10px;">用户已登出</span>

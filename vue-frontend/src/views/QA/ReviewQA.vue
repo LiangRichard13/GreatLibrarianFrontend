@@ -7,7 +7,7 @@
         {{ this.thisExperiment.name }}的存疑记录
       </h3>
     </div>
-    <template v-if="QAList&&QAList.length">
+    <template v-if="QAList && QAList.length">
       <div class="table-container">
         <el-table :data="pagedQAList" style="width: 100%" v-loading="loading">
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
@@ -25,11 +25,7 @@
           <el-table-column>
             <template slot-scope="scope">
               <div>
-                <!-- 使用 el-popconfirm 包裹您的按钮 -->
-                <el-popconfirm title="确定要提交打分吗？" @confirm="submitRate(scope.row, scope.$index)">
-                  <!-- slot 中是触发弹出的元素 -->
-                  <el-button plain icon="el-icon-finished" slot="reference" size="small" type="primary">提交打分</el-button>
-                </el-popconfirm>
+                  <el-button plain icon="el-icon-finished" slot="reference" size="small" type="primary" @click="submitRate(scope.row, scope.$index)">提交打分</el-button>
               </div>
             </template>
           </el-table-column>
@@ -47,8 +43,8 @@
         </el-table>
       </div>
       <div class="pagination-container" style="margin-top: 20px;">
-        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-          :page-sizes="[5, 10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :current-page="currentPage" :page-sizes="[5, 10, 20, 30, 50]" :page-size="pageSize" :total="QAList.length"
           layout="total, sizes, prev, pager, next, jumper">
         </el-pagination>
       </div>
@@ -69,15 +65,9 @@ export default {
   name: "ReviewQA",
   data() {
     return {
-      loading:true,
+      loading: true,
       showDialog: false,
-      QAList: [
-        // { QAid: '1', Q: '世界上最高的峰是哪个峰 ?', A: '世界上最高的山峰是珠穆朗玛峰（Mount Everest），它位于喜马拉雅山脉，跨越尼泊尔和中国（西藏）的边界。珠穆朗玛峰的海拔高度是8,848.86米（29,031.7英尺），这使它成为地球上海拔最高的山峰。这座山峰也是登山者们梦寐以求的挑战之一，但攀登它极具挑战性，需要极高的技术和体能。每年都有登山者前往珠穆朗玛峰尝试征服它，但也伴随着危险和挑战。' },
-        // { QAid: '2', Q: '世界上最深的湖是哪个?', A: '世界上最深的湖是贝加尔湖，位于俄罗斯。' },
-        // { QAid: '3', Q: '世界上最长的山脉是什么?', A: '世界上最长的山脉是安第斯山脉，延伸南美西部海岸线。' },
-        // { QAid: '4', Q: '世界上最大的热带雨林是哪里?', A: '世界上最大的热带雨林是亚马孙雨林，覆盖多个南美国家。' },
-        // { QAid: '5', Q: '世界上最大的岛屿是哪个?', A: '世界上最大的岛屿是格陵兰岛，属于丹麦。' }
-      ],
+      QAList: [],
       thisExperiment: {},
       selectedIds: [],
       currentPage: 1,
@@ -96,9 +86,9 @@ export default {
       this.$router.push("/projectsList")
     }
     this.load()
-         setTimeout(() => {
-      this.loading=false
-        }, 300);
+    setTimeout(() => {
+      this.loading = false
+    }, 300);
   },
   methods: {
     load() {
@@ -125,6 +115,10 @@ export default {
             message: '打分成功',
             type: 'success'
           });
+          setTimeout(() => {
+            this.QAList.splice(index, 1)
+            this.load()
+          }, 500);
           if (res.lastOne) {
             this.$message({
               message: '已完成该测试所有存疑记录的审核',

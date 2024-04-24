@@ -66,7 +66,7 @@
                                     {{ collaborator.name }}
                                 </div>
                             </div>
-                            <el-tag v-else type="danger">还没有协作者！</el-tag>
+                            <el-tag v-else type="danger">无协作者</el-tag>
                         </template>
                     </el-table-column>
                     <!-- <el-table-column label="配置文件">
@@ -81,21 +81,11 @@
                         <template slot-scope="scope">
                             <el-link type="primary" style="margin-right: 10px;"
                                 @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators)">添加协作者</el-link>
-                            <!-- <el-button plain size="mini" type="primary"
-                                            @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
-                                            添加审核协作者
-                                        </el-button> -->
                             <el-dropdown>
                                 <el-button plain size="mini" type="primary">操作
                                     <i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
                                 <el-dropdown-menu slot="dropdown">
-                                    <!-- <el-dropdown-item>
-                                        <el-button plain size="mini" type="primary"
-                                            @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators, index)">
-                                            添加审核协作者
-                                        </el-button>
-                                    </el-dropdown-item> -->
                                     <el-dropdown-item>
                                         <el-button plain icon="el-icon-caret-right" size="mini" type="success"
                                             @click="confirmStart(scope.$index, scope.row)" :loading="isTesting">
@@ -115,12 +105,6 @@
                                         </el-button>
                                     </el-dropdown-item> -->
                                     <el-dropdown-item>
-                                        <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
-                                            icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
-                                            title="确定要删除此测试吗？">
-                                            <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
-                                            </el-button>
-                                        </el-popconfirm> -->
                                         <el-button plain size="mini" icon="el-icon-delete" type="danger"
                                             @click="confirmDelete(scope.$index, scope.row)">删除
                                         </el-button>
@@ -222,11 +206,13 @@
                                     {{ collaborator.name }}
                                 </div>
                             </div>
-                            <el-tag v-else type="warning">无协作者</el-tag>
+                            <el-tag v-else type="danger">无协作者</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="" width="180" align="center">
                         <template slot-scope="scope">
+                            <el-link type="primary" style="margin-right: 10px;"
+                                @click="handleAddFriendsToExp(scope.row.id, scope.row.name, scope.row.collaborators)">添加协作者</el-link>
                             <el-dropdown>
                                 <el-button plain size="mini" type="primary">操作
                                     <i class="el-icon-arrow-down el-icon--right"></i>
@@ -252,7 +238,7 @@
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-button plain size="mini" icon="el-icon-download" type="success"
-                                            @click.stop="handleDownload(scope.row)">
+                                            @click.stop="handleDownload(scope.row)" :loading="isUpdate">
                                             下载报告
                                         </el-button>
                                     </el-dropdown-item>
@@ -333,7 +319,7 @@
                     <el-table-column label="操作" width="350" align="center">
                         <template slot-scope="scope">
                             <el-button plain size="mini" icon="el-icon-download" type="success"
-                                style="margin-bottom: 10px;" @click.stop="handleDownload(scope.row)">
+                                style="margin-bottom: 10px;" @click.stop="handleDownload(scope.row)" :loading="isUpdate">
                                 下载报告
                             </el-button>
                             <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
@@ -507,7 +493,8 @@
                         <el-table :data="downLoadTable">
                             <el-table-column prop="index" label="版本" align="center">
                                 <template slot-scope="scope">
-                                    Version-{{ scope.row.index }}
+                                    <span v-if="scope.row.index===downLoadTable.length&&currentExpStatus===3">Version-final</span>
+                                    <span v-else>Version-{{ scope.row.index }}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column label="下载" align="center">
@@ -555,7 +542,7 @@ export default {
             loading: true,
             isUpdate: false,
             downLoadTable: [],
-            currentTab: '待测试', // 默认选中的选项卡
+            currentTab: '', // 默认选中的选项卡
             friendsToExp: false,
             // showCodeEditorDialog: false,
             showDialog: false,
@@ -583,6 +570,7 @@ export default {
             selectFriendsId: [],
             currentExpName: '',
             currentExpId: '',
+            currentExpStatus:null,
             thisRowCollaborators: [],
             reportCount: null,
             // selectVersion: null,
@@ -594,6 +582,15 @@ export default {
         let storedProject = localStorage.getItem('thisProject');
         if (storedProject !== null) {
             this.thisProject = JSON.parse(storedProject);
+            if(localStorage.getItem('currentTab'))
+        {
+            this.currentTab=localStorage.getItem('currentTab')
+        }
+        else
+        {
+            this.currentTab='待测试'
+            localStorage.setItem('currentTab','待测试')
+        }
         }
         else {
             // 处理没有数据的情况，可能是跳转到此页面或刷新页面
@@ -735,6 +732,10 @@ export default {
         },
         handleStartExpirement(index, row) {
             this.isTesting = true
+            this.$message({
+                message: row.id + '-' + row.name + '正在准备执行,请稍等',
+                type: 'info'
+            });
             this.handleGenerateConfig(row).then(result => {
                 if (result) {
                     const id = { tPid: row.id }
@@ -744,17 +745,12 @@ export default {
                                 message: row.id + '-' + row.name + '开始执行',
                                 type: 'info'
                             });
-                            this.isTesting = false
                             this.setExpEmpty()
                         }
-                        this.isTesting = false
                     })
                 }
-                else {
-                    this.isTesting = false
-                }
+        
             })
-            this.isTesting = false
         },
         handleAssignExpirement(experiment) {
             // 保存到 LocalStorage
@@ -924,32 +920,34 @@ export default {
                     console.log("AK1 的调用函数代码：", values[0]);
                     console.log("AK2 的调用函数代码：", values[1]);
                     if (values[0] !== null && values[1] !== null) {
-                        let checkData = { tPid: thisTest.id, code: values[0], className: 'new_llm1' }
-                        checkOperationFile(checkData).then(res => {
+                        testConnectivity(thisTest.AK1.value, values[0]).then(res => {
                             if (res.success) {
-                                checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2' }
-                                checkOperationFile(checkData).then(res => {
-                                    if (res.success) {
-                                        testConnectivity(thisTest.AK1.value, AK1_callFunction).then(res => {
-                                            if (res.success) {
-                                                if (!res.result) {
-                                                    this.$message({
-                                                        message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性不佳`,
-                                                        type: 'error'
-                                                    });
-                                                    reject(false)
-                                                }
-                                                else {
-                                                    testConnectivity(thisTest.AK2.value, AK2_callFunction).then(res => {
-                                                        if (res.success) {
-                                                            if (!res.result) {
-                                                                this.$message({
-                                                                    message: `评估模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性不佳`,
-                                                                    type: 'error'
-                                                                });
-                                                                reject(false)
-                                                            }
-                                                            else {
+                                if (!res.result) {
+                                    this.$message({
+                                        message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
+                                        type: 'error'
+                                    });
+                                    this.isTesting=false
+                                    reject(false)
+                                }
+                                else {
+                                    testConnectivity(thisTest.AK2.value, values[1]).then(res => {
+                                        if (res.success) {
+                                            if (!res.result) {
+                                                this.$message({
+                                                    message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
+                                                    type: 'error'
+                                                });
+                                                this.isTesting=false
+                                                reject(false)
+                                            }
+                                            else {
+                                                let checkData = { tPid: thisTest.id, code: values[0], className: 'new_llm1' }
+                                                checkOperationFile(checkData).then(res => {
+                                                    if (res.success) {
+                                                        checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2' }
+                                                        checkOperationFile(checkData).then(res => {
+                                                            if (res.success) {
                                                                 generateOperationFile(thisTest.id).then(res => {
                                                                     if (res.success) {
                                                                         this.$message({
@@ -957,6 +955,7 @@ export default {
                                                                             type: 'success'
                                                                         });
                                                                         // this.setExpEmpty()
+                                                                        this.isTesting=false
                                                                         resolve(true)
                                                                     }
                                                                     else {
@@ -964,31 +963,34 @@ export default {
                                                                             message: '配置文件生成错误',
                                                                             type: 'error'
                                                                         });
+                                                                        this.isTesting=false
                                                                         reject(false)
                                                                     }
                                                                 })
                                                             }
-                                                        }
-                                                    })
-                                                }
+                                                            else {
+                                                                this.$message({
+                                                                    message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
+                                                                    type: 'error'
+                                                                });
+                                                                this.isTesting=false
+                                                                reject(false)
+                                                            }
+                                                        })
+                                                    }
+                                                    else {
+                                                        this.$message({
+                                                            message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
+                                                            type: 'error'
+                                                        });
+                                                        this.isTesting=false
+                                                        reject(false)
+                                                    }
+                                                })
                                             }
-                                        })
-                                    }
-                                    else {
-                                        this.$message({
-                                            message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
-                                            type: 'error'
-                                        });
-                                        reject(false)
-                                    }
-                                })
-                            }
-                            else {
-                                this.$message({
-                                    message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
-                                    type: 'error'
-                                });
-                                reject(false)
+                                        }
+                                    })
+                                }
                             }
                         })
                     }
@@ -999,6 +1001,7 @@ export default {
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
+                                this.isTesting=false
                                 this.$router.push("/keyConfig")
                                 reject(false)
                             })
@@ -1009,6 +1012,7 @@ export default {
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
+                                this.isTesting=false
                                 this.$router.push("/keyConfig")
                                 reject(false)
                             })
@@ -1019,6 +1023,7 @@ export default {
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
+                                this.isTesting=false
                                 this.$router.push("/keyConfig")
                                 reject(false)
                             })
@@ -1321,7 +1326,7 @@ export default {
                             else {
                                 localStorage.setItem(experiment.id + 'errorTimes', '1')
                             }
-                            if (Number(localStorage.getItem(experiment.id + 'errorTimes')) >= 3) {
+                            if (Number(localStorage.getItem(experiment.id + 'errorTimes')) >= 5) {
                                 errorHandle(experiment.id).then(res => {
                                     if (res.success) {
                                         this.$message({
@@ -1337,7 +1342,7 @@ export default {
                         }
                     })
                 });
-            }, 10000); // 设置轮询间隔为 5 秒
+            }, 10000); // 设置轮询间隔为 10 秒
         },
         // proceedingExp() {
         //     const interval = setInterval(() => {
@@ -1369,6 +1374,7 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
+            localStorage.setItem('currentTab',this.currentTab)
             // if (this.currentTab === '正在测试') {
             //     if (this.interval) {
             //         clearInterval(this.interval)
@@ -1420,6 +1426,7 @@ export default {
             })
             this.currentExpId = row.id
             this.currentExpName = row.name
+            this.currentExpStatus=row.status
             this.downloader = true
         },
         downloadClose() {

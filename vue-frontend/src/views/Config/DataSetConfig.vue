@@ -19,13 +19,13 @@
       <el-table :data="dataSet" style="width: 100%" v-loading="loading">
         <!-- <el-table-column label="数据集 ID" prop="id">
         </el-table-column> -->
-        <el-table-column label="数据集名称" prop="name" width="300%">
+        <el-table-column label="数据集名称" prop="name" width="150%">
         </el-table-column>
         <el-table-column label="上传文件名称" prop="url" width="300%">
         </el-table-column>
         <el-table-column label="详细描述" prop="info" align="center">
           <template slot-scope="scope">
-            <div style="height: 70px; overflow: auto;">{{ scope.row.info }}</div>
+            <div style="height: 50px; overflow: auto;">{{ scope.row.info }}</div>
           </template>
         </el-table-column>
 

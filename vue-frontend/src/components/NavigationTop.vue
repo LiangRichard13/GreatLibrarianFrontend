@@ -89,6 +89,7 @@ export default {
           localStorage.removeItem("loginToken")
           localStorage.removeItem("thisProject")
           localStorage.removeItem("thisExperiment")
+          localStorage.removeItem('currentTab')
           this.$router.push("/login");
         }
         else {
@@ -153,6 +154,7 @@ export default {
         localStorage.removeItem("loginToken")
         localStorage.removeItem("thisProject")
         localStorage.removeItem("thisExperiment")
+        localStorage.removeItem('currentTab')
         this.$router.push('/login')
       }
       else {

@@ -14,7 +14,7 @@
     <div class="table-container">
       <el-table :data="apiKeys" style="width: 100%" v-loading="loading">
         <!-- <el-table-column prop="id" label="API_KEY ID" width="300%"></el-table-column> -->
-        <el-table-column prop="name" label="大模型名称" width="300%"></el-table-column>
+        <el-table-column prop="name" label="大模型名称" width="150%"></el-table-column>
         <el-table-column prop="value" label="密钥"></el-table-column>
         <el-table-column label="调用函数" width="300%">
           <template slot-scope="scope">
@@ -24,7 +24,7 @@
         </el-table-column>
         <el-table-column label="详细描述" align="center">
           <template slot-scope="scope">
-            <div style="height: 70px; overflow: auto;">{{ scope.row.intro }}</div>
+            <div style="height: 50px; overflow: auto;">{{ scope.row.intro }}</div>
           </template>
         </el-table-column>
         <!-- <el-table-column type="expand" label="介绍">
@@ -47,25 +47,30 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <el-button plain  size="mini" icon="el-icon-edit" type="primary"
+                  <el-button plain size="mini" icon="el-icon-edit" type="primary"
                     @click="handleCodeEdit(scope.row.id, scope.row.name, scope.row.callFunction)">编辑调用函数
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button plain  size="mini" icon="el-icon-s-operation" type="warning"
-                    @click="handleTest(row)" :loading="connectivityTesting">测试连通性
+                  <el-button plain size="mini" icon="el-icon-s-operation" type="warning" @click="handleTest(scope.row)"
+                    :loading="connectivityTesting">测试连通性
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info" icon-color="red"
-                    @confirm="removeKey(scope.$index, scope.row)" title="确定要删除此API KEY吗?">
-                    <el-button plain  size="mini" icon="el-icon-delete" type="danger"
-                      slot="reference">删除
+                    @confirm="removeKey(scope.$index, scope.row)" title="确定要删除此API key吗?">
+                    <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                     </el-button>
                   </el-popconfirm>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
+          </template>
+        </el-table-column>
+        <el-table-column label="上次连通性测试" width="230px">
+          <template slot-scope="scope">
+          <span v-if="scope.row.testConnectivity"> {{ scope.row.testConnectivity }}</span>
+          <el-tag v-else type="info">未测试</el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -126,7 +131,7 @@
 
 
 <script>
-import { addApiKey, deleteById, findApiKeyByUserId, getCallFunction, addCallFunction,testConnectivity } from "@/api/apiConfig";
+import { addApiKey, deleteById, findApiKeyByUserId, getCallFunction, addCallFunction, testConnectivity } from "@/api/apiConfig";
 // import {checkOperationFile} from "@/api/experiment"
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
@@ -136,7 +141,7 @@ export default {
   name: "ApiConfig",
   data() {
     return {
-      connectivityTesting:false,
+      connectivityTesting: false,
       loading: true,
       apiKeys: [],
       showDialog: false,
@@ -165,17 +170,34 @@ export default {
           Promise.all(this.apiKeys.map(item => {
             return getCallFunction(item.id).then(res => {
               item.callFunction = res.code;
+              if(localStorage.getItem(item.id+'_testConnectivity'))
+              {
+                item.testConnectivity=localStorage.getItem(item.id+'_testConnectivity')
+              }
+              else
+              {
+                item.testConnectivity=null
+              }
               return item; // 返回更新后的 item
             });
           })).then(updatedApiKeys => {
 
             this.apiKeys = updatedApiKeys;
+            console.log('经过处理的apikeys',this.apiKeys)
           });
         });
       }
     },
     addKey() {
       if (this.newApiKey.value.trim() && this.newApiKey.name.trim()) {
+        if(!this.isValidValue(this.newApiKey.value))
+        {
+          this.$message({
+              message: '密钥形式不符合规范，请检查',
+              type: 'warning'
+            });
+            return
+        }
         const data = {
           uid: localStorage.getItem('uid'),
           name: this.newApiKey.name,
@@ -329,31 +351,47 @@ export default {
       })
       this.resetCodeEditor()
     },
-    handleTest(row)
-    { 
-      if(!row.callFunction)
-      {
+    handleTest(row) {
+      if (!row.callFunction) {
         this.$message({
-            message: '还没有编辑API key调用函数',
-            type: 'warning'
-          });
-          return
+          message: '还没有编辑API key调用函数',
+          type: 'warning'
+        });
+        return
       }
-      this.connectivityTesting=true
-      testConnectivity(row.value,row.callFunction).then(res=>{
-        if(res.success)
-        {
-          if(res.result)
-          {
-          this.$message({
-            message: '连通性良好',
-            type: 'success'
-          });
+      this.$message({
+          message: '正在测试，请稍等',
+          type: 'info'
+        });
+      this.connectivityTesting = true
+      testConnectivity(row.value, row.callFunction).then(res => {
+        if (res.success) {
+          if (res.result) {
+            this.$message({
+              message: '连通性良好',
+              type: 'success'
+            });
+            const specifiedDate = new Date();
+            localStorage.setItem(row.id+'_testConnectivity',specifiedDate.toLocaleString()+'  连通性良好')
           }
-          this.connectivityTesting=false
-        } 
-          this.connectivityTesting=false
+          else {
+            this.$message({
+              message: '连通性有问题，请检查网络或API key',
+              type: 'warning'
+            });
+            const specifiedDate = new Date();
+            localStorage.setItem(row.id+'_testConnectivity',specifiedDate.toLocaleString()+'  连通性不佳')
+          }
+          this.connectivityTesting = false
+        }
+        this.connectivityTesting = false
+        this.load()
       })
+    },
+    isValidValue(inputString) {
+      // 使用正则表达式匹配以非空内容开始，中间一个点，后面也是非空内容结束的字符串
+      const formatPattern = /^[^.]+\.[^.]+$/;
+      return formatPattern.test(inputString);
     }
   }
 }

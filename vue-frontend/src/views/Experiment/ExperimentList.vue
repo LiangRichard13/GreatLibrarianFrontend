@@ -542,7 +542,7 @@ export default {
             loading: true,
             isUpdate: false,
             downLoadTable: [],
-            currentTab: '待测试', // 默认选中的选项卡
+            currentTab: '', // 默认选中的选项卡
             friendsToExp: false,
             // showCodeEditorDialog: false,
             showDialog: false,
@@ -582,6 +582,15 @@ export default {
         let storedProject = localStorage.getItem('thisProject');
         if (storedProject !== null) {
             this.thisProject = JSON.parse(storedProject);
+            if(localStorage.getItem('currentTab'))
+        {
+            this.currentTab=localStorage.getItem('currentTab')
+        }
+        else
+        {
+            this.currentTab='待测试'
+            localStorage.setItem('currentTab','待测试')
+        }
         }
         else {
             // 处理没有数据的情况，可能是跳转到此页面或刷新页面
@@ -915,7 +924,7 @@ export default {
                             if (res.success) {
                                 if (!res.result) {
                                     this.$message({
-                                        message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性不佳`,
+                                        message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
                                         type: 'error'
                                     });
                                     this.isTesting=false
@@ -926,7 +935,7 @@ export default {
                                         if (res.success) {
                                             if (!res.result) {
                                                 this.$message({
-                                                    message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key连通性不佳`,
+                                                    message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
                                                     type: 'error'
                                                 });
                                                 this.isTesting=false
@@ -1317,7 +1326,7 @@ export default {
                             else {
                                 localStorage.setItem(experiment.id + 'errorTimes', '1')
                             }
-                            if (Number(localStorage.getItem(experiment.id + 'errorTimes')) >= 3) {
+                            if (Number(localStorage.getItem(experiment.id + 'errorTimes')) >= 5) {
                                 errorHandle(experiment.id).then(res => {
                                     if (res.success) {
                                         this.$message({
@@ -1365,6 +1374,7 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
+            localStorage.setItem('currentTab',this.currentTab)
             // if (this.currentTab === '正在测试') {
             //     if (this.interval) {
             //         clearInterval(this.interval)

@@ -14,7 +14,7 @@
     <div class="table-container">
       <el-table :data="apiKeys" style="width: 100%" v-loading="loading">
         <!-- <el-table-column prop="id" label="API_KEY ID" width="300%"></el-table-column> -->
-        <el-table-column prop="name" label="大模型名称" width="300%"></el-table-column>
+        <el-table-column prop="name" label="大模型名称" width="150%"></el-table-column>
         <el-table-column prop="value" label="密钥"></el-table-column>
         <el-table-column label="调用函数" width="300%">
           <template slot-scope="scope">
@@ -24,7 +24,7 @@
         </el-table-column>
         <el-table-column label="详细描述" align="center">
           <template slot-scope="scope">
-            <div style="height: 70px; overflow: auto;">{{ scope.row.intro }}</div>
+            <div style="height: 50px; overflow: auto;">{{ scope.row.intro }}</div>
           </template>
         </el-table-column>
         <!-- <el-table-column type="expand" label="介绍">
@@ -65,6 +65,12 @@
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
+          </template>
+        </el-table-column>
+        <el-table-column label="上次连通性测试" width="230px">
+          <template slot-scope="scope">
+          <span v-if="scope.row.testConnectivity"> {{ scope.row.testConnectivity }}</span>
+          <el-tag v-else type="info">未测试</el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -164,11 +170,20 @@ export default {
           Promise.all(this.apiKeys.map(item => {
             return getCallFunction(item.id).then(res => {
               item.callFunction = res.code;
+              if(localStorage.getItem(item.id+'_testConnectivity'))
+              {
+                item.testConnectivity=localStorage.getItem(item.id+'_testConnectivity')
+              }
+              else
+              {
+                item.testConnectivity=null
+              }
               return item; // 返回更新后的 item
             });
           })).then(updatedApiKeys => {
 
             this.apiKeys = updatedApiKeys;
+            console.log('经过处理的apikeys',this.apiKeys)
           });
         });
       }
@@ -337,7 +352,6 @@ export default {
       this.resetCodeEditor()
     },
     handleTest(row) {
-
       if (!row.callFunction) {
         this.$message({
           message: '还没有编辑API key调用函数',
@@ -345,6 +359,10 @@ export default {
         });
         return
       }
+      this.$message({
+          message: '正在测试，请稍等',
+          type: 'info'
+        });
       this.connectivityTesting = true
       testConnectivity(row.value, row.callFunction).then(res => {
         if (res.success) {
@@ -353,16 +371,21 @@ export default {
               message: '连通性良好',
               type: 'success'
             });
+            const specifiedDate = new Date();
+            localStorage.setItem(row.id+'_testConnectivity',specifiedDate.toLocaleString()+'  连通性良好')
           }
           else {
             this.$message({
-              message: '连通性不佳，请检查网络或API key',
+              message: '连通性有问题，请检查网络或API key',
               type: 'warning'
             });
+            const specifiedDate = new Date();
+            localStorage.setItem(row.id+'_testConnectivity',specifiedDate.toLocaleString()+'  连通性不佳')
           }
           this.connectivityTesting = false
         }
         this.connectivityTesting = false
+        this.load()
       })
     },
     isValidValue(inputString) {

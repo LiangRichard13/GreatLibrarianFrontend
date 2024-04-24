@@ -44,9 +44,9 @@ export default {
   },
   methods: {
     postLogin() {
-      if (this.username.length < 6) {
+      if (!this.username.length) {
         this.$message({
-          message: '请输入不少于6位的用户名',
+          message: '用户名不能为空',
           type: 'warning'
         });
         return

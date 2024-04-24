@@ -15,8 +15,8 @@
       <el-table :data="apiKeys" style="width: 100%" v-loading="loading">
         <!-- <el-table-column prop="id" label="API_KEY ID" width="300%"></el-table-column> -->
         <el-table-column prop="name" label="大模型名称" width="150%"></el-table-column>
-        <el-table-column prop="value" label="密钥"></el-table-column>
-        <el-table-column label="调用函数" width="300%">
+        <el-table-column prop="value" label="密钥" width="450%"></el-table-column>
+        <el-table-column label="调用函数" width="80%">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.callFunction" type="success">已保存</el-tag>
             <el-tag v-else type="warning">未编辑</el-tag>
@@ -39,7 +39,7 @@
 
 
         <!-- 操作列 -->
-        <el-table-column label="操作" width="250" align="center">
+        <el-table-column label="操作" width="100%" align="center">
           <template slot-scope="scope">
             <el-dropdown>
               <el-button plain size="mini" type="primary">
@@ -69,7 +69,9 @@
         </el-table-column>
         <el-table-column label="上次连通性测试" width="230px">
           <template slot-scope="scope">
-          <span v-if="scope.row.testConnectivity"> {{ scope.row.testConnectivity }}</span>
+            <el-tag v-if="scope.row.testResult===0" type="danger" class="testResult">未通过</el-tag>
+          <el-tag v-else-if="scope.row.testResult===1" type="success" class="testResult">已通过</el-tag>
+          <span v-if="scope.row.testTime"> {{ scope.row.testTime }}</span>
           <el-tag v-else type="info">未测试</el-tag>
           </template>
         </el-table-column>
@@ -170,13 +172,19 @@ export default {
           Promise.all(this.apiKeys.map(item => {
             return getCallFunction(item.id).then(res => {
               item.callFunction = res.code;
-              if(localStorage.getItem(item.id+'_testConnectivity'))
+              if(localStorage.getItem(item.id+'_testConnectivity_normal'))
               {
-                item.testConnectivity=localStorage.getItem(item.id+'_testConnectivity')
+                item.testTime=localStorage.getItem(item.id+'_testConnectivity_normal')
+                item.testResult=1
+              }
+              else if(localStorage.getItem(item.id+'_testConnectivity_error'))
+              {
+                item.testTime=localStorage.getItem(item.id+'_testConnectivity_error')
+                item.testResult=0
               }
               else
               {
-                item.testConnectivity=null
+                item.testTime=null
               }
               return item; // 返回更新后的 item
             });
@@ -372,7 +380,7 @@ export default {
               type: 'success'
             });
             const specifiedDate = new Date();
-            localStorage.setItem(row.id+'_testConnectivity',specifiedDate.toLocaleString()+'  连通性良好')
+            localStorage.setItem(row.id+'_testConnectivity_normal',specifiedDate.toLocaleString())
           }
           else {
             this.$message({
@@ -380,7 +388,7 @@ export default {
               type: 'warning'
             });
             const specifiedDate = new Date();
-            localStorage.setItem(row.id+'_testConnectivity',specifiedDate.toLocaleString()+'  连通性不佳')
+            localStorage.setItem(row.id+'_testConnectivity_error',specifiedDate.toLocaleString())
           }
           this.connectivityTesting = false
         }
@@ -414,5 +422,8 @@ export default {
 
 .main {
   padding: 20px;
+}
+.testResult{
+  margin-right: 10px;
 }
 </style>

@@ -122,7 +122,8 @@ export default {
           if (res.lastOne) {
             this.$message({
               message: '已完成该测试所有存疑记录的审核',
-              type: 'success'
+              type: 'success',
+              offset:100
             });
             updateReport(this.thisExperiment.id).then(res => {
               if (res.success) {

@@ -278,7 +278,7 @@
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="被测模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK1.name">
+                            <div v-if="scope.row.AK1">
                                 {{ scope.row.AK1.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -319,7 +319,8 @@
                     <el-table-column label="操作" width="350" align="center">
                         <template slot-scope="scope">
                             <el-button plain size="mini" icon="el-icon-download" type="success"
-                                style="margin-bottom: 10px;" @click.stop="handleDownload(scope.row)" :loading="isUpdate">
+                                style="margin-bottom: 10px;" @click.stop="handleDownload(scope.row)"
+                                :loading="isUpdate">
                                 下载报告
                             </el-button>
                             <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
@@ -493,7 +494,8 @@
                         <el-table :data="downLoadTable">
                             <el-table-column prop="index" label="版本" align="center">
                                 <template slot-scope="scope">
-                                    <span v-if="scope.row.index===downLoadTable.length&&currentExpStatus===3">Version-final</span>
+                                    <span
+                                        v-if="scope.row.index === downLoadTable.length && currentExpStatus === 3">Version-final</span>
                                     <span v-else>Version-{{ scope.row.index }}</span>
                                 </template>
                             </el-table-column>
@@ -570,7 +572,7 @@ export default {
             selectFriendsId: [],
             currentExpName: '',
             currentExpId: '',
-            currentExpStatus:null,
+            currentExpStatus: null,
             thisRowCollaborators: [],
             reportCount: null,
             // selectVersion: null,
@@ -582,15 +584,13 @@ export default {
         let storedProject = localStorage.getItem('thisProject');
         if (storedProject !== null) {
             this.thisProject = JSON.parse(storedProject);
-            if(localStorage.getItem('currentTab'))
-        {
-            this.currentTab=localStorage.getItem('currentTab')
-        }
-        else
-        {
-            this.currentTab='待测试'
-            localStorage.setItem('currentTab','待测试')
-        }
+            if (localStorage.getItem('currentTab')) {
+                this.currentTab = localStorage.getItem('currentTab')
+            }
+            else {
+                this.currentTab = '待测试'
+                localStorage.setItem('currentTab', '待测试')
+            }
         }
         else {
             // 处理没有数据的情况，可能是跳转到此页面或刷新页面
@@ -749,7 +749,7 @@ export default {
                         }
                     })
                 }
-        
+
             })
         },
         handleAssignExpirement(experiment) {
@@ -895,17 +895,21 @@ export default {
                     else {
                         this.$message({
                             message: '用于测试或评估大模型的数据集被删除，请重新配置测试或重新添加API key',
-                            type: 'warning'
+                            type: 'warning',
+                            offset: 100 
                         });
                         // this.initialEdit(thisTest)
+                        this.isTesting = false
                         reject(false);
                     }
                 }
                 else {
                     this.$message({
                         message: '用于测试或评估大模型的API key被删除，请重新配置测试或重新添加API key',
-                        type: 'warning'
+                        type: 'warning',
+                        offset: 100 
                     });
+                    this.isTesting = false
                     // this.initialEdit(thisTest)
                     reject(false);
                 }
@@ -927,7 +931,7 @@ export default {
                                         message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
                                         type: 'error'
                                     });
-                                    this.isTesting=false
+                                    this.isTesting = false
                                     reject(false)
                                 }
                                 else {
@@ -938,7 +942,7 @@ export default {
                                                     message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
                                                     type: 'error'
                                                 });
-                                                this.isTesting=false
+                                                this.isTesting = false
                                                 reject(false)
                                             }
                                             else {
@@ -955,7 +959,7 @@ export default {
                                                                             type: 'success'
                                                                         });
                                                                         // this.setExpEmpty()
-                                                                        this.isTesting=false
+                                                                        this.isTesting = false
                                                                         resolve(true)
                                                                     }
                                                                     else {
@@ -963,7 +967,7 @@ export default {
                                                                             message: '配置文件生成错误',
                                                                             type: 'error'
                                                                         });
-                                                                        this.isTesting=false
+                                                                        this.isTesting = false
                                                                         reject(false)
                                                                     }
                                                                 })
@@ -973,7 +977,7 @@ export default {
                                                                     message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
                                                                     type: 'error'
                                                                 });
-                                                                this.isTesting=false
+                                                                this.isTesting = false
                                                                 reject(false)
                                                             }
                                                         })
@@ -983,7 +987,7 @@ export default {
                                                             message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
                                                             type: 'error'
                                                         });
-                                                        this.isTesting=false
+                                                        this.isTesting = false
                                                         reject(false)
                                                     }
                                                 })
@@ -1001,7 +1005,7 @@ export default {
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
-                                this.isTesting=false
+                                this.isTesting = false
                                 this.$router.push("/keyConfig")
                                 reject(false)
                             })
@@ -1012,7 +1016,7 @@ export default {
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
-                                this.isTesting=false
+                                this.isTesting = false
                                 this.$router.push("/keyConfig")
                                 reject(false)
                             })
@@ -1023,7 +1027,7 @@ export default {
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
-                                this.isTesting=false
+                                this.isTesting = false
                                 this.$router.push("/keyConfig")
                                 reject(false)
                             })
@@ -1374,7 +1378,7 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
-            localStorage.setItem('currentTab',this.currentTab)
+            localStorage.setItem('currentTab', this.currentTab)
             // if (this.currentTab === '正在测试') {
             //     if (this.interval) {
             //         clearInterval(this.interval)
@@ -1426,7 +1430,7 @@ export default {
             })
             this.currentExpId = row.id
             this.currentExpName = row.name
-            this.currentExpStatus=row.status
+            this.currentExpStatus = row.status
             this.downloader = true
         },
         downloadClose() {
@@ -1440,24 +1444,29 @@ export default {
                         type: 'success',
                         message: this.currentExpId + '-' + this.currentExpName + '正在下载该测试的测试报告'
                     });
-                    let downloadUrl = res.url
+                    //处理下载链接
+                    let downloadUrl = res.url;
                     downloadUrl = downloadUrl.replace(/\\/g, '/');
                     downloadUrl = downloadUrl.replace(/App/g, '');
                     downloadUrl = config.API_URL + downloadUrl;
-                    const fileName = '测试报告';
+                    console.log('下载链接', downloadUrl)
 
-                    // 创建一个隐藏的<a>标签，设置属性并模拟点击
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = downloadUrl;
-                    a.download = fileName;
-                    document.body.appendChild(a);
-                    a.click();
-                    console.log('版本:', res.version)
+                    //获取到文件名
+                    const urlParts = downloadUrl.split('/');
+                    const filename = urlParts[urlParts.length - 1];
 
-                    // 清理：移除<a>标签
-                    document.body.removeChild(a);
-                    this.downloadClose()
+                    fetch(downloadUrl)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const url = window.URL.createObjectURL(new Blob([blob]));
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = filename; 
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                            document.body.removeChild(a);
+                        });
                 }
             })
         },

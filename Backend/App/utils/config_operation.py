@@ -4,32 +4,36 @@ import ast
 import os
 import re
 
-from datetime import datetime
 from App.models import TestProject, APIKey
 from App.utils.backend_path import BackendPath
 
 
 # 补充类的实例化参数
-def update_instance(tPid):
+def update_instance(tPid, tPtype):
     tp = TestProject.query.filter(TestProject.tP_id == tPid).first()
-    AK1 = APIKey.query.filter(APIKey.AK_id == tp.AK1).first()
-    AK2 = APIKey.query.filter(APIKey.AK_id == tp.AK2).first()
-    temp_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件临时区路径
+    config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件路径
     # 读取模板文件内容
-    with open(temp_path, 'r', encoding='utf-8') as file:
-        template_content = file.read()
-    # 替换模板中的值
-    llm_cfg1_updated = re.compile(rf'llm_cfg1\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
-        f'llm_cfg1 = dict(type="testLLM", apikey="{AK1.AK_value}",name="{AK1.AK_name}",'
-        f' llm_intro="{"" if AK1.AK_intro is None else AK1.AK_intro}")', template_content)
-    llm_cfg2_updated = re.compile(rf'llm_cfg2\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
-        f'llm_cfg2 = dict(type="evaluationLLM", apikey="{AK2.AK_value}", name="{AK2.AK_name}", '
-        f'llm_intro="{"" if AK2.AK_intro is None else AK2.AK_intro}")', llm_cfg1_updated)
+    with open(config_path, 'r', encoding='utf-8') as file:
+        content = file.read()
+    AK1 = APIKey.query.filter(APIKey.AK_id == tp.AK1).first()
+    if tPtype == 1:
+        AK2 = APIKey.query.filter(APIKey.AK_id == tp.AK2).first()
+        # 替换模板中的值
+        update_first = re.compile(rf'llm_cfg1\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
+            f'llm_cfg1 = dict(type="testLLM", apikey="{AK1.AK_value}",name="{AK1.AK_name}",'
+            f' llm_intro="{"" if AK1.AK_intro is None else AK1.AK_intro}")', content)
+        update_fin = re.compile(rf'llm_cfg2\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
+            f'llm_cfg2 = dict(type="evaluationLLM", apikey="{AK2.AK_value}", name="{AK2.AK_name}", '
+            f'llm_intro="{"" if AK2.AK_intro is None else AK2.AK_intro}")', update_first)
+    elif tPtype == 2:
+        update_fin = re.compile(rf'llm_cfg1\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
+            f'llm_cfg1 = dict(type="testLLM", apikey="{AK1.AK_value}",name="{AK1.AK_name}",'
+            f' llm_intro="{"" if AK1.AK_intro is None else AK1.AK_intro}")', content)
     try:
         # 写入更新后的内容到新文件
-        with open(temp_path, 'w', encoding='utf-8') as output_file:
-            output_file.write(llm_cfg2_updated)
-        compile(llm_cfg2_updated, temp_path, 'exec')  # 编译新文件以检查语法错误
+        with open(config_path, 'w', encoding='utf-8') as output_file:
+            output_file.write(update_fin)
+        compile(update_fin, config_path, 'exec')  # 编译新文件以检查语法错误
         return True
     except SyntaxError as e:
         print(f"配置脚本文件发生语法错误：{e}")
@@ -67,8 +71,12 @@ def update_code_to_class(file_path, updated_code, class_name):
 
 
 def add_call_function(file_path, flag, updated_code, class_name):
-    template = file_path if flag == 1 else os.path.join(BackendPath(), 'App', 'utils', 'config_template_fin.py')  # 模板路径
-    with open(template, 'r', encoding='UTF-8') as file:
+    template_maps = {
+        1: file_path,  # 原有的config文件
+        -1: os.path.join(BackendPath(), 'App', 'utils', 'config_template_general.py'),  # 基础知识测试——模板路径
+        -2: os.path.join(BackendPath(), 'App', 'utils', 'config_template_hallucination.py')  # 幻觉测试——模板路径
+    }
+    with open(template_maps.get(flag), 'r', encoding='UTF-8') as file:
         file_code = file.read()
     # 解析代码为AST
     tree = ast.parse(file_code)

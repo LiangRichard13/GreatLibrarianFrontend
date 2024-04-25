@@ -16,9 +16,10 @@
               <div style="height: 50px; overflow: auto;">{{ scope.row.Q }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="打分" prop="score">
+          <el-table-column label="打分(请从0到1打分)" prop="score">
             <template slot-scope="scope">
-              <el-rate v-model="scope.row.score" :colors="colors"></el-rate>
+              <!-- <el-rate v-model="scope.row.score" :colors="colors"></el-rate> -->
+              <el-slider v-model="scope.row.score" :format-tooltip="formatTooltip"></el-slider>
             </template>
           </el-table-column>
 
@@ -73,7 +74,7 @@ export default {
       currentPage: 1,
       pageSize: 10,
       pagedQAList: [], // 用于显示当前页的数据
-      colors: ['#99A9BF', '#F7BA2A', '#FF9900']
+      // colors: ['#99A9BF', '#F7BA2A', '#FF9900']
     }
   },
   mounted() {
@@ -111,11 +112,13 @@ export default {
       if(row.score===0)
       {
         this.$message({
-            message: '请完成打分，再提交',
+          message: '不能打0分,请打分再提交',
             type: 'warning'
-          });
+        });
+        return
       }
-      rateQA(row.QAid, row.score).then(res => {
+      console.log('打分：',row.score)
+      rateQA(row.QAid, row.score/100).then(res => {
         if (res.success) {
           this.QAList.splice(index, 1)
           this.$message({
@@ -161,6 +164,9 @@ export default {
       const endIndex = startIndex + this.pageSize;
       this.pagedQAList = this.QAList.slice(startIndex, endIndex);
     },
+    formatTooltip(val) {
+        return val / 100;
+      },
   }
 }
 </script>

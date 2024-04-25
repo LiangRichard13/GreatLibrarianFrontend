@@ -18,7 +18,7 @@ export function deleteById(data) {
     })
 }
 
-export function addExpirement(data) {
+export function addExperiment(data) {
     return service({
         url: '/testProject',
         method: 'post',
@@ -29,7 +29,7 @@ export function addExpirement(data) {
     })
 }
 
-export function editExpirement(data) {
+export function editExperiment(data) {
     return service({
         url: '/testProject',
         method: 'put',

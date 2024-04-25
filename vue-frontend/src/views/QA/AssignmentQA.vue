@@ -93,7 +93,7 @@
 
 <script>
 import { getQAByExpirenceId, distributeToOthers } from '@/api/qa'
-// import { getCollaboratorsByProjectId, getProjectByExpirementId } from "@/api/project"
+// import { getCollaboratorsByProjectId, getProjectByExperimentId } from "@/api/project"
 import { getFriendsByExperimentId } from "@/api/collaborate"
 export default {
   name: "AssignmentQA",
@@ -143,7 +143,7 @@ export default {
       })
 
       //用于获取当前测试的项目
-      // getProjectByExpirementId(this.thisExperiment.id).then(res => {
+      // getProjectByExperimentId(this.thisExperiment.id).then(res => {
       //   this.thisProjejctId = res.data
       // })
 

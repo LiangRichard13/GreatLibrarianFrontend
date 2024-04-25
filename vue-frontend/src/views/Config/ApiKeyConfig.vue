@@ -384,7 +384,7 @@ export default {
           }
           else {
             this.$message({
-              message: '连通性有问题，请检查网络或API key',
+              message: '连通性出了问题，请检查网络或API key',
               type: 'warning'
             });
             const specifiedDate = new Date();

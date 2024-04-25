@@ -12,7 +12,9 @@
         <el-input v-model="filterKey" placeholder="搜索问题或回答" size="large" clearable @input="updateFilter"
           style="width: 300px;margin-left: 60px; margin-bottom: 20px;">
         </el-input>
-        <el-table :data="pageList" style="width: 100%" stripe v-loading="loading"  border>
+
+        <!-- 基础能力测试交互显示列表 -->
+        <el-table v-if="thisExperiment.type===1" :data="pageList" style="width: 100%" stripe v-loading="loading"  border>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
           <el-table-column label="详情" type="expand" width="150px">
             <template slot-scope="scope">
@@ -25,19 +27,19 @@
                     <span v-if="scope.row.keyword.length">{{ scope.row.keyword }}</span>
                     <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
-                  <el-form-item label="关键字打分:">
+                  <el-form-item label="规则化得分:">
                     <span v-if="scope.row.keywords_score.length">{{ scope.row.keywords_score }}</span>
                     <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
-                  <el-form-item label="Black List打分:">
+                  <el-form-item label="黑名单:">
                     <span v-if="scope.row.blacklist_score.length">{{ scope.row.blacklist_score }}</span>
                     <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
-                  <el-form-item label="大模型打分:">
+                  <el-form-item label="大模型得分:">
                     <span v-if="scope.row.llm_score.length">{{ scope.row.llm_score }}</span>
                     <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
-                  <el-form-item label="最终打分:">
+                  <el-form-item label="最终得分:">
                     <span v-if="scope.row.fin_score">{{ scope.row.fin_score }}</span>
                     <el-tag type="warning" v-else>暂无</el-tag>
                   </el-form-item>
@@ -56,17 +58,45 @@
             </template>
           </el-table-column>
           <el-table-column label="领域" prop="field" width="200px">
-            <!-- <template slot="header" slot-scope="scope">
-              <el-input v-model="search" size="mini" placeholder="输入关键字搜索问题" />
-            </template> -->
           </el-table-column>
-          <!-- <el-table-column label="规则化打分" prop="method_scored">
-            </el-table-column>
-            <el-table-column label="大模型打分" prop="llm_score">
-            </el-table-column>
-            <el-table-column label="最终打分" prop="fin_score">
-            </el-table-column> -->
         </el-table>
+
+         <!-- 幻觉测试交互显示列表 -->
+         <el-table v-else-if="thisExperiment.type===2" :data="pageList" style="width: 100%" stripe v-loading="loading"  border>
+          <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
+          <el-table-column label="详情" type="expand" width="150px">
+            <template slot-scope="scope">
+              <div>
+                <el-form label-position="left" inline class="demo-table-expand">
+                  <el-form-item label="时间:">
+                    <span>{{ scope.row.time }}</span>
+                  </el-form-item>
+                  <el-form-item label="LLMEval打分:">
+                    <span v-if="scope.row.llm_score.length">{{ scope.row.llm_score }}</span>
+                    <el-tag type="info" v-else>无</el-tag>
+                  </el-form-item>
+                  <el-form-item label="最终得分:">
+                    <span v-if="scope.row.fin_score">{{ scope.row.fin_score }}</span>
+                    <el-tag type="warning" v-else>暂无</el-tag>
+                  </el-form-item>
+                </el-form>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="问题">
+            <template slot-scope="scope">
+              <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.Q }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="回答">
+            <template slot-scope="scope">
+              <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="领域" prop="field" width="200px">
+          </el-table-column>
+        </el-table>
+        
       </div>
       <div class="pagination-container" style="margin-top: 20px;">
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -114,7 +144,7 @@ export default {
   },
   methods: {
     load() {
-      getInteraction(this.thisExperiment.id).then(res => {
+      getInteraction(this.thisExperiment.id,this.thisExperiment.type).then(res => {
         if (res.success)
           this.interactionList = res.data
         console.log("交互记录", this.interactionList)

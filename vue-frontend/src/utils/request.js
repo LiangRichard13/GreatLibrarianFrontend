@@ -31,7 +31,7 @@ service.interceptors.response.use(
         if (!res.success)
             {
                   Notification.error({
-                      title: '出错了！ ',
+                      title: '错误提示',
                       message: res.message
                   });
               }

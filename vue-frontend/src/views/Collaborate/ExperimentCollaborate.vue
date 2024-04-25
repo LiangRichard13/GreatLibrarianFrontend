@@ -72,7 +72,7 @@ export default {
             if (localStorage.getItem("uid") !== null) {
                 const id = localStorage.getItem("uid")
                 getExperimentsByUserId(id).then(res => {
-                    this.experimentList = res.data;
+                    this.experimentList = res.data.filter(exp=>exp.status===2);
                     Promise.all(this.experimentList.map(exp => {
                     // 对每个exp调用getQAByExpirenceId函数
                     return getQAByExpirenceId(exp.id, localStorage.getItem('uid')).then(res => {

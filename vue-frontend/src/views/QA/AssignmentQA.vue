@@ -67,18 +67,18 @@
 
       <!-- 分发协作者对话框 -->
       <el-dialog title="选择分发协作者" :visible.sync="showDialog" width="30%" @close="resetDialog">
-        <div>
-          <el-form ref="form" label-width="100px">
+        <div v-if="thisCollaborators&&thisCollaborators.length>0">
+          <el-form ref="form" label-width="100px" >
             <el-form-item label="选择协作者">
               <el-select v-model="distributeUserId" placeholder="请选择">
-                <el-option v-for="item in this.thisCollaborators" :key="item.id" :label="`${item.id} - ${item.name}`"
+                <el-option v-for="item in this.thisCollaborators" :key="item.id" :label="`${item.name}`"
                   :value="item.id">
                 </el-option>
               </el-select>
             </el-form-item>
           </el-form>
         </div>
-
+        <el-empty v-else description="无协作者"></el-empty>
         <span slot="footer" class="dialog-footer">
           <el-button plain @click="showDialog = false">取 消</el-button>
           <el-button plain type="primary" @click="distributeToCollaborators">确 定</el-button>

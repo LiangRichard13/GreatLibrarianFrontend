@@ -144,7 +144,7 @@ export default {
       //获取参与的测试
         const id = localStorage.getItem("uid")
         getExperimentsByUserId(id).then(res => {
-          this.participatedExp = res.data;
+          this.participatedExp = res.data.filter(exp=>exp.status===2);
           Promise.all(this.participatedExp.map(exp => {
             // 对每个exp调用getQAByExpirenceId函数
             return getQAByExpirenceId(exp.id, localStorage.getItem('uid')).then(res => {

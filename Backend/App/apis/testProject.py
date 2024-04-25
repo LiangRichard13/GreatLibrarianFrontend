@@ -30,21 +30,11 @@ class TestProjectCRUD(Resource):
     def post(self):
         tP = TestProject(tP_id=creat_md5_id()[:9], tP_name=request.form['name'], tP_time=datetime.now(),
                          Pid=request.form['pid'], AK1=request.form['AK1'], AK2=request.form['AK2'],
-                         DS=request.form['DS'])
-        # 上传配置文件
-        # f = request.files.get('configFile')  # 获取到前端的config文件
-        # file_dir = os.path.join("App", "data", "config")
-        # os.makedirs(file_dir, exist_ok=True)  # 创建多层文件夹
-        # fileName = 'config_' + tP.tP_id + '.' + f.filename.split('.')[-1]  # 文件名为config_+实验Id
-        # file_url = os.path.join(file_dir, fileName)
-        # tP.tP_configURL = file_url
+                         DS=request.form['DS'], tP_type=request.form['type'])
         try:
-            # f.save(file_url)  # 将文件进行保存
             db.session.add(tP)
             db.session.commit()
             return jsonify({'success': True})
-        # except OSError as oe:  # 文件处理异常
-        #     return jsonify({'success': False, 'message': str(oe)})
         except Exception as e:
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
@@ -67,7 +57,7 @@ class TestProjectCRUD(Resource):
     def get(self):
         test = []
         for x in TestProject.query.filter(TestProject.Pid == request.args['pid']):
-            test.append({'id': x.tP_id, 'name': x.tP_name, 'time': x.tP_time,
+            test.append({'id': x.tP_id, 'name': x.tP_name, 'time': x.tP_time, 'type': x.tP_type,
                          'status': x.tP_status, 'progress': x.tP_progress, 'configURL': x.tP_configURL,
                          'AK1': getAK(x.AK1), 'AK2': getAK(x.AK2), 'dataSet': getDS(x.DS)})
         return jsonify({'data': test, 'success': True})
@@ -75,7 +65,7 @@ class TestProjectCRUD(Resource):
     # 实验修改
     def put(self):
         tP = TestProject.query.filter(TestProject.tP_id == request.json['tPid']).first()
-        tP.tP_name = request.json['name']
+        tP.tP_name, tP.tP_type = request.json['name'], request.json['type']
         tP.AK1, tP.AK2, tP.DS = request.json['AK1'], request.json['AK2'], request.json['DS']
         try:
             db.session.commit()  # 提交数据库
@@ -100,7 +90,7 @@ class ConfigCRUD(Resource):
     def get(self):
         tp = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         tp.tP_configURL = os.path.join('App', 'data', 'config', 'config_' + tp.tP_id + '.py')  # 配置文件路径
-        if update_instance(request.args['tPid']):  # 补充配置文件的实例化
+        if update_instance(tp.tP_id, tp.tP_type):  # 补充配置文件的实例化
             try:
                 db.session.commit()
                 return jsonify({'success': True})
@@ -119,7 +109,8 @@ class ConfigCRUD(Resource):
             path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tPid + '.py')  # 配置文件路径
             return jsonify({'success': update_code_to_class(path, code, className)})
         elif choose == '2':  # 修改实例化参数
-            return jsonify({'success': update_instance(request.json['tPid'])})  # 补充配置文件的实例化
+            tp = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
+            return jsonify({'success': update_instance(tp.tP_id, tp.tP_type)})  # 补充配置文件的实例化
 
     # 删除配置文件
     def delete(self):
@@ -139,7 +130,6 @@ class ConfigCRUD(Resource):
 
     # 添加相应代码至配置文件并进行代码语法检查【参数：tPid实验id,code函数代码,className类名】
     def post(self):
-        tPid, code, className = request.json['tPid'], request.json['code'], request.json['className']
-        config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tPid + '.py')
-        flag = 1 if os.path.exists(config_path) else -1
-        return jsonify({'success': add_call_function(config_path, flag, code, className)})
+        cfg_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + request.json['tPid'] + '.py')
+        flag = 1 if os.path.exists(cfg_path) else {1: -1, 2: -2}.get(request.json['type'], None)
+        return jsonify({'success': add_call_function(cfg_path, flag, request.json['code'], request.json['className'])})

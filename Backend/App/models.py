@@ -93,6 +93,7 @@ class TestProject(db.Model):
     tP_name = db.Column(db.String(30))  # 实验名称
     tP_time = db.Column(db.DateTime)  # 测试时间
     tP_status = db.Column(db.Integer, default=0)  # 实验状态   【0:待实验、1:正在实验、2:待审核、3:已完成】
+    tP_type = db.Column(db.Integer, default=0)  # 实验类型 【0:未选择、1:基础知识测试、2:幻觉测试】
     tP_progress = db.Column(db.Float, default=0)  # 实验进度
     tP_configURL = db.Column(db.String(80))  # 实验配置文件Url
     Pid = db.Column(db.Integer, db.ForeignKey(Project.project_id, ondelete='CASCADE'))  # 项目ID---外键

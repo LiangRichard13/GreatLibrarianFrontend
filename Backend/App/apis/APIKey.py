@@ -77,4 +77,5 @@ class APIKeyCRUD(Resource):
             value, code = request.json['value'], request.json['code']  # apikey值,call函数
             path = os.path.join(BackendPath(), 'App', 'utils', 'check.py')
             update_code_to_class(path, code, 'new_llm')
+            print(f'网络连通性测试:{checkllm(new_llm(value))}')
             return jsonify({'success': True, 'result': checkllm(new_llm(value))})

@@ -79,9 +79,10 @@ export default {
       const loginToken = { token: localStorage.getItem('loginToken') }
       isExpired(loginToken).then(res => {
         if (!res.success) {
-          this.$message({
-            message: '您的令牌已过期请重新登录',
-            type: 'warning'
+          this.$notify({
+          title: '警告',
+          message: '您的令牌已过期，请重新登录',
+          type: 'warning'
           });
           const uid = localStorage.getItem("uid")
           removeUserIp(uid)//令牌过期则移除用户IP

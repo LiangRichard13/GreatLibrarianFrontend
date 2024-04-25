@@ -1399,9 +1399,9 @@ export default {
                             if (Number(localStorage.getItem(experiment.id + 'errorTimes')) >= 5) {
                                 errorHandle(experiment.id).then(res => {
                                     if (res.success) {
-                                        this.$message({
-                                            type: 'error',
-                                            message: experiment.id + '-' + experiment.name + '获取进度失败，请检查测试配置再重新开始测试'
+                                        this.$notify.error({
+                                        title: '错误',
+                                        message: experiment.id + '-' + experiment.name + '获取进度失败，请检查测试配置再重新开始测试'
                                         });
                                         clearInterval(this.interval);
                                         this.setExpEmpty()

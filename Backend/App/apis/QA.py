@@ -23,7 +23,7 @@ def readLog(logURL):
 
     # 修改正则表达式以匹配整个部分
     parts = re.compile(
-        r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO - \n\d+\..*?To LLM:(.*?)To User:"(.*?)"\n.*?in (.*?) field\.from thread (\d+)\n',
+        r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO - \n\d+\..*?To LLM:(.*?)To User:(.*?)\n.*?in (.*?) field\.from thread (\d+)\n',
         re.DOTALL).findall(file)
 
     # 提取问题、答案、字段和线程内容

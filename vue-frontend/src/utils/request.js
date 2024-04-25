@@ -30,7 +30,7 @@ service.interceptors.response.use(
         const res = response.data;
         if (!res.success)
             {
-                if(res.testing||res.tokenExpired)
+                if(res.progressFail||res.tokenExpired)
                 {
                     return res
                 }

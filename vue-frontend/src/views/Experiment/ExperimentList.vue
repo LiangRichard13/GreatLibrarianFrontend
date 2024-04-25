@@ -353,26 +353,32 @@
 
                     <el-form-item label="指定被测模型API Key">
                         <el-select v-model="newExpirement.AK1" placeholder="请选择">
-                            <el-option v-for="item in thisProject.apiKey" :key="item.id"
-                                :label="`${item.name}`" :value="item.id">
+                            <el-option v-for="item in thisProject.apiKey" :key="item.id" :label="`${item.name}`"
+                                :value="item.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
 
                     <el-form-item label="指定评估模型API Key">
                         <el-select v-model="newExpirement.AK2" placeholder="请选择">
-                            <el-option v-for="item in thisProject.apiKey" :key="item.id"
-                                :label="`${item.name}`" :value="item.id">
+                            <el-option v-for="item in thisProject.apiKey" :key="item.id" :label="`${item.name}`"
+                                :value="item.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
 
                     <el-form-item label="指定测试数据集">
                         <el-select v-model="newExpirement.DS" placeholder="请选择">
-                            <el-option v-for="item in thisProject.dataSet" :key="item.id"
-                                :label="`${item.name}`" :value="item.id">
+                            <el-option v-for="item in thisProject.dataSet" :key="item.id" :label="`${item.name}`"
+                                :value="item.id">
                             </el-option>
                         </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="指定测试类型">
+                        <el-switch v-model="newExpirement.type" active-color="#13ce66" inactive-color="#409EFF" active-value="1"
+                            inactive-value="0" active-text="幻觉测试" inactive-text="基础测试">
+                        </el-switch>
                     </el-form-item>
 
                     <!-- 进行测试配置文件的编辑 -->
@@ -551,7 +557,7 @@ export default {
             editDialog: false,
             downloader: false,
             experimentList: [],
-            newExpirement: { name: '', AK1: '', AK2: '', DS: '' },
+            newExpirement: { name: '', AK1: '', AK2: '', DS: '',type:0},
             expList: [], // 待测试列表数据
             proceeding: [],//正在测试列表
             reviewList: [], // 待审核列表数据

@@ -188,6 +188,14 @@ export default {
     beforeUpload(file) {
       // 检查文件类型等逻辑...
       JSZip.loadAsync(file).then(zip => {
+
+        if (Object.keys(zip.files).length === 0) {
+        this.$message({
+            message: 'zip包为空',
+            type: 'warning'
+        });
+        return;
+    }
         // 检查ZIP包内的文件结构
         let hasSubdirectories = false;
         let hasNonJsonFiles = false;

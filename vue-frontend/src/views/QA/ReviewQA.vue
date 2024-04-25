@@ -108,6 +108,13 @@ export default {
       this.$router.go(-1); // 返回上一个页面
     },
     submitRate(row, index) {
+      if(row.score===0)
+      {
+        this.$message({
+            message: '请完成打分，再提交',
+            type: 'warning'
+          });
+      }
       rateQA(row.QAid, row.score).then(res => {
         if (res.success) {
           this.QAList.splice(index, 1)

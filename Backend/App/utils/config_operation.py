@@ -83,7 +83,7 @@ def add_call_function(file_path, flag, updated_code, class_name):
                         new_call_ast = ast.parse(updated_code).body[0]  # 创建一个新的 __call__ 函数节点
                         node.body.append(new_call_ast)  # 将新的 __call__ 函数添加到类的成员中
                         new_content = ast.unparse(tree)  # 重新生成代码
-                        os.makedirs(os.path.join(BackendPath(), 'App', 'data', 'config', 'Temp'), exist_ok=True)
+                        os.makedirs(os.path.join(BackendPath(), 'App', 'data', 'config'), exist_ok=True)
                         with open(file_path, 'w', encoding='UTF-8') as file:
                             file.write(new_content)  # 将更新后的代码写回文件
                         compile(new_content, file_path, 'exec')  # 编译新文件以检查语法错误

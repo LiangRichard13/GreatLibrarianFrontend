@@ -78,7 +78,7 @@ class TPOperation(Resource):
         matches = re.compile(
             r'New Epoch ----------.*?INFO - (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO - '
             r'To LLM:	 (.*?)\n\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*?'
-            r'To User:	 "(.*?)"(.*?)'
+            r'To User:	 "(.*?)"\n(.*?)'
             r'(The model gets .*?)'
             r'(The final score of this testcase is (\d+\.\d+), in (.*?) field\.|Human Evaluation!)',
             re.DOTALL).findall(content)
@@ -92,4 +92,4 @@ class TPOperation(Resource):
                                                re.DOTALL).findall(m[4]),
                  'field': re.compile(r'method, in (.*?) field', re.DOTALL).findall(m[4])[0]
                  } for m in matches]
-        return jsonify({'success': True, 'data': pd.DataFrame(data)})
+        return jsonify({'success': True, 'data': data})

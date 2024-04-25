@@ -16,10 +16,10 @@
               <div style="height: 50px; overflow: auto;">{{ scope.row.Q }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="打分(请从0到1打分)" prop="score">
+          <el-table-column label="打分" prop="score" width="400%">
             <template slot-scope="scope">
               <!-- <el-rate v-model="scope.row.score" :colors="colors"></el-rate> -->
-              <el-slider v-model="scope.row.score" :format-tooltip="formatTooltip"></el-slider>
+              <el-slider v-model="scope.row.score" input-size="mini" show-input></el-slider>
             </template>
           </el-table-column>
 
@@ -117,8 +117,9 @@ export default {
         });
         return
       }
-      console.log('打分：',row.score)
-      rateQA(row.QAid, row.score/100).then(res => {
+      const score=(row.score / 100).toFixed(2)
+      console.log('打分',score)
+      rateQA(row.QAid,score).then(res => {
         if (res.success) {
           this.QAList.splice(index, 1)
           this.$message({
@@ -164,9 +165,9 @@ export default {
       const endIndex = startIndex + this.pageSize;
       this.pagedQAList = this.QAList.slice(startIndex, endIndex);
     },
-    formatTooltip(val) {
-        return val / 100;
-      },
+    // formatTooltip(val) {
+    //     return val / 100;
+    //   },
   }
 }
 </script>

@@ -24,8 +24,8 @@
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试类型">
                         <template slot-scope="scope">
-                            <el-tag v-if="scope.row.type === 1">基础能力测试</el-tag>
-                            <el-tag v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                            <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="被测模型">
@@ -129,8 +129,8 @@
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试类型">
                         <template slot-scope="scope">
-                            <el-tag v-if="scope.row.type === 1">基础能力测试</el-tag>
-                            <el-tag v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                            <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="被测模型">
@@ -165,7 +165,9 @@
                     </el-table-column>
                     <el-table-column label="进度" prop="progress">
                         <template slot-scope="scope">
-                            <el-progress :percentage="scope.row.progress"></el-progress>
+                            <div>
+                            <el-progress  :percentage="scope.row.progress"  :text-inside="true" :color="colors"  :stroke-width="18"></el-progress>
+                            </div>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -178,8 +180,8 @@
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试类型">
                         <template slot-scope="scope">
-                            <el-tag v-if="scope.row.type === 1">基础能力测试</el-tag>
-                            <el-tag v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                            <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="被测模型">
@@ -296,8 +298,8 @@
                     <el-table-column label="名称" prop="name"></el-table-column>
                     <el-table-column label="测试类型">
                         <template slot-scope="scope">
-                            <el-tag v-if="scope.row.type === 1">基础能力测试</el-tag>
-                            <el-tag v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                            <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="被测模型">
@@ -380,7 +382,7 @@
                             :active-value="2" :inactive-value="1" active-text="幻觉测试" inactive-text="基础能力测试">
                         </el-switch>
                     </el-form-item>
-                        
+
                     <el-form-item label="指定测试数据集">
                         <el-select v-model="newExperiment.DS" placeholder="请选择">
                             <el-option v-for="item in thisProject.dataSet" :key="item.id" :label="`${item.name}`"
@@ -397,8 +399,13 @@
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item label="指定评估模型API Key" v-if="newExperiment.type === 1">
-                        <el-select v-model="newExperiment.AK2" placeholder="请选择">
+                    <el-form-item label="指定评估模型API Key">
+                        <el-select  v-if="newExperiment.type === 1" v-model="newExperiment.AK2" placeholder="请选择">
+                            <el-option v-for="item in thisProject.apiKey" :key="item.id" :label="`${item.name}`"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                        <el-select  v-else-if="newExperiment.type === 2" disabled v-model="newExperiment.AK2" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id" :label="`${item.name}`"
                                 :value="item.id">
                             </el-option>
@@ -428,7 +435,7 @@
                             :active-value="2" :inactive-value="1" active-text="幻觉测试" inactive-text="基础能力测试">
                         </el-switch>
                     </el-form-item>
-                    
+
                     <el-form-item label="指定测试数据集">
                         <el-select v-model="editExperiment_DS" placeholder="请选择">
                             <el-option v-for="item in thisProject.dataSet" :key="item.id"
@@ -445,8 +452,13 @@
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item label="指定评估模型API Key" v-if="editExperiment_type === 1">
-                        <el-select v-model="editExperiment_AK2" placeholder="请选择">
+                    <el-form-item label="指定评估模型API Key">
+                        <el-select v-if="editExperiment_type === 1" v-model="editExperiment_AK2" placeholder="请选择">
+                            <el-option v-for="item in thisProject.apiKey" :key="item.id"
+                                :label="`${item.id} - ${item.name}`" :value="item.id">
+                            </el-option>
+                        </el-select>
+                        <el-select v-else-if="editExperiment_type === 2" disabled v-model="editExperiment_AK2" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
                             </el-option>
@@ -608,6 +620,13 @@ export default {
             currentExpStatus: null,
             thisRowCollaborators: [],
             reportCount: null,
+            colors: [
+          {color: '#f56c6c', percentage: 20},
+          {color: '#e6a23c', percentage: 40},
+          {color: '#5cb87a', percentage: 60},
+          {color: '#1989fa', percentage: 80},
+          {color: '#6f7ad3', percentage: 100}
+        ]
             // selectVersion: null,
             // LL1ClassName: '',
             // LL2ClassName: ''
@@ -706,21 +725,26 @@ export default {
             })
         },
         handleAddNewExperiment() {
+            if(this.newExperiment.type===1){
             if (this.newExperiment.name.trim()) {
-                if (this.newExperiment.AK1 !== '' && this.newExperiment.Ak2 !== '' && this.newExperiment.DS !== '') {
-                    const formData = new FormData();
-                    formData.append('name', this.newExperiment.name);
-                    formData.append('AK1', this.newExperiment.AK1);
-                    formData.append('AK2', this.newExperiment.AK2);
-                    formData.append('DS', this.newExperiment.DS);
-                    formData.append('pid', this.thisProject.id)
-                    formData.append('type', this.newExperiment.type)
-                    // const formData={
-                    //     name:this.newExperiment.name,AK1:this.newExperiment.AK1,AK2:this.newExperiment.AK2,
-                    //     DS:this.newExperiment.DS,pid:this.thisProject.id,type:this.newExperiment.type
-                    // }
+                if (this.newExperiment.AK1&& this.newExperiment.AK2&& this.newExperiment.DS) {
+                    // const formData = new FormData();
+                    // formData.append('name', this.newExperiment.name);
+                    // formData.append('AK1', this.newExperiment.AK1);
+                    // formData.append('AK2', this.newExperiment.AK2);
+                    // formData.append('DS', this.newExperiment.DS);
+                    // formData.append('pid', this.thisProject.id)
+                    // formData.append('type', this.newExperiment.type)
+                    const addData={
+                        name:this.newExperiment.name,
+                        AK1:this.newExperiment.AK1,
+                        AK2:this.newExperiment.AK2,
+                        DS:this.newExperiment.DS,
+                        pid:this.thisProject.id,
+                        type:this.newExperiment.type
+                    }
 
-                    addExperiment(formData).then(res => {
+                    addExperiment(addData).then(res => {
                         if (res.success) {
                             this.resetDialog
                             this.showDialog = false; // 关闭对话框
@@ -741,10 +765,49 @@ export default {
             }
             else {
                 this.$message({
-                    message: '创建新测试各字段不能为空',
+                    message: '新测试名字不能为空',
                     type: 'warning'
                 });
             }
+        }
+        else if(this.newExperiment.type===2)
+        {
+            if (this.newExperiment.name.trim()) {
+                if (this.newExperiment.AK1&&this.newExperiment.DS) {
+                    const addData={
+                        name:this.newExperiment.name,
+                        AK1:this.newExperiment.AK1,
+                        AK2:this.newExperiment.AK2,
+                        DS:this.newExperiment.DS,
+                        pid:this.thisProject.id,
+                        type:this.newExperiment.type
+                    }
+                    addExperiment(addData).then(res => {
+                        if (res.success) {
+                            this.resetDialog
+                            this.showDialog = false; // 关闭对话框
+                            this.$message({
+                                message: '添加成功',
+                                type: 'success'
+                            });
+                            this.setExpEmpty()
+                        }
+                    })
+                }
+                else {
+                    this.$message({
+                        message: '请选择apikey和数据集',
+                        type: 'warning'
+                    });
+                }
+            }
+            else {
+                this.$message({
+                    message: '新测试名字不能为空',
+                    type: 'warning'
+                });
+            }
+        }
         },
         handleRemoveExperiment(index, row) {
             const deleteData = { tPid: row.id }
@@ -841,41 +904,84 @@ export default {
             return formattedDate
         },
         handleEditExperiment() {
-            if (this.editExperiment_name.trim()) {
-                if (this.editExperiment_AK1 !== null && this.editExperiment_AK2 !== null && this.editExperiment_DS !== null) {
-                    const data = {
-                        name: this.editExperiment_name,
-                        AK1: this.editExperiment_AK1,
-                        AK2: this.editExperiment_AK2,
-                        DS: this.editExperiment_DS,
-                        tPid: this.editExperiment_id,
-                        type: this.editExperiment_type
-                    }
-                    console.log('修改的数据', data)
-                    editExperiment(data).then(res => {
-                        if (res.success) {
-                            this.$message({
-                                message: '修改成功',
-                                type: 'success'
-                            });
-                            this.resetEditDialog()
-                            this.editDialog = false; // 关闭对话框
-                            this.setExpEmpty()
+            //基础能力测试配置修改
+            if (this.editExperiment_type === 1) {
+                if (this.editExperiment_name.trim()) {
+                    if (this.editExperiment_AK1 !== null && this.editExperiment_AK2 !== null && this.editExperiment_DS !== null) {
+                        const data = {
+                            name: this.editExperiment_name,
+                            AK1: this.editExperiment_AK1,
+                            AK2: this.editExperiment_AK2,
+                            DS: this.editExperiment_DS,
+                            tPid: this.editExperiment_id,
+                            type: this.editExperiment_type
                         }
-                    })
+                        console.log('修改的数据', data)
+                        editExperiment(data).then(res => {
+                            if (res.success) {
+                                this.$message({
+                                    message: '修改成功',
+                                    type: 'success'
+                                });
+                                this.resetEditDialog()
+                                this.editDialog = false; // 关闭对话框
+                                this.setExpEmpty()
+                            }
+                        })
+                    }
+                    else {
+                        this.$message({
+                            message: '请选择apikey和数据集',
+                            type: 'warning'
+                        });
+                    }
                 }
                 else {
                     this.$message({
-                        message: '请选择apikey和数据集',
+                        message: '测试名不能为空',
                         type: 'warning'
                     });
                 }
             }
-            else {
-                this.$message({
-                    message: '测试各字段不能为空',
-                    type: 'warning'
-                });
+            //幻觉测试配置修改
+            else if(this.editExperiment_type===2) 
+            {
+                if (this.editExperiment_name.trim()) {
+                    if (this.editExperiment_AK1 !== null&& this.editExperiment_DS !== null) {
+                        const data = {
+                            name: this.editExperiment_name,
+                            AK1: this.editExperiment_AK1,
+                            AK2: this.editExperiment_AK2,
+                            DS: this.editExperiment_DS,
+                            tPid: this.editExperiment_id,
+                            type: this.editExperiment_type
+                        }
+                        console.log('修改的数据', data)
+                        editExperiment(data).then(res => {
+                            if (res.success) {
+                                this.$message({
+                                    message: '修改成功',
+                                    type: 'success'
+                                });
+                                this.resetEditDialog()
+                                this.editDialog = false; // 关闭对话框
+                                this.setExpEmpty()
+                            }
+                        })
+                    }
+                    else {
+                        this.$message({
+                            message: '请选择apikey和数据集',
+                            type: 'warning'
+                        });
+                    }
+                }
+                else {
+                    this.$message({
+                        message: '测试名不能为空',
+                        type: 'warning'
+                    });
+                }
             }
         },
         initialEdit(row) {
@@ -981,10 +1087,10 @@ export default {
                                                 reject(false)
                                             }
                                             else {
-                                                let checkData = { tPid: thisTest.id, code: values[0], className: 'new_llm1',type:1 }
+                                                let checkData = { tPid: thisTest.id, code: values[0], className: 'new_llm1', type: 1 }
                                                 checkOperationFile(checkData).then(res => {
                                                     if (res.success) {
-                                                        checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2',type:1}
+                                                        checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2', type: 1 }
                                                         checkOperationFile(checkData).then(res => {
                                                             if (res.success) {
                                                                 generateOperationFile(thisTest.id).then(res => {
@@ -1096,7 +1202,7 @@ export default {
                                     reject(false)
                                 }
                                 else {
-                                    let checkData = { tPid: thisTest.id, code: value, className: 'new_llm1',type:2}
+                                    let checkData = { tPid: thisTest.id, code: value, className: 'new_llm1', type: 2 }
                                     checkOperationFile(checkData).then(res => {
                                         if (res.success) {
                                             generateOperationFile(thisTest.id).then(res => {

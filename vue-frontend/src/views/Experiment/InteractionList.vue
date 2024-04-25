@@ -9,8 +9,8 @@
     </div>
     <template v-if="interactionList && interactionList.length">
       <div class="table-container">
-        <el-input v-model="filterKey" placeholder="搜索问题或回答" size="large" clearable @input="updateFilter"
-          style="width: 300px;margin-left: 60px; margin-bottom: 20px;">
+        <el-input v-model="filterKey" placeholder="请搜索问题" size="large" clearable @input="updateFilter"
+          style="width: 300px;margin-left:0px; margin-bottom: 20px;">
         </el-input>
 
         <!-- 基础能力测试交互显示列表 -->
@@ -57,14 +57,14 @@
               <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="领域" prop="field" width="200px">
+          <el-table-column label="领域" prop="field" width="200px" align="center">
           </el-table-column>
         </el-table>
 
          <!-- 幻觉测试交互显示列表 -->
          <el-table v-else-if="thisExperiment.type===2" :data="pageList" style="width: 100%" stripe v-loading="loading"  border>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
-          <el-table-column label="详情" type="expand" width="150px">
+          <!-- <el-table-column label="详情" type="expand" width="150px">
             <template slot-scope="scope">
               <div>
                 <el-form label-position="left" inline class="demo-table-expand">
@@ -82,18 +82,46 @@
                 </el-form>
               </div>
             </template>
+          </el-table-column> -->
+          <el-table-column label="时间" prop="time" width="200%">
           </el-table-column>
           <el-table-column label="问题">
             <template slot-scope="scope">
               <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.Q }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="回答">
+          <el-table-column label="回答" type="expand">
             <template slot-scope="scope">
-              <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}</div>
+              <!-- <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}</div> -->
+              <el-form label-position="left" inline class="three-times-answer">
+                  <el-form-item>
+                    <h4>第一次回答</h4>
+                    <span>{{ scope.row.A[0] }}</span>
+                  </el-form-item>
+                  <el-form-item>
+                    <h4>第二次回答</h4>
+                    <span>{{ scope.row.A[1] }}</span>
+                  </el-form-item>
+                  <el-form-item>
+                    <h4>第三次回答</h4>
+                    <span>{{ scope.row.A[2] }}</span>
+                  </el-form-item>
+              </el-form>
             </template>
           </el-table-column>
-          <el-table-column label="领域" prop="field" width="200px">
+          <el-table-column label="领域" prop="field" width="200px" align="center">
+          </el-table-column>
+          <el-table-column label="LLMEval得分" prop="llm_score"  width="120%" align="center">
+            <template slot-scope="scope">
+              <span v-if="scope.row.llm_score.length">{{ scope.row.llm_score }}</span>
+                    <el-tag type="info" v-else>无</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="最终得分" prop="fin_score" width="100%" align="center">
+            <template slot-scope="scope">
+              <span v-if="scope.row.fin_score">{{ scope.row.fin_score }}</span>
+                    <el-tag type="warning" v-else>暂无</el-tag>
+            </template>
           </el-table-column>
         </el-table>
         
@@ -156,8 +184,7 @@ export default {
     },
     updateFilter() {
       const filteredData = this.interactionList.filter(item => {
-        return item.Q.toLowerCase().includes(this.filterKey.toLowerCase()) ||
-          item.A.toLowerCase().includes(this.filterKey.toLowerCase());
+        return item.Q.toLowerCase().includes(this.filterKey.toLowerCase())
       });
       this.updatePageList(filteredData);
     },
@@ -224,5 +251,10 @@ export default {
   margin-right: 0;
   margin-bottom: 0;
   width: 50%;
+}
+.three-times-answer.el-form-item{
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 100%;
 }
 </style>

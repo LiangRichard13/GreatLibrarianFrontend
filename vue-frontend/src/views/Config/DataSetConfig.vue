@@ -197,26 +197,41 @@ export default {
         return;
     }
         // 检查ZIP包内的文件结构
-        let hasSubdirectories = false;
+        // let hasSubdirectories = false;
         let hasNonJsonFiles = false;
 
         zip.forEach((relativePath, file) => {
-          if (file.dir) {
-            hasSubdirectories = true;
-          } else if (!file.name.endsWith('.json')) {
+          if (!file.name.endsWith('.json')) {
             hasNonJsonFiles = true;
           }
         });
 
-        // 如果存在文件夹或非JSON文件，则提醒用户
-        if (hasSubdirectories || hasNonJsonFiles) {
-          let errorMessage = 'zip包内应该只包含JSON文件且没有文件夹。\n';
-          if (hasSubdirectories) {
-            errorMessage += 'ZIP包内存在文件夹。\n';
-          }
-          if (hasNonJsonFiles) {
-            errorMessage += 'zip包内存在非JSON文件。\n';
-          }
+        // zip.forEach((relativePath, file) => {
+        //   if (file.dir) {
+        //     hasSubdirectories = true;
+        //   } else if (!file.name.endsWith('.json')) {
+        //     hasNonJsonFiles = true;
+        //   }
+        // });
+
+         // 如果存在文件夹或非JSON文件，则提醒用户
+        //  if (hasSubdirectories || hasNonJsonFiles) {
+        //   let errorMessage = 'zip包内应该只包含JSON文件且没有文件夹。\n';
+        //   if (hasSubdirectories) {
+        //     errorMessage += 'zip包内存在文件夹。\n';
+        //   }
+        //   if (hasNonJsonFiles) {
+        //     errorMessage += 'zip包内存在非JSON文件。\n';
+        //   }
+        //   this.$message({
+        //   message:errorMessage ,
+        //   type: 'warning'
+        // });
+        //   return;
+        // }
+
+        if (hasNonJsonFiles) {
+          let errorMessage = 'zip包内应该只包含JSON文件。zip包内存在非JSON文件';
           this.$message({
           message:errorMessage ,
           type: 'warning'

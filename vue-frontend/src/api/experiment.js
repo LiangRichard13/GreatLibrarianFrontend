@@ -22,10 +22,10 @@ export function addExperiment(data) {
     return service({
         url: '/testProject',
         method: 'post',
-        data: data,
-        headers: {
-            'Content-Type': 'multipart/form-data'
-          },
+        data: data
+        // headers: {
+        //     'Content-Type': 'multipart/form-data'
+        //   },
     })
 }
 

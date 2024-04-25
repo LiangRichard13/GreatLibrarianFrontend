@@ -4,7 +4,7 @@
       <div class="header">
         <div style="height: 70px;width: 100%">
           <div class="header-logo">
-            <img style="width: 45px; height: 45px;float: left" src="../assets/logo.png" alt="" />
+            <img style="width: 45px; height: 45px;float: left" src="../assets/logo.png" alt=""/>
             <div class="header-logo-text">大模型测评工具箱</div>
           </div>
           <div class="header-links">
@@ -21,7 +21,7 @@
                 <i class="el-icon-caret-bottom"></i>
               </div>
               <!-- <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.iconUrl"> -->
-              <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.iconUrl">
+              <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.iconUrl" @error="handleImageError">
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
@@ -161,6 +161,9 @@ export default {
         this.$router.push("/login")
       }
     },
+    handleImageError(event) {
+      event.target.src = "https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
+    }
 
     // handleRemoveUserIp() {
     //   if (!this.$navigating) {

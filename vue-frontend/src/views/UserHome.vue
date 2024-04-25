@@ -77,7 +77,7 @@
               <template v-if="userFriends&&userFriends.length">
                 <div v-for="(friend, index) in userFriends" :key="index" class="friend">
                   <!-- <el-avatar :src="friend.icon"></el-avatar> -->
-                  <img :src="friend.icon" style="width: 50px; height: 50px; border-radius: 50%;" class="friend-icon" />
+                  <img :src="friend.icon" style="width: 50px; height: 50px; border-radius: 50%;" class="friend-icon" @error="handleImageError" />
                   <div class="friend-info">
                     <span>{{ friend.name }}</span>
                   </div>
@@ -192,6 +192,9 @@ export default {
         this.$router.push("/experimentList")
       }
     },
+    handleImageError(event){
+      event.target.src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
+    }
   },
   mounted() {
     setTimeout(() => {

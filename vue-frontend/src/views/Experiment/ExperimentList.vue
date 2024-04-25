@@ -380,6 +380,14 @@
                             :active-value="2" :inactive-value="1" active-text="幻觉测试" inactive-text="基础能力测试">
                         </el-switch>
                     </el-form-item>
+                        
+                    <el-form-item label="指定测试数据集">
+                        <el-select v-model="newExperiment.DS" placeholder="请选择">
+                            <el-option v-for="item in thisProject.dataSet" :key="item.id" :label="`${item.name}`"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
 
                     <el-form-item label="指定被测模型API Key">
                         <el-select v-model="newExperiment.AK1" placeholder="请选择">
@@ -397,13 +405,6 @@
                         </el-select>
                     </el-form-item>
 
-                    <el-form-item label="指定测试数据集">
-                        <el-select v-model="newExperiment.DS" placeholder="请选择">
-                            <el-option v-for="item in thisProject.dataSet" :key="item.id" :label="`${item.name}`"
-                                :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
                 </el-form>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -427,6 +428,14 @@
                             :active-value="2" :inactive-value="1" active-text="幻觉测试" inactive-text="基础能力测试">
                         </el-switch>
                     </el-form-item>
+                    
+                    <el-form-item label="指定测试数据集">
+                        <el-select v-model="editExperiment_DS" placeholder="请选择">
+                            <el-option v-for="item in thisProject.dataSet" :key="item.id"
+                                :label="`${item.id} - ${item.name}`" :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
 
                     <el-form-item label="指定被测模型API Key">
                         <el-select v-model="editExperiment_AK1" placeholder="请选择">
@@ -439,14 +448,6 @@
                     <el-form-item label="指定评估模型API Key" v-if="editExperiment_type === 1">
                         <el-select v-model="editExperiment_AK2" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
-                                :label="`${item.id} - ${item.name}`" :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-
-                    <el-form-item label="指定测试数据集">
-                        <el-select v-model="editExperiment_DS" placeholder="请选择">
-                            <el-option v-for="item in thisProject.dataSet" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
                             </el-option>
                         </el-select>

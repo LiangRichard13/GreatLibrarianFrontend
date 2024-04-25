@@ -8,7 +8,7 @@
         <el-col :span="6" v-for="(user, index) in userList" :key="user.id">
           <el-card style="margin-bottom: 20px;margin-right: 20px;margin-left: 20px;">
             <div style="display:flex; align-items: center;">
-              <img :src="user.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
+              <img :src="user.icon" style="width: 50px; height: 50px; border-radius: 50%;" @error="handleImageError" />
               <div style="margin-left: 10px;">
                 <p>用户ID:{{ user.id }}</p>
                 <p>用户名:{{ user.name }}</p>
@@ -78,6 +78,9 @@ export default {
           this.load()
         }
       })
+    },
+    handleImageError(event) {
+      event.target.src = "https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
     }
   },
   mounted() {

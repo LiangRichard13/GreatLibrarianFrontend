@@ -7,7 +7,7 @@
           <!-- <div v-for="(item, index) in friendsInfo" :key="index"> -->
           <el-card>
             <div style="display: flex; align-items: center;">
-              <img :src="row.icon" style="width: 50px; height: 50px; border-radius: 50%;" />
+              <img :src="row.icon" style="width: 50px; height: 50px; border-radius: 50%;" @error="handleImageError" />
               <div style="margin-left: 10px;">
                 <p>用户名:{{ row.name }}</p>
                 <!-- <p>用户ID:{{ row.id }}</p> -->
@@ -103,6 +103,9 @@ export default {
         }
       })
     },
+    handleImageError(event){
+      event.target.src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
+    }
   },
   mounted() {
     this.load()

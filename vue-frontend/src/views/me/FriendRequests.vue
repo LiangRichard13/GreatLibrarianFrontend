@@ -7,7 +7,7 @@
         <!-- <div v-for="(fid, index) in userFriendsRequestID" :key="index"> -->
         <el-card>
           <div style="display: flex; align-items: center;">
-            <img :src="row.data.iconUrl" style="width: 50px; height: 50px; border-radius: 50%;" />
+            <img :src="row.data.iconUrl" style="width: 50px; height: 50px; border-radius: 50%;" @error="handleImageError"/>
             <div style="margin-left: 10px;">
                <p>用户ID:{{ userFriendsRequestID[index] }}</p>
               <p>用户名:{{ row.data.name }}</p>
@@ -25,11 +25,11 @@
       <!-- </div> -->
       </el-col>
     </el-row>
-  </template> 
-  <div v-else class="emptyFriendsRequests">
-    <el-empty description="暂无好友申请"></el-empty>
-  </div>
-  </div>
+  </template>
+<div v-else class="emptyFriendsRequests">
+  <el-empty description="暂无好友申请"></el-empty>
+</div>
+</div>
 </template>
 <script>
 import { getFriendsRequest } from '@/api/collaborate'
@@ -55,14 +55,14 @@ export default {
         this.userFriendsRequestID = res.fid;
 
         if (this.userFriendsRequestID) {
-          console.log('用户好友请求的id列表',this.userFriendsRequestID)
+          console.log('用户好友请求的id列表', this.userFriendsRequestID)
           Promise.all(this.userFriendsRequestID.map(fid => {
             const fidObject = { id: fid };
             return findById(fidObject);
           }))
             .then(res => {
               this.userFriendsRequest = res
-              console.log('好友请求列表的用户信息',this.userFriendsRequest)
+              console.log('好友请求列表的用户信息', this.userFriendsRequest)
 
               //设置用户头像
               this.userFriendsRequest = this.userFriendsRequest.map(user => {
@@ -122,7 +122,9 @@ export default {
           this.load()
         }
       })
-
+    },
+    handleImageError(event) {
+      event.target.src = "https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
     }
   },
 }

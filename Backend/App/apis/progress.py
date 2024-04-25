@@ -36,11 +36,10 @@ class Progress(Resource):
         #           state=3 已完成【直接返回100】
         tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         if tP.tP_status == 1:
-            # process = readTemp('App/data/Logs/' + tP.tP_id + '/process.temp')
             try:
-                process = readTemp(os.path.join(BackendPath(), "App", "data", "Logs", tP.tP_id, "process.temp"))
+                process = readTemp(os.path.join(BackendPath(), "App", "data", "Logs", tP.tP_id, "testcase_process.temp"))
             except Exception:
-                return jsonify({'success': False, 'message': tP.tP_id + '-' + tP.tP_name + '读取进度失败'})
+                return jsonify({'success': False, 'message': tP.tP_id + '-' + tP.tP_name + '读取进度失败', 'error': 'error'})
             if process >= 0:
                 tP.tP_progress = process
                 # if process == 100:  # 已经完成实验，进行实验状态修改

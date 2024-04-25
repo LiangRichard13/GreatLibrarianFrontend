@@ -354,7 +354,7 @@
                     <el-form-item label="指定被测模型API Key">
                         <el-select v-model="newExpirement.AK1" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
-                                :label="`${item.id} - ${item.name}`" :value="item.id">
+                                :label="`${item.name}`" :value="item.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -362,7 +362,7 @@
                     <el-form-item label="指定评估模型API Key">
                         <el-select v-model="newExpirement.AK2" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
-                                :label="`${item.id} - ${item.name}`" :value="item.id">
+                                :label="`${item.name}`" :value="item.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -370,7 +370,7 @@
                     <el-form-item label="指定测试数据集">
                         <el-select v-model="newExpirement.DS" placeholder="请选择">
                             <el-option v-for="item in thisProject.dataSet" :key="item.id"
-                                :label="`${item.id} - ${item.name}`" :value="item.id">
+                                :label="`${item.name}`" :value="item.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -896,7 +896,7 @@ export default {
                         this.$message({
                             message: '用于测试或评估大模型的数据集被删除，请重新配置测试或重新添加API key',
                             type: 'warning',
-                            offset: 100 
+                            offset: 100
                         });
                         // this.initialEdit(thisTest)
                         this.isTesting = false
@@ -907,7 +907,7 @@ export default {
                     this.$message({
                         message: '用于测试或评估大模型的API key被删除，请重新配置测试或重新添加API key',
                         type: 'warning',
-                        offset: 100 
+                        offset: 100
                     });
                     this.isTesting = false
                     // this.initialEdit(thisTest)
@@ -1008,7 +1008,10 @@ export default {
                                 this.isTesting = false
                                 this.$router.push("/keyConfig")
                                 reject(false)
-                            })
+                            }).catch(() => {
+                                this.isTesting = false
+                                reject(false)
+                            });
                         }
                         else if (values[0] !== null && values[1] === null) {
                             this.$confirm(`还没有编辑评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
@@ -1019,7 +1022,10 @@ export default {
                                 this.isTesting = false
                                 this.$router.push("/keyConfig")
                                 reject(false)
-                            })
+                            }).catch(() => {
+                                this.isTesting = false
+                                reject(false)
+                            });
                         }
                         else {
                             this.$confirm(`还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK2.name + ' ' : ''}和评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
@@ -1030,7 +1036,10 @@ export default {
                                 this.isTesting = false
                                 this.$router.push("/keyConfig")
                                 reject(false)
-                            })
+                            }).catch(() => {
+                                this.isTesting = false
+                                reject(false)
+                            });
                         }
                     }
                 })
@@ -1461,7 +1470,7 @@ export default {
                             const url = window.URL.createObjectURL(new Blob([blob]));
                             const a = document.createElement('a');
                             a.href = url;
-                            a.download = filename; 
+                            a.download = filename;
                             document.body.appendChild(a);
                             a.click();
                             window.URL.revokeObjectURL(url);

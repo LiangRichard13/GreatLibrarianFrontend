@@ -342,7 +342,7 @@ export default {
                     message: thisProject.id + '-' + thisProject.name + '测试配置文件删除出错',
                     type: 'error'
                   });
-                  throw new Error('删除配置文件失败');
+                  return Promise.resolve(); //删除文件失败也要删除对应的数据库数据
                 }
               });
             } else {

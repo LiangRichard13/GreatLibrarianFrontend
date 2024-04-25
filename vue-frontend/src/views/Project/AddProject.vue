@@ -12,14 +12,14 @@
 
         <el-form-item label="API Key">
           <el-select v-model="newProject.apiKey" placeholder="请选择" multiple>
-            <el-option v-for="item in apiKeys" :key="item.id" :label="`${item.id} - ${item.name}`" :value="item.id">
+            <el-option v-for="item in apiKeys" :key="item.id" :label="`${item.name}`" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
 
         <el-form-item label="数据集">
           <el-select v-model="newProject.dataset" placeholder="请选择" multiple>
-            <el-option v-for="item in dataSet" :key="item.id" :label="`${item.id} - ${item.name}`" :value="item.id">
+            <el-option v-for="item in dataSet" :key="item.id" :label="`${item.name}`" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>

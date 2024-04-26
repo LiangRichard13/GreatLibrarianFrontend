@@ -120,16 +120,17 @@
           </el-table-column>
           <el-table-column label="领域" prop="field" width="200px" align="center">
           </el-table-column>
-          <el-table-column label="LLMEval得分" prop="llm_score" width="120%" align="center">
+          <!-- <el-table-column label="LLMEval得分" prop="llm_score" width="120%" align="center">
             <template slot-scope="scope">
               <span v-if="scope.row.llm_score.length">{{ scope.row.llm_score }}</span>
               <el-tag type="info" v-else>无</el-tag>
             </template>
-          </el-table-column>
-          <el-table-column label="最终得分" prop="fin_score" width="100%" align="center">
+          </el-table-column> -->
+          <el-table-column label="幻觉最终判断" prop="fin_score" width="120%" align="center">
             <template slot-scope="scope">
-              <span v-if="scope.row.fin_score">{{ scope.row.fin_score }}</span>
-              <el-tag type="warning" v-else>暂无</el-tag>
+              <el-tag  effect="light" v-if="scope.row.fin_score==='1.0'" type="success">无幻觉</el-tag>
+              <el-tag  effect="light" v-else-if="scope.row.fin_score==='0.0'" type="danger">有幻觉</el-tag>
+              <el-tag  effect="light" v-else type="info">缺失</el-tag>
             </template>
           </el-table-column>
         </el-table>

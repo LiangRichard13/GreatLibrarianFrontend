@@ -25,7 +25,7 @@
                     </el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
-                                <el-button plain size="mini" icon="el-icon-document-checked" type="warning" @click.stop="handleReviewExpirement(scope.row)">
+                                <el-button plain size="mini" icon="el-icon-document-checked" type="warning" @click.stop="handleReviewExperiment(scope.row)">
                                     开始审核
                                 </el-button>
                         </template>
@@ -72,7 +72,7 @@ export default {
             if (localStorage.getItem("uid") !== null) {
                 const id = localStorage.getItem("uid")
                 getExperimentsByUserId(id).then(res => {
-                    this.experimentList = res.data;
+                    this.experimentList = res.data.filter(exp=>exp.status===2);
                     Promise.all(this.experimentList.map(exp => {
                     // 对每个exp调用getQAByExpirenceId函数
                     return getQAByExpirenceId(exp.id, localStorage.getItem('uid')).then(res => {
@@ -100,7 +100,7 @@ export default {
             //     }
             // });
         },
-        handleReviewExpirement(experiment) {
+        handleReviewExperiment(experiment) {
             // this.$router.push({ path: `/review`, query: experiment });
             localStorage.setItem('thisExperiment', JSON.stringify(experiment));
             this.$router.push("/review")

@@ -60,10 +60,11 @@ export function getReportNum(tPid){
     })
 }
 
-export function getInteraction(id) {
+export function getInteraction(id,type) {
     return service({
         url: '/testProjectOperation',
         method: 'delete',
-        params: {tPid:id}
+        params: {tPid:id},
+        data:{type:type}
     })
 }

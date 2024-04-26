@@ -9,6 +9,9 @@ module.exports = defineConfig({
           '^/api': '' // 重写路径，去掉/api前缀
         }
       }
+    },
+    client:{
+    overlay:false
     }
   },
   transpileDependencies: true,

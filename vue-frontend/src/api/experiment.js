@@ -18,18 +18,18 @@ export function deleteById(data) {
     })
 }
 
-export function addExpirement(data) {
+export function addExperiment(data) {
     return service({
         url: '/testProject',
         method: 'post',
-        data: data,
-        headers: {
-            'Content-Type': 'multipart/form-data'
-          },
+        data: data
+        // headers: {
+        //     'Content-Type': 'multipart/form-data'
+        //   },
     })
 }
 
-export function editExpirement(data) {
+export function editExperiment(data) {
     return service({
         url: '/testProject',
         method: 'put',

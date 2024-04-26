@@ -22,6 +22,12 @@
                 <el-table :data="expList" style="width: 100%" v-loading="loading">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
+                    <el-table-column label="测试类型">
+                        <template slot-scope="scope">
+                            <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="被测模型">
                         <template slot-scope="scope">
                             <div v-if="scope.row.AK1">
@@ -121,6 +127,12 @@
                 <el-table :data="proceeding" style="width: 100%" v-loading="loading">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
+                    <el-table-column label="测试类型">
+                        <template slot-scope="scope">
+                            <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="被测模型">
                         <template slot-scope="scope">
                             <div v-if="scope.row.AK1">
@@ -153,7 +165,9 @@
                     </el-table-column>
                     <el-table-column label="进度" prop="progress">
                         <template slot-scope="scope">
-                            <el-progress :percentage="scope.row.progress"></el-progress>
+                            <div>
+                            <el-progress  :percentage="scope.row.progress"  :text-inside="true" :color="colors"  :stroke-width="18"></el-progress>
+                            </div>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -164,6 +178,12 @@
                 <el-table :data="reviewList" style="width: 100%" v-loading="loading">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
+                    <el-table-column label="测试类型">
+                        <template slot-scope="scope">
+                            <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="被测模型">
                         <template slot-scope="scope">
                             <div v-if="scope.row.AK1">
@@ -220,13 +240,13 @@
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
                                         <el-button plain size="mini" icon="el-icon-s-promotion" type="primary"
-                                            @click.stop="handleAssignExpirement(scope.row)">
+                                            @click.stop="handleAssignExperiment(scope.row)">
                                             分发协作
                                         </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-button plain size="mini" icon="el-icon-document-checked" type="warning"
-                                            @click.stop="handleReviewExpirement(scope.row)">
+                                            @click.stop="handleReviewExperiment(scope.row)">
                                             审核结果
                                         </el-button>
                                     </el-dropdown-item>
@@ -250,7 +270,7 @@
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
-                                            icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
+                                            icon-color="red" @confirm="handleRemoveExperiment(scope.$index, scope.row)"
                                             title="确定要删除此测试吗？">
                                             <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                             </el-button>
@@ -276,9 +296,15 @@
                 <el-table :data="doneList" style="width: 100%" v-loading="loading">
                     <!-- <el-table-column label="测试 ID" prop="id"></el-table-column> -->
                     <el-table-column label="名称" prop="name"></el-table-column>
+                    <el-table-column label="测试类型">
+                        <template slot-scope="scope">
+                            <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="被测模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK1.name">
+                            <div v-if="scope.row.AK1">
                                 {{ scope.row.AK1.name }}
                             </div>
                             <el-tag v-else type="danger">无</el-tag>
@@ -319,11 +345,12 @@
                     <el-table-column label="操作" width="350" align="center">
                         <template slot-scope="scope">
                             <el-button plain size="mini" icon="el-icon-download" type="success"
-                                style="margin-bottom: 10px;" @click.stop="handleDownload(scope.row)" :loading="isUpdate">
+                                style="margin-bottom: 10px;" @click.stop="handleDownload(scope.row)"
+                                :loading="isUpdate">
                                 下载报告
                             </el-button>
                             <!-- <el-popconfirm confirm-button-text="确定" cancel-button-text="不用了" icon="el-icon-info"
-                                icon-color="red" @confirm="handleRemoveExpirement(scope.$index, scope.row)"
+                                icon-color="red" @confirm="handleRemoveExperiment(scope.$index, scope.row)"
                                 title="确定要删除此测试吗？">
                                 <el-button plain size="mini" icon="el-icon-delete" type="danger" slot="reference">删除
                                 </el-button>
@@ -344,46 +371,52 @@
         <!-- 创建测试对话框 -->
         <el-dialog title="创建新测试" :visible.sync="showDialog" width="50%" @close="resetDialog">
             <div>
-                <el-form ref="form" :model="newExpirement" label-width="150px">
+                <el-form ref="form" :model="newExperiment" label-width="150px">
 
                     <el-form-item label="测试名称">
-                        <el-input v-model="newExpirement.name"></el-input>
+                        <el-input v-model="newExperiment.name"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="指定测试类型">
+                        <el-switch v-model="newExperiment.type" active-color="#13ce66" inactive-color="#409EFF"
+                            :active-value="2" :inactive-value="1" active-text="幻觉测试" inactive-text="基础能力测试">
+                        </el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="指定测试数据集">
+                        <el-select v-model="newExperiment.DS" placeholder="请选择">
+                            <el-option v-for="item in thisProject.dataSet" :key="item.id" :label="`${item.name}`"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
 
                     <el-form-item label="指定被测模型API Key">
-                        <el-select v-model="newExpirement.AK1" placeholder="请选择">
-                            <el-option v-for="item in thisProject.apiKey" :key="item.id"
-                                :label="`${item.id} - ${item.name}`" :value="item.id">
+                        <el-select v-model="newExperiment.AK1" placeholder="请选择">
+                            <el-option v-for="item in thisProject.apiKey" :key="item.id" :label="`${item.name}`"
+                                :value="item.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
 
                     <el-form-item label="指定评估模型API Key">
-                        <el-select v-model="newExpirement.AK2" placeholder="请选择">
-                            <el-option v-for="item in thisProject.apiKey" :key="item.id"
-                                :label="`${item.id} - ${item.name}`" :value="item.id">
+                        <el-select  v-if="newExperiment.type === 1" v-model="newExperiment.AK2" placeholder="请选择">
+                            <el-option v-for="item in thisProject.apiKey" :key="item.id" :label="`${item.name}`"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                        <el-select  v-else-if="newExperiment.type === 2" disabled v-model="newExperiment.AK2" placeholder="请选择">
+                            <el-option v-for="item in thisProject.apiKey" :key="item.id" :label="`${item.name}`"
+                                :value="item.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
-
-                    <el-form-item label="指定测试数据集">
-                        <el-select v-model="newExpirement.DS" placeholder="请选择">
-                            <el-option v-for="item in thisProject.dataSet" :key="item.id"
-                                :label="`${item.id} - ${item.name}`" :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-
-                    <!-- 进行测试配置文件的编辑 -->
-                    <!-- <el-form-item>
-                        <el-button plain type="primary" @click="showCodeEditorDialog = true">编辑测试配置文件</el-button>
-                    </el-form-item> -->
 
                 </el-form>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button plain @click="showDialog = false">取 消</el-button>
-                <el-button plain type="primary" @click="handleAddNewExpirement">确 定</el-button>
+                <el-button plain type="primary" @click="handleAddNewExperiment">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -397,6 +430,20 @@
                         <el-input v-model="editExperiment_name"></el-input>
                     </el-form-item>
 
+                    <el-form-item label="指定测试类型">
+                        <el-switch v-model="editExperiment_type" active-color="#13ce66" inactive-color="#409EFF"
+                            :active-value="2" :inactive-value="1" active-text="幻觉测试" inactive-text="基础能力测试">
+                        </el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="指定测试数据集">
+                        <el-select v-model="editExperiment_DS" placeholder="请选择">
+                            <el-option v-for="item in thisProject.dataSet" :key="item.id"
+                                :label="`${item.id} - ${item.name}`" :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+
                     <el-form-item label="指定被测模型API Key">
                         <el-select v-model="editExperiment_AK1" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
@@ -406,16 +453,13 @@
                     </el-form-item>
 
                     <el-form-item label="指定评估模型API Key">
-                        <el-select v-model="editExperiment_AK2" placeholder="请选择">
+                        <el-select v-if="editExperiment_type === 1" v-model="editExperiment_AK2" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
                             </el-option>
                         </el-select>
-                    </el-form-item>
-
-                    <el-form-item label="指定测试数据集">
-                        <el-select v-model="editExperiment_DS" placeholder="请选择">
-                            <el-option v-for="item in thisProject.dataSet" :key="item.id"
+                        <el-select v-else-if="editExperiment_type === 2" disabled v-model="editExperiment_AK2" placeholder="请选择">
+                            <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
                             </el-option>
                         </el-select>
@@ -493,7 +537,8 @@
                         <el-table :data="downLoadTable">
                             <el-table-column prop="index" label="版本" align="center">
                                 <template slot-scope="scope">
-                                    <span v-if="scope.row.index===downLoadTable.length&&currentExpStatus===3">Version-final</span>
+                                    <span
+                                        v-if="scope.row.index === downLoadTable.length && currentExpStatus === 3">Version-final</span>
                                     <span v-else>Version-{{ scope.row.index }}</span>
                                 </template>
                             </el-table-column>
@@ -518,7 +563,7 @@
 
 <script>
 import { getExperimentByProjectId } from '@/api/experiment'
-import { deleteById, addExpirement, editExpirement, deleteOperationFile, checkOperationFile, generateOperationFile } from '@/api/experiment'
+import { deleteById, addExperiment, editExperiment, deleteOperationFile, checkOperationFile, generateOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
 import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum, errorHandle } from '@/api/expOperation'
@@ -549,7 +594,8 @@ export default {
             editDialog: false,
             downloader: false,
             experimentList: [],
-            newExpirement: { name: '', AK1: '', AK2: '', DS: '' },
+            newExperiment: { name: '', AK1: null, AK2: null, DS: null, type: 1 },
+            // newExperiment: { name: '', AK1: '', AK2: '', DS: ''},
             expList: [], // 待测试列表数据
             proceeding: [],//正在测试列表
             reviewList: [], // 待审核列表数据
@@ -561,6 +607,7 @@ export default {
             editExperiment_AK1: null,
             editExperiment_AK2: null,
             editExperiment_DS: null,
+            editExperiment_type: 1,
             // pythonCode_1: '',
             // pythonCode_2: '',
             // pythonFile: null,
@@ -570,9 +617,16 @@ export default {
             selectFriendsId: [],
             currentExpName: '',
             currentExpId: '',
-            currentExpStatus:null,
+            currentExpStatus: null,
             thisRowCollaborators: [],
             reportCount: null,
+            colors: [
+          {color: '#f56c6c', percentage: 20},
+          {color: '#e6a23c', percentage: 40},
+          {color: '#5cb87a', percentage: 60},
+          {color: '#1989fa', percentage: 80},
+          {color: '#6f7ad3', percentage: 100}
+        ]
             // selectVersion: null,
             // LL1ClassName: '',
             // LL2ClassName: ''
@@ -582,15 +636,13 @@ export default {
         let storedProject = localStorage.getItem('thisProject');
         if (storedProject !== null) {
             this.thisProject = JSON.parse(storedProject);
-            if(localStorage.getItem('currentTab'))
-        {
-            this.currentTab=localStorage.getItem('currentTab')
-        }
-        else
-        {
-            this.currentTab='待测试'
-            localStorage.setItem('currentTab','待测试')
-        }
+            if (localStorage.getItem('currentTab')) {
+                this.currentTab = localStorage.getItem('currentTab')
+            }
+            else {
+                this.currentTab = '待测试'
+                localStorage.setItem('currentTab', '待测试')
+            }
         }
         else {
             // 处理没有数据的情况，可能是跳转到此页面或刷新页面
@@ -672,18 +724,27 @@ export default {
                 this.userFriends = res.data.filter(user => user.state === 1 || user.state === -1);
             })
         },
-        handleAddNewExpirement() {
-            if (this.newExpirement.name.trim()) {
-                if (this.newExpirement.AK1 !== '' && this.newExpirement.Ak2 !== '' && this.newExpirement.DS !== '') {
-                    // if (this.pythonFile !== null) {
-                    const formData = new FormData();
-                    // formData.append('configFile', this.pythonFile);
-                    formData.append('name', this.newExpirement.name);
-                    formData.append('AK1', this.newExpirement.AK1);
-                    formData.append('AK2', this.newExpirement.AK2);
-                    formData.append('DS', this.newExpirement.DS);
-                    formData.append('pid', this.thisProject.id)
-                    addExpirement(formData).then(res => {
+        handleAddNewExperiment() {
+            if(this.newExperiment.type===1){
+            if (this.newExperiment.name.trim()) {
+                if (this.newExperiment.AK1&& this.newExperiment.AK2&& this.newExperiment.DS) {
+                    // const formData = new FormData();
+                    // formData.append('name', this.newExperiment.name);
+                    // formData.append('AK1', this.newExperiment.AK1);
+                    // formData.append('AK2', this.newExperiment.AK2);
+                    // formData.append('DS', this.newExperiment.DS);
+                    // formData.append('pid', this.thisProject.id)
+                    // formData.append('type', this.newExperiment.type)
+                    const addData={
+                        name:this.newExperiment.name,
+                        AK1:this.newExperiment.AK1,
+                        AK2:this.newExperiment.AK2,
+                        DS:this.newExperiment.DS,
+                        pid:this.thisProject.id,
+                        type:this.newExperiment.type
+                    }
+
+                    addExperiment(addData).then(res => {
                         if (res.success) {
                             this.resetDialog
                             this.showDialog = false; // 关闭对话框
@@ -704,12 +765,51 @@ export default {
             }
             else {
                 this.$message({
-                    message: '创建新测试各字段不能为空',
+                    message: '新测试名字不能为空',
                     type: 'warning'
                 });
             }
+        }
+        else if(this.newExperiment.type===2)
+        {
+            if (this.newExperiment.name.trim()) {
+                if (this.newExperiment.AK1&&this.newExperiment.DS) {
+                    const addData={
+                        name:this.newExperiment.name,
+                        AK1:this.newExperiment.AK1,
+                        AK2:this.newExperiment.AK2,
+                        DS:this.newExperiment.DS,
+                        pid:this.thisProject.id,
+                        type:this.newExperiment.type
+                    }
+                    addExperiment(addData).then(res => {
+                        if (res.success) {
+                            this.resetDialog
+                            this.showDialog = false; // 关闭对话框
+                            this.$message({
+                                message: '添加成功',
+                                type: 'success'
+                            });
+                            this.setExpEmpty()
+                        }
+                    })
+                }
+                else {
+                    this.$message({
+                        message: '请选择apikey和数据集',
+                        type: 'warning'
+                    });
+                }
+            }
+            else {
+                this.$message({
+                    message: '新测试名字不能为空',
+                    type: 'warning'
+                });
+            }
+        }
         },
-        handleRemoveExpirement(index, row) {
+        handleRemoveExperiment(index, row) {
             const deleteData = { tPid: row.id }
             if (row.configURL !== null) {
                 deleteOperationFile(deleteData).then(res => {
@@ -730,7 +830,7 @@ export default {
                 })
             }
         },
-        handleStartExpirement(index, row) {
+        handleStartExperiment(index, row) {
             this.isTesting = true
             this.$message({
                 message: row.id + '-' + row.name + '正在准备执行,请稍等',
@@ -749,16 +849,16 @@ export default {
                         }
                     })
                 }
-        
+
             })
         },
-        handleAssignExpirement(experiment) {
+        handleAssignExperiment(experiment) {
             // 保存到 LocalStorage
             localStorage.setItem('thisExperiment', JSON.stringify(experiment));
             this.$router.push("/assignment")
 
         },
-        handleReviewExpirement(experiment) {
+        handleReviewExperiment(experiment) {
             localStorage.setItem('thisExperiment', JSON.stringify(experiment));
             this.$router.push("/review")
         },
@@ -766,10 +866,11 @@ export default {
             this.$router.go(-1); // 返回上一个页面
         },
         resetDialog() {
-            this.newExpirement.name = '',
-                this.newExpirement.AK1 = '',
-                this.newExpirement.AK2 = '',
-                this.newExpirement.DS = ''
+            this.newExperiment.name = '',
+                this.newExperiment.AK1 = null,
+                this.newExperiment.AK2 = null,
+                this.newExperiment.DS = null,
+                this.newExperiment.type = 1
             // this.resetCodeEditor()
         },
         resetEditDialog() {
@@ -782,7 +883,8 @@ export default {
                 this.editExperiment_id = '',
                 this.editExperiment_AK1 = null,
                 this.editExperiment_AK2 = null,
-                this.editExperiment_DS = null
+                this.editExperiment_DS = null,
+                this.editExperiment_type = 1
         },
         formatDate(dateStr) {
             const date = new Date(dateStr);
@@ -802,112 +904,155 @@ export default {
             return formattedDate
         },
         handleEditExperiment() {
-            if (this.editExperiment_name.trim()) {
-                if (this.editExperiment_AK1 !== null && this.editExperiment_AK2 !== null && this.editExperiment_DS !== null) {
-                    const data = {
-                        name: this.editExperiment_name,
-                        AK1: this.editExperiment_AK1,
-                        AK2: this.editExperiment_AK2,
-                        DS: this.editExperiment_DS,
-                        tPid: this.editExperiment_id
-                    }
-                    editExpirement(data).then(res => {
-                        if (res.success) {
-                            this.$message({
-                                message: '修改成功',
-                                type: 'success'
-                            });
-                            // const updateData = { tPid: this.editExperiment.tPid }
-                            // updateOperationFile(updateData).then(res => {
-                            //     if (res.success) {
-                            //         this.$message({
-                            //             message: '配置文件更新成功',
-                            //             type: 'success'
-                            //         });
-                            //     }
-                            // })
-                            // const configData = {
-                            //     id: this.editExperiment_id,
-                            //     AK1: { id: this.editExperiment_AK1 },
-                            //     AK2: { id: this.editExperiment_AK2 },
-                            // }
-                            // console.log('configData', configData)
-                            // this.generateConfig(configData)
-                            this.resetEditDialog()
-                            this.editDialog = false; // 关闭对话框
-                            this.setExpEmpty()
+            //基础能力测试配置修改
+            if (this.editExperiment_type === 1) {
+                if (this.editExperiment_name.trim()) {
+                    if (this.editExperiment_AK1 !== null && this.editExperiment_AK2 !== null && this.editExperiment_DS !== null) {
+                        const data = {
+                            name: this.editExperiment_name,
+                            AK1: this.editExperiment_AK1,
+                            AK2: this.editExperiment_AK2,
+                            DS: this.editExperiment_DS,
+                            tPid: this.editExperiment_id,
+                            type: this.editExperiment_type
                         }
-                    })
-                }
-                else {
-                    this.$message({
-                        message: '请选择apikey和数据集',
-                        type: 'warning'
-                    });
-                }
-            }
-            else {
-                this.$message({
-                    message: '测试各字段不能为空',
-                    type: 'warning'
-                });
-            }
-        },
-        initialEdit(row) {
-            // if (row.configURL != null) {
-            // this.editExperiment.name = row.name
-            // this.editExperiment.id = row.id
-            this.editExperiment_name = row.name
-            this.editExperiment_id = row.id
-            // console.log('当前进行修改的测试id', this.editExperiment.tPid)
-            this.editDialog = true
-            // }
-            // else {
-            //     this.$message({
-            //         message: '请先生成配置文件',
-            //         type: 'warning'
-            //     });
-            // }
-        },
-        handleGenerateConfig(thisTest) {
-            // if (thisTest.configURL) {
-            //     this.$message({
-            //         message: '已有配置文件，无需重复生成',
-            //         type: 'warning'
-            //     });
-            //     return
-            // }
-            return new Promise((resolve, reject) => {
-                if (thisTest.AK1 !== null && thisTest.AK2 !== null) {
-                    if (thisTest.dataSet !== null) {
-                        this.generateConfig(thisTest).then(result => {
-                            if (result)
-                                resolve(true);
-                            else
-                                reject(false)
+                        console.log('修改的数据', data)
+                        editExperiment(data).then(res => {
+                            if (res.success) {
+                                this.$message({
+                                    message: '修改成功',
+                                    type: 'success'
+                                });
+                                this.resetEditDialog()
+                                this.editDialog = false; // 关闭对话框
+                                this.setExpEmpty()
+                            }
                         })
-                        // if (this.generateConfig(thisTest))
-                        //     resolve(true);
-                        // else
-                        //     reject(false);
-                        //    this.setExpEmpty()
                     }
                     else {
                         this.$message({
-                            message: '用于测试或评估大模型的数据集被删除，请重新配置测试或重新添加API key',
+                            message: '请选择apikey和数据集',
                             type: 'warning'
                         });
-                        // this.initialEdit(thisTest)
-                        reject(false);
                     }
                 }
                 else {
                     this.$message({
-                        message: '用于测试或评估大模型的API key被删除，请重新配置测试或重新添加API key',
+                        message: '测试名不能为空',
                         type: 'warning'
                     });
-                    // this.initialEdit(thisTest)
-                    reject(false);
+                }
+            }
+            //幻觉测试配置修改
+            else if(this.editExperiment_type===2) 
+            {
+                if (this.editExperiment_name.trim()) {
+                    if (this.editExperiment_AK1 !== null&& this.editExperiment_DS !== null) {
+                        const data = {
+                            name: this.editExperiment_name,
+                            AK1: this.editExperiment_AK1,
+                            AK2: this.editExperiment_AK2,
+                            DS: this.editExperiment_DS,
+                            tPid: this.editExperiment_id,
+                            type: this.editExperiment_type
+                        }
+                        console.log('修改的数据', data)
+                        editExperiment(data).then(res => {
+                            if (res.success) {
+                                this.$message({
+                                    message: '修改成功',
+                                    type: 'success'
+                                });
+                                this.resetEditDialog()
+                                this.editDialog = false; // 关闭对话框
+                                this.setExpEmpty()
+                            }
+                        })
+                    }
+                    else {
+                        this.$message({
+                            message: '请选择apikey和数据集',
+                            type: 'warning'
+                        });
+                    }
+                }
+                else {
+                    this.$message({
+                        message: '测试名不能为空',
+                        type: 'warning'
+                    });
+                }
+            }
+        },
+        initialEdit(row) {
+            this.editExperiment_name = row.name
+            this.editExperiment_id = row.id
+            this.editExperiment_type = row.type
+            this.editDialog = true
+        },
+        handleGenerateConfig(thisTest) {
+            return new Promise((resolve, reject) => {
+                //基础能力测试执行前的检查
+                if (thisTest.type === 1) {
+                    if (thisTest.AK1 !== null && thisTest.AK2 !== null) {
+                        if (thisTest.dataSet !== null) {
+                            this.generateConfig(thisTest).then(result => {
+                                if (result)
+                                    resolve(true);
+                                else
+                                    reject(false)
+                            })
+                        }
+                        else {
+                            this.$message({
+                                message: '用于测试的数据集被删除，请重新配置测试或重新添加数据集',
+                                type: 'warning',
+                                offset: 100
+                            });
+                            this.isTesting = false
+                            reject(false);
+                        }
+                    }
+                    else {
+                        this.$message({
+                            message: '用于测试或评估的大模型API key被删除，请重新配置测试或重新添加API key',
+                            type: 'warning',
+                            offset: 100
+                        });
+                        this.isTesting = false
+                        reject(false);
+                    }
+                }
+                //幻觉测试执行前的检查
+                else if (thisTest.type === 2) {
+                    if (thisTest.AK1 !== null) {
+                        if (thisTest.dataSet !== null) {
+                            this.generateConfig_hallucinationTest(thisTest).then(result => {
+                                if (result)
+                                    resolve(true);
+                                else
+                                    reject(false)
+                            })
+                        }
+                        else {
+                            this.$message({
+                                message: '用于测试的数据集被删除，请重新配置测试或重新添加数据集',
+                                type: 'warning',
+                                offset: 100
+                            });
+                            this.isTesting = false
+                            reject(false);
+                        }
+                    }
+                    else {
+                        this.$message({
+                            message: '用于测试的大模型API key被删除，请重新配置测试或重新添加API key',
+                            type: 'warning',
+                            offset: 100
+                        });
+                        this.isTesting = false
+                        reject(false);
+                    }
                 }
             });
 
@@ -927,7 +1072,7 @@ export default {
                                         message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
                                         type: 'error'
                                     });
-                                    this.isTesting=false
+                                    this.isTesting = false
                                     reject(false)
                                 }
                                 else {
@@ -938,14 +1083,14 @@ export default {
                                                     message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
                                                     type: 'error'
                                                 });
-                                                this.isTesting=false
+                                                this.isTesting = false
                                                 reject(false)
                                             }
                                             else {
-                                                let checkData = { tPid: thisTest.id, code: values[0], className: 'new_llm1' }
+                                                let checkData = { tPid: thisTest.id, code: values[0], className: 'new_llm1', type: 1 }
                                                 checkOperationFile(checkData).then(res => {
                                                     if (res.success) {
-                                                        checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2' }
+                                                        checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2', type: 1 }
                                                         checkOperationFile(checkData).then(res => {
                                                             if (res.success) {
                                                                 generateOperationFile(thisTest.id).then(res => {
@@ -955,7 +1100,7 @@ export default {
                                                                             type: 'success'
                                                                         });
                                                                         // this.setExpEmpty()
-                                                                        this.isTesting=false
+                                                                        this.isTesting = false
                                                                         resolve(true)
                                                                     }
                                                                     else {
@@ -963,7 +1108,7 @@ export default {
                                                                             message: '配置文件生成错误',
                                                                             type: 'error'
                                                                         });
-                                                                        this.isTesting=false
+                                                                        this.isTesting = false
                                                                         reject(false)
                                                                     }
                                                                 })
@@ -973,7 +1118,7 @@ export default {
                                                                     message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
                                                                     type: 'error'
                                                                 });
-                                                                this.isTesting=false
+                                                                this.isTesting = false
                                                                 reject(false)
                                                             }
                                                         })
@@ -983,7 +1128,7 @@ export default {
                                                             message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
                                                             type: 'error'
                                                         });
-                                                        this.isTesting=false
+                                                        this.isTesting = false
                                                         reject(false)
                                                     }
                                                 })
@@ -1001,10 +1146,13 @@ export default {
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
-                                this.isTesting=false
+                                this.isTesting = false
                                 this.$router.push("/keyConfig")
                                 reject(false)
-                            })
+                            }).catch(() => {
+                                this.isTesting = false
+                                reject(false)
+                            });
                         }
                         else if (values[0] !== null && values[1] === null) {
                             this.$confirm(`还没有编辑评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
@@ -1012,10 +1160,13 @@ export default {
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
-                                this.isTesting=false
+                                this.isTesting = false
                                 this.$router.push("/keyConfig")
                                 reject(false)
-                            })
+                            }).catch(() => {
+                                this.isTesting = false
+                                reject(false)
+                            });
                         }
                         else {
                             this.$confirm(`还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK2.name + ' ' : ''}和评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
@@ -1023,13 +1174,86 @@ export default {
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
-                                this.isTesting=false
+                                this.isTesting = false
                                 this.$router.push("/keyConfig")
                                 reject(false)
-                            })
+                            }).catch(() => {
+                                this.isTesting = false
+                                reject(false)
+                            });
                         }
                     }
                 })
+            })
+        },
+        generateConfig_hallucinationTest(thisTest) {
+            return new Promise((resolve, reject) => {
+                var AK1_callFunction = this.getCode(thisTest.AK1.id);
+                AK1_callFunction.then(value => {
+                    if (value !== null) {
+                        testConnectivity(thisTest.AK1.value, value).then(res => {
+                            if (res.success) {
+                                if (!res.result) {
+                                    this.$message({
+                                        message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
+                                        type: 'error'
+                                    });
+                                    this.isTesting = false
+                                    reject(false)
+                                }
+                                else {
+                                    let checkData = { tPid: thisTest.id, code: value, className: 'new_llm1', type: 2 }
+                                    checkOperationFile(checkData).then(res => {
+                                        if (res.success) {
+                                            generateOperationFile(thisTest.id).then(res => {
+                                                if (res.success) {
+                                                    this.$message({
+                                                        message: '已生成新配置文件',
+                                                        type: 'success'
+                                                    });
+                                                    this.isTesting = false
+                                                    resolve(true)
+                                                }
+                                                else {
+                                                    this.$message({
+                                                        message: '配置文件生成错误',
+                                                        type: 'error'
+                                                    });
+                                                    this.isTesting = false
+                                                    reject(false)
+                                                }
+                                            })
+                                        }
+                                        else {
+                                            this.$message({
+                                                message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
+                                                type: 'error'
+                                            });
+                                            this.isTesting = false
+                                            reject(false)
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    }
+                    else {
+                        this.$confirm(`还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            this.isTesting = false
+                            this.$router.push("/keyConfig")
+                            reject(false)
+                        }).catch(() => {
+                            this.isTesting = false
+                            reject(false)
+                        });
+                    }
+                })
+
+
             })
         },
         getCode(id) {
@@ -1037,148 +1261,6 @@ export default {
                 return res.code
             })
         },
-        // resetCodeEditor() {
-        //     this.pythonCode_1 = '',
-        //         this.pythonCode_2 = '',
-        //         // this.pythonFile = null,
-        //         // this.LL1ClassName='',
-        //         // this.LL2ClassName='',
-        //         this.showCodeEditorDialog = false
-        // },
-        // initPythonEditor_1(template) {
-        //     if (document.getElementById('python-editor_1')) {
-        //         // 初始化 Ace Editor1
-        //         this.editor_1 = ace.edit("python-editor_1");
-        //         this.editor_1.setTheme("ace/theme/chrome"); // 使用亮色主题
-        //         this.editor_1.session.setMode("ace/mode/python");
-        //         this.editor_1.setFontSize(18); // 设置字体大小为18px
-
-        //         if (localStorage.getItem(this.currentExpId + '_1') === null)
-        //             this.editor_1.setValue(template, 1);
-        //         else
-        //             this.editor_1.setValue(localStorage.getItem(this.currentExpId + '_1'), 1);
-
-        //         this.pythonCode_1 = this.editor_1.getValue();
-        //         // 监听代码改变事件
-        //         this.editor_1.session.on('change', () => {
-
-        //             this.pythonCode_1 = this.editor_1.getValue();
-        //         });
-        //     } else {
-        //         console.log('The #python-editor element does not exist.')
-        //     }
-        // },
-        // initPythonEditor_2(template) {
-        //     if (document.getElementById('python-editor_2')) {
-        //         // 初始化 Ace Editor2
-        //         this.editor_2 = ace.edit("python-editor_2");
-        //         this.editor_2.setTheme("ace/theme/chrome"); // 使用亮色主题
-        //         this.editor_2.session.setMode("ace/mode/python");
-        //         this.editor_2.setFontSize(18); // 设置字体大小为18px
-        //         if (localStorage.getItem(this.currentExpId + '_2') === null)
-        //             this.editor_2.setValue(template, 1);
-        //         else
-        //             this.editor_2.setValue(localStorage.getItem(this.currentExpId + '_2'), 1);
-
-        //         this.pythonCode_2 = this.editor_2.getValue()
-
-        //         // 监听代码改变事件
-        //         this.editor_2.session.on('change', () => {
-        //             this.pythonCode_2 = this.editor_2.getValue();
-        //         });
-        //     }
-        //     else {
-        //         console.log('The #python-editor element does not exist.')
-        //     }
-        // },
-        // savePythonFile() {
-        //     // if (this.LL1ClassName !== '' && this.LL2ClassName !== '') {
-        //     console.log('LLM1配置', this.pythonCode_1)
-        //     console.log('LLM2配置', this.pythonCode_2)
-        //     if (this.pythonCode_1 === '' || this.pythonCode_2 === '') {
-        //         this.$message({
-        //             message: '不能为空！',
-        //             type: 'warning'
-        //         });
-        //         return
-        //     }
-
-        //     let checkData = { tPid: this.currentExpId, code: this.pythonCode_1, className: 'new_llm1' }
-        //     checkOperationFile(checkData).then(res => {
-        //         if (res.success) {
-        //             let checkData = { tPid: this.currentExpId, code: this.pythonCode_2, className: 'new_llm2' }
-        //             checkOperationFile(checkData).then(res => {
-        //                 if (res.success) {
-        //                     // 使用模板字符串和换行符`\n`来确保两段代码之间有一个换行
-        //                     // const combinedCode = `${this.pythonCode_1}\n${this.pythonCode_2}`;
-        //                     // const fileBlob = new Blob([combinedCode], { type: 'text/plain' });
-        //                     // this.pythonFile = new File([fileBlob], "script.py");
-
-        //                     addOperationFile(this.currentExpId).then(res => {
-        //                         if (res.success) {
-        //                             localStorage.setItem(this.currentExpId + '_1', this.pythonCode_1)
-        //                             localStorage.setItem(this.currentExpId + '_2', this.pythonCode_2)
-        //                             this.$message({
-        //                                 message: '编辑成功',
-        //                                 type: 'success'
-        //                             });
-        //                             this.setExpEmpty()
-        //                             this.resetCodeEditor()
-        //                         }
-        //                     })
-        //                 }
-        //                 else {
-        //                     this.$message({
-        //                         message: '评估模型调用函数编译失败,请检查语法错误',
-        //                         type: 'error'
-        //                     })
-        //                 }
-        //             })
-        //         }
-        //         else {
-        //             this.$message({
-        //                 message: '被测模型调用函数编译失败,请检查语法错误',
-        //                 type: 'error'
-        //             })
-
-        //         }
-        //     })
-        // }
-        // else {
-        //     this.$message({
-        //         message: '类名不可为空！',
-        //         type: 'warning'
-        //     })
-        // }
-
-        // loadTemplate() {
-        //     fetch('/codeTemplate_L1.txt')
-        //         .then(response => response.text())
-        //         .then(data => {
-        //             this.initPythonEditor_1(data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error loading the template:', error)
-        //             this.$message({
-        //                 message: '加载被测模型调用函数模板文件出错',
-        //                 type: 'error'
-        //             });
-        //         }
-        //         );
-        //     fetch('/codeTemplate_L2.txt')
-        //         .then(response => response.text())
-        //         .then(data => {
-        //             this.initPythonEditor_2(data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error loading the template:', error)
-        //             this.$message({
-        //                 message: '加载评估模型调用函数模板文件出错',
-        //                 type: 'error'
-        //             });
-        //         }
-        //         );
-        // },
         handleAddFriendsToExp(id, name, collaborators) {
             this.currentExpId = id,
                 this.currentExpName = name
@@ -1245,7 +1327,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.handleRemoveExpirement(index, row)
+                this.handleRemoveExperiment(index, row)
             }).catch(() => {
                 this.$message({
                     type: 'info',
@@ -1254,13 +1336,12 @@ export default {
             });
         },
         confirmStart(index, row) {
-            // if (row.configURL !== null) {
             this.$confirm('确定执行该测试吗？一旦执行将直至结束', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.handleStartExpirement(index, row)
+                this.handleStartExperiment(index, row)
             }).catch(() => {
                 this.$message({
                     type: 'info',
@@ -1268,17 +1349,6 @@ export default {
                 });
             });
         },
-        // else {
-        //     this.$message({
-        //         message: '请先生成配置文件！',
-        //         type: 'warning'
-        //     })
-        // }
-        // handleEditConfigFile(row) {
-        //     this.currentExpId = row.id
-        //     this.currentExpName = row.name
-        //     this.showCodeEditorDialog = true
-        // },
         proceedingExp() {
             this.interval = setInterval(() => {
                 // 如果 this.proceeding 为空，则停止轮询
@@ -1329,9 +1399,9 @@ export default {
                             if (Number(localStorage.getItem(experiment.id + 'errorTimes')) >= 5) {
                                 errorHandle(experiment.id).then(res => {
                                     if (res.success) {
-                                        this.$message({
-                                            type: 'error',
-                                            message: experiment.id + '-' + experiment.name + '获取进度失败，请检查测试配置再重新开始测试'
+                                        this.$notify.error({
+                                        title: '错误',
+                                        message: experiment.id + '-' + experiment.name + '获取进度失败，请检查测试配置再重新开始测试'
                                         });
                                         clearInterval(this.interval);
                                         this.setExpEmpty()
@@ -1374,7 +1444,7 @@ export default {
         // },
         handleClick(tab, event) {
             console.log(tab, event);
-            localStorage.setItem('currentTab',this.currentTab)
+            localStorage.setItem('currentTab', this.currentTab)
             // if (this.currentTab === '正在测试') {
             //     if (this.interval) {
             //         clearInterval(this.interval)
@@ -1383,9 +1453,6 @@ export default {
             // }
         },
         afterDeleteExp(row, index) {
-            // localStorage.removeItem(row.id + '_1')
-            // localStorage.removeItem(row.id + '_2')
-            // localStorage.removeItem(row.id + 'report')
             this.$message({
                 message: '删除成功',
                 type: 'success',
@@ -1426,11 +1493,10 @@ export default {
             })
             this.currentExpId = row.id
             this.currentExpName = row.name
-            this.currentExpStatus=row.status
+            this.currentExpStatus = row.status
             this.downloader = true
         },
         downloadClose() {
-            // this.selectVersion = null,
             this.downloader = false
         },
         confirmDownload(selectVersion) {
@@ -1440,24 +1506,29 @@ export default {
                         type: 'success',
                         message: this.currentExpId + '-' + this.currentExpName + '正在下载该测试的测试报告'
                     });
-                    let downloadUrl = res.url
+                    //处理下载链接
+                    let downloadUrl = res.url;
                     downloadUrl = downloadUrl.replace(/\\/g, '/');
                     downloadUrl = downloadUrl.replace(/App/g, '');
                     downloadUrl = config.API_URL + downloadUrl;
-                    const fileName = '测试报告';
+                    console.log('下载链接', downloadUrl)
 
-                    // 创建一个隐藏的<a>标签，设置属性并模拟点击
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = downloadUrl;
-                    a.download = fileName;
-                    document.body.appendChild(a);
-                    a.click();
-                    console.log('版本:', res.version)
+                    //获取到文件名
+                    const urlParts = downloadUrl.split('/');
+                    const filename = urlParts[urlParts.length - 1];
 
-                    // 清理：移除<a>标签
-                    document.body.removeChild(a);
-                    this.downloadClose()
+                    fetch(downloadUrl)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const url = window.URL.createObjectURL(new Blob([blob]));
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                            document.body.removeChild(a);
+                        });
                 }
             })
         },

@@ -30,11 +30,15 @@ service.interceptors.response.use(
         const res = response.data;
         if (!res.success)
             {
+                if(res.progressFail||res.tokenExpired)
+                {
+                    return res
+                }
                   Notification.error({
-                      title: '出错了！ ',
+                      title: '错误提示',
                       message: res.message
                   });
-              }
+            }
 
         return res
     },

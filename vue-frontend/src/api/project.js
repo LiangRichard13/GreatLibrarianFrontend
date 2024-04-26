@@ -92,9 +92,9 @@ export function deleteDataSetByPid(data) {
 //     })
 // }
 
-// export function getProjectByExpirementId(id) {
+// export function getProjectByExperimentId(id) {
 //     return service({
-//         url: '/project/getProjectByExpirementId',
+//         url: '/project/getProjectByExperimentId',
 //         method: 'get',
 //         params: {
 //             id: id

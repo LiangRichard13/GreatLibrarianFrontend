@@ -40,7 +40,7 @@
         </el-form-item>
       </el-form>
       <div style="text-align: center;">
-        <img style="padding-left:100px;width: 150px; height: 150px;margin-bottom: 10px;" alt="" :src="user.iconUrl">
+        <img style="padding-left:100px;width: 150px; height: 150px;margin-bottom: 10px;" alt="" :src="user.iconUrl" @error="handleImageError">
         <br>
         <el-upload class="upload-demo" :before-upload="beforeUpload" multiple :limit="1" accept=".png,.jpg">
           <el-button plain size="small" type="primary" style="margin-left:50px">
@@ -230,6 +230,9 @@ export default {
     this.password = '',
       this.checkPassword = ''
   },
+  handleImageError(event){
+      event.target.src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
+    }
 },
 }
 </script>

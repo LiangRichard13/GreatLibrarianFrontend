@@ -14,7 +14,8 @@
                 <el-tab-pane label="待测试" name="待测试"></el-tab-pane>
                 <el-tab-pane label="正在测试" name="正在测试"></el-tab-pane>
                 <el-tab-pane label="待审核" name="待审核"></el-tab-pane>
-                <el-tab-pane label="已完成" name="已完成"></el-tab-pane>
+                <el-tab-pane label="已完成" name="已完成" v-if="!isUpdate"></el-tab-pane>
+                <el-tab-pane label="已完成" name="已完成" v-else disabled></el-tab-pane>
             </el-tabs>
 
             <div class="section" v-if="currentTab === '待测试'">
@@ -41,7 +42,8 @@
                             <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
-                            <el-tag v-else type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===1" type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===2" type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -146,7 +148,8 @@
                             <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
-                            <el-tag v-else type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===1" type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===2" type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -197,7 +200,8 @@
                             <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
-                            <el-tag v-else type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===1" type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===2" type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -315,7 +319,8 @@
                             <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
-                            <el-tag v-else type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===1" type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===2" type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -580,12 +585,13 @@ import config from "@/services/conf"
 // import { formToJSON } from 'axios';
 
 export default {
+    inject: ['isUpdate'],
     name: "ExperimentList",
     data() {
         return {
             isTesting: false,
             loading: true,
-            isUpdate: false,
+            // isUpdate: false,
             downLoadTable: [],
             currentTab: '', // 默认选中的选项卡
             friendsToExp: false,

@@ -3,6 +3,13 @@
 </template>
 
 <script>
+export default {
+  provide() {
+    return {
+      isUpdate:false
+    }
+  }
+}
 //解决error：ResizeObserver loop completed with undelivered notifications
 const debounce = (fn, delay) => {
     let timer

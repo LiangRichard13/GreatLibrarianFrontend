@@ -19,6 +19,7 @@
           <el-table-column label="打分" prop="score" width="400%">
             <template slot-scope="scope">
               <!-- <el-rate v-model="scope.row.score" :colors="colors"></el-rate> -->
+              <!-- <el-slider v-model="scope.row.score" max=1 step=0.01 input-size="mini" show-input></el-slider> -->
               <el-slider v-model="scope.row.score" input-size="mini" show-input></el-slider>
             </template>
           </el-table-column>
@@ -63,6 +64,7 @@
 import { getQAByExpirenceId, rateQA } from '@/api/qa'
 import { updateReport } from '@/api/expOperation'
 export default {
+  inject: ['isUpdate'],
   name: "ReviewQA",
   data() {
     return {
@@ -136,6 +138,7 @@ export default {
               type: 'success',
               offset:100
             });
+            this.isUpdate=true
             updateReport(this.thisExperiment.id).then(res => {
               if (res.success) {
                 this.$message({
@@ -143,6 +146,7 @@ export default {
                   message: this.thisExperiment.id + '-' + this.thisExperiment.name + '测试报告更新成功'
                 });
               }
+              this.isUpdate=false
             })
           }
           // this.load()

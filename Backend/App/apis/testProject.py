@@ -28,7 +28,7 @@ def getDS(DSid):
 class TestProjectCRUD(Resource):
     # 添加实验
     def post(self):
-        tP = TestProject(tP_id=creat_md5_id()[:9], tP_name=request.form['name'], tP_time=datetime.now(),
+        tP = TestProject(tP_id=creat_md5_id()[:9], tP_name=request.json['name'], tP_time=datetime.now(),
                          Pid=request.json['pid'], AK1=request.json['AK1'], AK2=request.json['AK2'],
                          DS=request.json['DS'], tP_type=request.json['type'])
         try:

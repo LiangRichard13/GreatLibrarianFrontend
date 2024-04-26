@@ -125,13 +125,13 @@ class Login(Resource):
                 user = User.query.filter(User.user_id == decode(request.json['token'])[1])[0]
                 user.user_IP = request.remote_addr  # 获取本地ip地址
                 db.session.commit()
-                return jsonify({'success': True, 'loginExpired': True})
+                return jsonify({'success': True})
             except Exception as e:  # 数据库插入操作异常处理
                 db.session.rollback()  # 回滚
                 db.session.flush()  # 刷新，清空缓存
                 return jsonify({'success': False, 'message': str(e)})
         else:
-            return jsonify({'success': False})
+            return jsonify({'success': False, 'loginExpired': True})
 
     # 修改用户ip地址，用户登出
     def get(self):

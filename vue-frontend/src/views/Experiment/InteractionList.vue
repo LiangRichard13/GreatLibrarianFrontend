@@ -13,7 +13,7 @@
           style="width: 300px;margin-left:0px; margin-bottom: 20px;">
         </el-input>
 
-        <!-- 基础能力测试交互显示列表 -->
+        <!-- 基础能力测试交互记录列表 -->
         <el-table v-if="thisExperiment.type === 1" :data="pageList" style="width: 100%" stripe v-loading="loading"
           border>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
@@ -68,29 +68,9 @@
           </el-table-column>
         </el-table>
 
-        <!-- 幻觉测试交互显示列表 -->
+        <!-- 幻觉测试交互记录列表 -->
         <el-table v-else-if="thisExperiment.type === 2" :data="pageList" style="width: 100%" stripe v-loading="loading"
           border>
-          <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
-          <!-- <el-table-column label="详情" type="expand" width="150px">
-            <template slot-scope="scope">
-              <div>
-                <el-form label-position="left" inline class="demo-table-expand">
-                  <el-form-item label="时间:">
-                    <span>{{ scope.row.time }}</span>
-                  </el-form-item>
-                  <el-form-item label="LLMEval打分:">
-                    <span v-if="scope.row.llm_score.length">{{ scope.row.llm_score }}</span>
-                    <el-tag type="info" v-else>无</el-tag>
-                  </el-form-item>
-                  <el-form-item label="最终得分:">
-                    <span v-if="scope.row.fin_score">{{ scope.row.fin_score }}</span>
-                    <el-tag type="warning" v-else>暂无</el-tag>
-                  </el-form-item>
-                </el-form>
-              </div>
-            </template>
-          </el-table-column> -->
           <el-table-column label="时间" prop="time" width="200%">
           </el-table-column>
           <el-table-column label="问题">
@@ -134,6 +114,14 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <!-- 毒性测试的交互记录表 -->
+        <el-table v-else-if="thisExperiment.type === 3" :data="pageList" style="width: 100%" stripe v-loading="loading"
+          border>
+          <el-table-column label="时间" prop="time" width="200%">
+          </el-table-column>
+        </el-table>
+
 
       </div>
       <div class="pagination-container" style="margin-top: 20px;">

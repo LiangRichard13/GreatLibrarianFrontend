@@ -27,6 +27,7 @@
                         <template slot-scope="scope">
                             <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
                             <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 3">毒性测试</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="被测模型">
@@ -42,8 +43,8 @@
                             <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
-                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===1" type="danger">无</el-tag>
-                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===2" type="info">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && scope.row.type === 1" type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)" type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -133,6 +134,7 @@
                         <template slot-scope="scope">
                             <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
                             <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 3">毒性测试</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="被测模型">
@@ -148,8 +150,8 @@
                             <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
-                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===1" type="danger">无</el-tag>
-                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===2" type="info">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && scope.row.type === 1" type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)" type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -169,7 +171,8 @@
                     <el-table-column label="进度" prop="progress">
                         <template slot-scope="scope">
                             <div>
-                            <el-progress  :percentage="scope.row.progress"  :text-inside="true" :color="colors"  :stroke-width="18"></el-progress>
+                                <el-progress :percentage="scope.row.progress" :text-inside="true" :color="colors"
+                                    :stroke-width="18"></el-progress>
                             </div>
                         </template>
                     </el-table-column>
@@ -185,6 +188,7 @@
                         <template slot-scope="scope">
                             <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
                             <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 3">毒性测试</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="被测模型">
@@ -200,8 +204,8 @@
                             <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
-                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===1" type="danger">无</el-tag>
-                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===2" type="info">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && scope.row.type === 1" type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)" type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -304,6 +308,7 @@
                         <template slot-scope="scope">
                             <el-tag effect="plain" v-if="scope.row.type === 1">基础能力测试</el-tag>
                             <el-tag effect="plain" v-else-if="scope.row.type === 2">幻觉测试</el-tag>
+                            <el-tag effect="plain" v-else-if="scope.row.type === 3">毒性测试</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="被测模型">
@@ -319,8 +324,8 @@
                             <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
-                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===1" type="danger">无</el-tag>
-                            <el-tag v-else-if="!scope.row.AK2&&scope.row.type===2" type="info">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && scope.row.type === 1" type="danger">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)" type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -382,10 +387,18 @@
                         <el-input v-model="newExperiment.name"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="指定测试类型">
+                    <!-- <el-form-item label="指定测试类型">
                         <el-switch v-model="newExperiment.type" active-color="#13ce66" inactive-color="#409EFF"
                             :active-value="2" :inactive-value="1" active-text="幻觉测试" inactive-text="基础能力测试">
                         </el-switch>
+                    </el-form-item> -->
+
+                    <el-form-item label="指定测试类型">
+                    <el-radio-group v-model="newExperiment.type">
+                        <el-radio-button :label="1">基础能力测试</el-radio-button>
+                        <el-radio-button :label="2">幻觉测试</el-radio-button>
+                        <el-radio-button :label="3">毒性测试</el-radio-button>
+                    </el-radio-group>
                     </el-form-item>
 
                     <el-form-item label="指定测试数据集">
@@ -405,12 +418,13 @@
                     </el-form-item>
 
                     <el-form-item label="指定评估模型API Key">
-                        <el-select  v-if="newExperiment.type === 1" v-model="newExperiment.AK2" placeholder="请选择">
+                        <el-select v-if="newExperiment.type === 1" v-model="newExperiment.AK2" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id" :label="`${item.name}`"
                                 :value="item.id">
                             </el-option>
                         </el-select>
-                        <el-select  v-else-if="newExperiment.type === 2" disabled v-model="newExperiment.AK2" placeholder="请选择">
+                        <el-select v-else-if="newExperiment.type === 2 || newExperiment.type === 3" v-model="newExperiment.AK2"
+                            placeholder="请选择" disabled>
                             <el-option v-for="item in thisProject.apiKey" :key="item.id" :label="`${item.name}`"
                                 :value="item.id">
                             </el-option>
@@ -435,10 +449,17 @@
                         <el-input v-model="editExperiment_name"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="指定测试类型">
+                    <!-- <el-form-item label="指定测试类型">
                         <el-switch v-model="editExperiment_type" active-color="#13ce66" inactive-color="#409EFF"
                             :active-value="2" :inactive-value="1" active-text="幻觉测试" inactive-text="基础能力测试">
                         </el-switch>
+                    </el-form-item> -->
+                    <el-form-item label="指定测试类型">
+                    <el-radio-group v-model="editExperiment_type">
+                        <el-radio-button :label="1">基础能力测试</el-radio-button>
+                        <el-radio-button :label="2">幻觉测试</el-radio-button>
+                        <el-radio-button :label="3">毒性测试</el-radio-button>
+                    </el-radio-group>
                     </el-form-item>
 
                     <el-form-item label="指定测试数据集">
@@ -463,7 +484,8 @@
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
                             </el-option>
                         </el-select>
-                        <el-select v-else-if="editExperiment_type === 2" disabled v-model="editExperiment_AK2" placeholder="请选择">
+                        <el-select v-else-if="editExperiment_type === 2||editExperiment_type === 3" disabled v-model="editExperiment_AK2"
+                            placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
                             </el-option>
@@ -627,12 +649,12 @@ export default {
             thisRowCollaborators: [],
             reportCount: null,
             colors: [
-          {color: '#f56c6c', percentage: 20},
-          {color: '#e6a23c', percentage: 40},
-          {color: '#5cb87a', percentage: 60},
-          {color: '#1989fa', percentage: 80},
-          {color: '#6f7ad3', percentage: 100}
-        ]
+                { color: '#f56c6c', percentage: 20 },
+                { color: '#e6a23c', percentage: 40 },
+                { color: '#5cb87a', percentage: 60 },
+                { color: '#1989fa', percentage: 80 },
+                { color: '#6f7ad3', percentage: 100 }
+            ]
             // selectVersion: null,
             // LL1ClassName: '',
             // LL2ClassName: ''
@@ -731,89 +753,88 @@ export default {
             })
         },
         handleAddNewExperiment() {
-            if(this.newExperiment.type===1){
-            if (this.newExperiment.name.trim()) {
-                if (this.newExperiment.AK1&& this.newExperiment.AK2&& this.newExperiment.DS) {
-                    // const formData = new FormData();
-                    // formData.append('name', this.newExperiment.name);
-                    // formData.append('AK1', this.newExperiment.AK1);
-                    // formData.append('AK2', this.newExperiment.AK2);
-                    // formData.append('DS', this.newExperiment.DS);
-                    // formData.append('pid', this.thisProject.id)
-                    // formData.append('type', this.newExperiment.type)
-                    const addData={
-                        name:this.newExperiment.name,
-                        AK1:this.newExperiment.AK1,
-                        AK2:this.newExperiment.AK2,
-                        DS:this.newExperiment.DS,
-                        pid:this.thisProject.id,
-                        type:this.newExperiment.type
-                    }
+            if (this.newExperiment.type === 1) {
+                if (this.newExperiment.name.trim()) {
+                    if (this.newExperiment.AK1 && this.newExperiment.AK2 && this.newExperiment.DS) {
+                        // const formData = new FormData();
+                        // formData.append('name', this.newExperiment.name);
+                        // formData.append('AK1', this.newExperiment.AK1);
+                        // formData.append('AK2', this.newExperiment.AK2);
+                        // formData.append('DS', this.newExperiment.DS);
+                        // formData.append('pid', this.thisProject.id)
+                        // formData.append('type', this.newExperiment.type)
+                        const addData = {
+                            name: this.newExperiment.name,
+                            AK1: this.newExperiment.AK1,
+                            AK2: this.newExperiment.AK2,
+                            DS: this.newExperiment.DS,
+                            pid: this.thisProject.id,
+                            type: this.newExperiment.type
+                        }
 
-                    addExperiment(addData).then(res => {
-                        if (res.success) {
-                            this.resetDialog
-                            this.showDialog = false; // 关闭对话框
-                            this.$message({
-                                message: '添加成功',
-                                type: 'success'
-                            });
-                            this.setExpEmpty()
-                        }
-                    })
-                }
-                else {
-                    this.$message({
-                        message: '请选择apikey和数据集',
-                        type: 'warning'
-                    });
-                }
-            }
-            else {
-                this.$message({
-                    message: '新测试名字不能为空',
-                    type: 'warning'
-                });
-            }
-        }
-        else if(this.newExperiment.type===2)
-        {
-            if (this.newExperiment.name.trim()) {
-                if (this.newExperiment.AK1&&this.newExperiment.DS) {
-                    const addData={
-                        name:this.newExperiment.name,
-                        AK1:this.newExperiment.AK1,
-                        AK2:this.newExperiment.AK2,
-                        DS:this.newExperiment.DS,
-                        pid:this.thisProject.id,
-                        type:this.newExperiment.type
+                        addExperiment(addData).then(res => {
+                            if (res.success) {
+                                this.resetDialog
+                                this.showDialog = false; // 关闭对话框
+                                this.$message({
+                                    message: '添加成功',
+                                    type: 'success'
+                                });
+                                this.setExpEmpty()
+                            }
+                        })
                     }
-                    addExperiment(addData).then(res => {
-                        if (res.success) {
-                            this.resetDialog
-                            this.showDialog = false; // 关闭对话框
-                            this.$message({
-                                message: '添加成功',
-                                type: 'success'
-                            });
-                            this.setExpEmpty()
-                        }
-                    })
+                    else {
+                        this.$message({
+                            message: '请选择apikey和数据集',
+                            type: 'warning'
+                        });
+                    }
                 }
                 else {
                     this.$message({
-                        message: '请选择apikey和数据集',
+                        message: '新测试名字不能为空',
                         type: 'warning'
                     });
                 }
             }
-            else {
-                this.$message({
-                    message: '新测试名字不能为空',
-                    type: 'warning'
-                });
+            else if (this.newExperiment.type === 2 || this.newExperiment.type === 3) {
+                if (this.newExperiment.name.trim()) {
+                    if (this.newExperiment.AK1 && this.newExperiment.DS) {
+                        const addData = {
+                            name: this.newExperiment.name,
+                            AK1: this.newExperiment.AK1,
+                            AK2: this.newExperiment.AK2,
+                            DS: this.newExperiment.DS,
+                            pid: this.thisProject.id,
+                            type: this.newExperiment.type
+                        }
+                        addExperiment(addData).then(res => {
+                            if (res.success) {
+                                this.resetDialog
+                                this.showDialog = false; // 关闭对话框
+                                this.$message({
+                                    message: '添加成功',
+                                    type: 'success'
+                                });
+                                this.setExpEmpty()
+                            }
+                        })
+                    }
+                    else {
+                        this.$message({
+                            message: '请选择apikey和数据集',
+                            type: 'warning'
+                        });
+                    }
+                }
+                else {
+                    this.$message({
+                        message: '新测试名字不能为空',
+                        type: 'warning'
+                    });
+                }
             }
-        }
         },
         handleRemoveExperiment(index, row) {
             const deleteData = { tPid: row.id }
@@ -950,10 +971,9 @@ export default {
                 }
             }
             //幻觉测试配置修改
-            else if(this.editExperiment_type===2) 
-            {
+            else if (this.editExperiment_type === 2 || this.editExperiment_type === 3) {
                 if (this.editExperiment_name.trim()) {
-                    if (this.editExperiment_AK1 !== null&& this.editExperiment_DS !== null) {
+                    if (this.editExperiment_AK1 !== null && this.editExperiment_DS !== null) {
                         const data = {
                             name: this.editExperiment_name,
                             AK1: this.editExperiment_AK1,
@@ -1029,11 +1049,11 @@ export default {
                         reject(false);
                     }
                 }
-                //幻觉测试执行前的检查
-                else if (thisTest.type === 2) {
+                //幻觉测试和毒性测试执行前的检查
+                else if (thisTest.type === 2 || thisTest.type === 3) {
                     if (thisTest.AK1 !== null) {
                         if (thisTest.dataSet !== null) {
-                            this.generateConfig_hallucinationTest(thisTest).then(result => {
+                            this.generateConfig_hallucination_toxicity(thisTest).then(result => {
                                 if (result)
                                     resolve(true);
                                 else
@@ -1192,7 +1212,7 @@ export default {
                 })
             })
         },
-        generateConfig_hallucinationTest(thisTest) {
+        generateConfig_hallucination_toxicity(thisTest) {
             return new Promise((resolve, reject) => {
                 var AK1_callFunction = this.getCode(thisTest.AK1.id);
                 AK1_callFunction.then(value => {
@@ -1208,7 +1228,7 @@ export default {
                                     reject(false)
                                 }
                                 else {
-                                    let checkData = { tPid: thisTest.id, code: value, className: 'new_llm1', type: 2 }
+                                    let checkData = { tPid: thisTest.id, code: value, className: 'new_llm1', type: thisTest.type }
                                     checkOperationFile(checkData).then(res => {
                                         if (res.success) {
                                             generateOperationFile(thisTest.id).then(res => {
@@ -1406,8 +1426,8 @@ export default {
                                 errorHandle(experiment.id).then(res => {
                                     if (res.success) {
                                         this.$notify.error({
-                                        title: '错误',
-                                        message: experiment.id + '-' + experiment.name + '获取进度失败，请检查测试配置再重新开始测试'
+                                            title: '错误',
+                                            message: experiment.id + '-' + experiment.name + '获取进度失败，请检查测试配置再重新开始测试'
                                         });
                                         clearInterval(this.interval);
                                         this.setExpEmpty()

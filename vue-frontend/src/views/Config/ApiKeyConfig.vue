@@ -380,6 +380,11 @@ export default {
               type: 'success'
             });
             const specifiedDate = new Date();
+
+            if(localStorage.getItem(row.id+'_testConnectivity_error'))
+           {    
+          localStorage.removeItem(row.id+'_testConnectivity_error')
+           }
             localStorage.setItem(row.id+'_testConnectivity_normal',specifiedDate.toLocaleString())
           }
           else {
@@ -388,6 +393,10 @@ export default {
               type: 'warning'
             });
             const specifiedDate = new Date();
+            if(localStorage.getItem(row.id+'_testConnectivity_normal'))
+           {    
+          localStorage.removeItem(row.id+'_testConnectivity_normal')
+           }
             localStorage.setItem(row.id+'_testConnectivity_error',specifiedDate.toLocaleString())
           }
           this.connectivityTesting = false

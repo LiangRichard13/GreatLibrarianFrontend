@@ -95,6 +95,10 @@
                   <h4>第三次回答</h4>
                   <span>{{ scope.row.A[2] }}</span>
                 </el-form-item>
+                <!-- <el-form-item>
+                  <h4>评估模型prompt</h4>
+                  <span>{{ scope.row.prompt }}</span>
+                </el-form-item> -->
               </el-form>
             </template>
           </el-table-column>
@@ -126,10 +130,15 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="回答">
+          <el-table-column label="回答" type="expand" width="50%">
             <template slot-scope="scope">
-              <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}
-              </div>
+              <!-- <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}</div> -->
+              <el-form label-position="left" class="three-times-answer">
+                <el-form-item>
+                  <h4>回答</h4>
+                  <span>{{ scope.row.A}}</span>
+                </el-form-item>
+              </el-form>
             </template>
           </el-table-column>
           <el-table-column label="领域" prop="field" width="200px" align="center">

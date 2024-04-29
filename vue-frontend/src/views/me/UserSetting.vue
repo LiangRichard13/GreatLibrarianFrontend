@@ -30,13 +30,13 @@
           <div>{{ user.tel }}</div>
         </el-form-item>
 
-        <el-form-item style="padding: 0;" label="API_KEY">
+        <el-form-item style="padding: 0;" label="API key">
           <div v-for="(row, index) in apiKeys" :key="index" class="api-key-item"
             style="box-shadow: 0px 0px 10px rgba(0,0,0,0.1); padding: 10px; margin-bottom: 20px;">
           {{ row.name }}-----{{ row.value }}
           </div>
 
-          <el-button plain @click="goToKeyConfig" type="success">配置我的API_KEY</el-button>
+          <el-button plain @click="goToKeyConfig" type="success">配置我的API key</el-button>
         </el-form-item>
       </el-form>
       <div style="text-align: center;">

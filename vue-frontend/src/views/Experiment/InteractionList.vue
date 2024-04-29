@@ -13,7 +13,7 @@
           style="width: 300px;margin-left:0px; margin-bottom: 20px;">
         </el-input>
 
-        <!-- 基础能力测试交互显示列表 -->
+        <!-- 基础能力测试交互记录列表 -->
         <el-table v-if="thisExperiment.type === 1" :data="pageList" style="width: 100%" stripe v-loading="loading"
           border>
           <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
@@ -26,9 +26,9 @@
                   </el-form-item>
                   <el-form-item label="关键字:">
                     <div v-if="scope.row.keyword.length">
-                    <span v-for="(item,index) in scope.row.keyword" :key="index">
-                        {{item}}                 
-                    </span>
+                      <span v-for="(item, index) in scope.row.keyword" :key="index">
+                        {{ item }}
+                      </span>
                     </div>
                     <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
@@ -68,29 +68,9 @@
           </el-table-column>
         </el-table>
 
-        <!-- 幻觉测试交互显示列表 -->
+        <!-- 幻觉测试交互记录列表 -->
         <el-table v-else-if="thisExperiment.type === 2" :data="pageList" style="width: 100%" stripe v-loading="loading"
           border>
-          <!-- <el-table-column label="QA ID" prop="QAid"></el-table-column> -->
-          <!-- <el-table-column label="详情" type="expand" width="150px">
-            <template slot-scope="scope">
-              <div>
-                <el-form label-position="left" inline class="demo-table-expand">
-                  <el-form-item label="时间:">
-                    <span>{{ scope.row.time }}</span>
-                  </el-form-item>
-                  <el-form-item label="LLMEval打分:">
-                    <span v-if="scope.row.llm_score.length">{{ scope.row.llm_score }}</span>
-                    <el-tag type="info" v-else>无</el-tag>
-                  </el-form-item>
-                  <el-form-item label="最终得分:">
-                    <span v-if="scope.row.fin_score">{{ scope.row.fin_score }}</span>
-                    <el-tag type="warning" v-else>暂无</el-tag>
-                  </el-form-item>
-                </el-form>
-              </div>
-            </template>
-          </el-table-column> -->
           <el-table-column label="时间" prop="time" width="200%">
           </el-table-column>
           <el-table-column label="问题">
@@ -115,6 +95,10 @@
                   <h4>第三次回答</h4>
                   <span>{{ scope.row.A[2] }}</span>
                 </el-form-item>
+                <!-- <el-form-item>
+                  <h4>评估模型prompt</h4>
+                  <span>{{ scope.row.prompt }}</span>
+                </el-form-item> -->
               </el-form>
             </template>
           </el-table-column>
@@ -128,13 +112,45 @@
           </el-table-column> -->
           <el-table-column label="幻觉最终判断" prop="fin_score" width="120%" align="center">
             <template slot-scope="scope">
-              <el-tag  effect="light" v-if="scope.row.fin_score==='1.0'" type="success">无幻觉</el-tag>
-              <el-tag  effect="light" v-else-if="scope.row.fin_score==='0.0'" type="danger">有幻觉</el-tag>
-              <el-tag  effect="light" v-else type="info">缺失</el-tag>
+              <el-tag effect="light" v-if="scope.row.fin_score === '1.0'" type="success">无幻觉</el-tag>
+              <el-tag effect="light" v-else-if="scope.row.fin_score === '0.0'" type="danger">有幻觉</el-tag>
+              <el-tag effect="light" v-else type="info">缺失</el-tag>
             </template>
           </el-table-column>
         </el-table>
 
+        <!-- 毒性测试的交互记录表 -->
+        <el-table v-else-if="thisExperiment.type === 3" :data="pageList" style="width: 100%" stripe v-loading="loading"
+          border>
+          <el-table-column label="时间" prop="time" width="200%">
+          </el-table-column>
+          <el-table-column label="问题">
+            <template slot-scope="scope">
+              <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.Q }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="回答" type="expand" width="50%">
+            <template slot-scope="scope">
+              <!-- <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}</div> -->
+              <el-form label-position="left" class="three-times-answer">
+                <el-form-item>
+                  <h4>回答</h4>
+                  <span>{{ scope.row.A}}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+          <el-table-column label="领域" prop="field" width="200px" align="center">
+          </el-table-column>
+          <el-table-column label="毒性最终判断" prop="fin_score" width="120%" align="center">
+            <template slot-scope="scope">
+              <el-tag effect="light" v-if="scope.row.fin_score === '1.0'" type="success">无毒性</el-tag>
+              <el-tag effect="light" v-else-if="scope.row.fin_score === '0.0'" type="danger">有毒性</el-tag>
+              <el-tag effect="light" v-else type="info">缺失</el-tag>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
       <div class="pagination-container" style="margin-top: 20px;">
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -163,7 +179,7 @@ export default {
       pageSize: 10,
       pageList: [], // 用于显示当前页的数据
       loading: true,
-      filteredTotal:null
+      filteredTotal: 0
     }
   },
   mounted() {
@@ -188,6 +204,7 @@ export default {
           this.interactionList = res.data
         console.log("交互记录", this.interactionList)
         this.updatePageList()
+        this.updateTotalPages(this.interactionList)
       })
     },
     goBack() {

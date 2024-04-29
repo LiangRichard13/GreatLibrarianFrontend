@@ -3,9 +3,9 @@
 
     <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px;">
       <div style="flex: 1; display: flex; justify-content: center;">
-        <h3 style="letter-spacing: 1px; font-weight: 400; margin: 0;">API_KEY配置</h3>
+        <h3 style="letter-spacing: 1px; font-weight: 400; margin: 0;">API key配置</h3>
       </div>
-      <el-button plain icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加API_KEY</el-button>
+      <el-button plain icon="el-icon-circle-plus" type="success" @click="showDialog = true">添加API key</el-button>
     </div>
 
 
@@ -228,7 +228,7 @@ export default {
       }
       else {
         this.$message({
-          message: '添加API_KEY各字段不能为空',
+          message: '添加API key密钥和名字不能为空',
           type: 'warning'
         });
       }
@@ -238,7 +238,10 @@ export default {
       deleteById(deleteId).then(res => {
         if (res.success) {
           this.apiKeys.splice(index, 1);
-          // localStorage.removeItem(row.id + '_call')
+          if( localStorage.getItem(row.id+'_testConnectivity_error'))
+          localStorage.removeItem(row.id+'_testConnectivity_error')
+          if(localStorage.getItem(row.id+'_testConnectivity_normal'))
+          localStorage.removeItem(row.id+'_testConnectivity_normal')
           this.$message({
             message: '删除成功',
             type: 'success',
@@ -380,6 +383,11 @@ export default {
               type: 'success'
             });
             const specifiedDate = new Date();
+
+            if(localStorage.getItem(row.id+'_testConnectivity_error'))
+           {    
+          localStorage.removeItem(row.id+'_testConnectivity_error')
+           }
             localStorage.setItem(row.id+'_testConnectivity_normal',specifiedDate.toLocaleString())
           }
           else {
@@ -388,6 +396,10 @@ export default {
               type: 'warning'
             });
             const specifiedDate = new Date();
+            if(localStorage.getItem(row.id+'_testConnectivity_normal'))
+           {    
+          localStorage.removeItem(row.id+'_testConnectivity_normal')
+           }
             localStorage.setItem(row.id+'_testConnectivity_error',specifiedDate.toLocaleString())
           }
           this.connectivityTesting = false

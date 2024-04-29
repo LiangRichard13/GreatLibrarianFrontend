@@ -131,5 +131,5 @@ class ConfigCRUD(Resource):
     # 添加相应代码至配置文件并进行代码语法检查【参数：tPid实验id,code函数代码,className类名】
     def post(self):
         cfg_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + request.json['tPid'] + '.py')
-        flag = 1 if os.path.exists(cfg_path) else {1: -1, 2: -2}.get(request.json['type'], None)
+        flag = -1 if os.path.exists(cfg_path) else request.json['type']
         return jsonify({'success': add_call_function(cfg_path, flag, request.json['code'], request.json['className'])})

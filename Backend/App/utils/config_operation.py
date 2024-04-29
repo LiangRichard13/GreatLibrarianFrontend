@@ -25,7 +25,7 @@ def update_instance(tPid, tPtype):
         update_fin = re.compile(rf'llm_cfg2\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
             f'llm_cfg2 = dict(type="evaluationLLM", apikey="{AK2.AK_value}", name="{AK2.AK_name}", '
             f'llm_intro="{"" if AK2.AK_intro is None else AK2.AK_intro}")', update_first)
-    elif tPtype == 2:
+    elif tPtype == 2 or tPtype == 3:
         update_fin = re.compile(rf'llm_cfg1\s*=\s*dict\([^)]*\)', re.DOTALL).sub(
             f'llm_cfg1 = dict(type="testLLM", apikey="{AK1.AK_value}",name="{AK1.AK_name}",'
             f' llm_intro="{"" if AK1.AK_intro is None else AK1.AK_intro}")', content)
@@ -72,9 +72,10 @@ def update_code_to_class(file_path, updated_code, class_name):
 
 def add_call_function(file_path, flag, updated_code, class_name):
     template_maps = {
-        1: file_path,  # 原有的config文件
-        -1: os.path.join(BackendPath(), 'App', 'utils', 'config_template_general.py'),  # 基础知识测试——模板路径
-        -2: os.path.join(BackendPath(), 'App', 'utils', 'config_template_hallucination.py')  # 幻觉测试——模板路径
+        -1: file_path,  # 原有的config文件
+        1: os.path.join(BackendPath(), 'App', 'utils', 'config_template_general.py'),  # 基础知识测试——模板路径
+        2: os.path.join(BackendPath(), 'App', 'utils', 'config_template_hallucination.py'),  # 幻觉测试——模板路径
+        3: os.path.join(BackendPath(), 'App', 'utils', 'config_template_hallucination.py')  # 毒性测试——模板路径
     }
     with open(template_maps.get(flag), 'r', encoding='UTF-8') as file:
         file_code = file.read()

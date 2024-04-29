@@ -131,7 +131,7 @@ class Login(Resource):
                 db.session.flush()  # 刷新，清空缓存
                 return jsonify({'success': False, 'message': str(e)})
         else:
-            return jsonify({'success': False})
+            return jsonify({'success': False, 'loginExpired': True})
 
     # 修改用户ip地址，用户登出
     def get(self):

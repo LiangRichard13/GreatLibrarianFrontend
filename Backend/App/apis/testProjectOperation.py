@@ -71,7 +71,7 @@ class TPOperation(Resource):
         command = 'conda run -n ' + current_app.config['conda_env'] + ' gltest --testcase_path=' + testcase_path \
                   + ' --config_path=' + config_path + ' --project_name=' + project_name + ' --test_name=' + tP.tP_name \
                   + ' --test_id=' + tP.tP_id + ' --logs_path=' + os.path.join(BackendPath(), 'App', 'data') \
-                  + ' --test_type=' + {1: 'general', 2: 'hallucination', 3: 'general'}.get(tP.tP_type, None)
+                  + ' --test_type=' + {1: 'general', 2: 'hallucination', 3: 'safety'}.get(tP.tP_type, None)
         print(command)
         try:
             thread = threading.Thread(

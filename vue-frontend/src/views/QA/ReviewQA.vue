@@ -18,9 +18,9 @@
           </el-table-column>
           <el-table-column label="打分" prop="score" width="400%">
             <template slot-scope="scope">
-              <!-- <el-rate v-model="scope.row.score" :colors="colors"></el-rate> -->
+              <el-rate v-model="scope.row.score" :colors="colors" :max="5" allow-half show-score  :score-template="scoreTemplate(scope.row.score)"  text-color="#ff9900"></el-rate>
               <!-- <el-slider v-model="scope.row.score" max=1 step=0.01 input-size="mini" show-input></el-slider> -->
-              <el-slider v-model="scope.row.score" input-size="mini" show-input></el-slider>
+              <!-- <el-slider v-model="scope.row.score" input-size="mini" show-input></el-slider> -->
             </template>
           </el-table-column>
 
@@ -76,7 +76,7 @@ export default {
       currentPage: 1,
       pageSize: 10,
       pagedQAList: [], // 用于显示当前页的数据
-      // colors: ['#99A9BF', '#F7BA2A', '#FF9900']
+      colors: ['#99A9BF', '#F7BA2A', '#FF9900']
     }
   },
   mounted() {
@@ -119,7 +119,7 @@ export default {
         });
         return
       }
-      const score=(row.score / 100).toFixed(2)
+      const score=(row.score*0.2).toFixed(2)
       console.log('打分',score)
       rateQA(row.QAid,score).then(res => {
         if (res.success) {
@@ -169,6 +169,10 @@ export default {
       const endIndex = startIndex + this.pageSize;
       this.pagedQAList = this.QAList.slice(startIndex, endIndex);
     },
+    scoreTemplate(score) {
+      // 计算得分显示为原始分数的两倍
+      return `${score * 2}`;
+    }
     // formatTooltip(val) {
     //     return val / 100;
     //   },

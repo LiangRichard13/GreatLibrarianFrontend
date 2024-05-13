@@ -53,7 +53,7 @@
           </el-form-item>
 
           <el-form-item label="详细描述">
-            <el-input v-model="newDataItem.info"></el-input>
+            <el-input v-model="newDataItem.info" type="textarea"></el-input>
           </el-form-item>
 
           <!-- Upload button added here -->

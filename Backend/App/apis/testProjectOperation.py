@@ -105,15 +105,16 @@ class TPOperation(Resource):
             print(f"命令输出:{e.stdout}\n错误信息:{e.stderr}\n返回码:{e.returncode}")
             return jsonify({'success': False, 'message': str(e)})
 
-    # 下载pdf报告
+    # 下载测试结果报告
     def get(self):
         dir_r = os.path.join(BackendPath(), 'App', 'data', 'Logs', request.args['tPid'])  # 报告目录
         if request.args['choose'] == '1':  # 报告数量
             return jsonify(
                 {'count': sum(1 for file in os.listdir(dir_r) if file.startswith('report-v')), 'success': True})
-        if request.args['choose'] == '2':  # 报告路径
-            return jsonify({'url': os.path.join('App', 'data', 'Logs', request.args['tPid'],
-                                                'report-v' + request.args['n'] + '.pdf'), 'success': True})
+        if request.args['choose'] == '2':  # 报告路径【markdown文件】
+            return jsonify({'url': os.path.join(dir_r, 'report-v' + request.args['n'] + '.md'), 'success': True})
+        if request.args['choose'] == '3':  # 报告路径【html文件】
+            return jsonify({'url': os.path.join(dir_r, 'report-v' + request.args['n'] + '.html'), 'success': True})
 
     # 查询交互记录
     def delete(self):

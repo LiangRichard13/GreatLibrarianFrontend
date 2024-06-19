@@ -9,7 +9,7 @@ from flask_restful import Resource
 from App.models import db, User, FriendShip
 from App.utils.MD5_ID import creat_md5_id
 from App.utils.backend_path import BackendPath
-from App.utils.token import encode, decode
+from App.utils.my_token import encode, decode
 
 
 # 用户头像文件操作

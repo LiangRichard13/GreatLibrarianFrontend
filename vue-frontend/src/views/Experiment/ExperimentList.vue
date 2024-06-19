@@ -571,9 +571,11 @@
                             </el-table-column>
                             <el-table-column label="下载" align="center">
                                 <template slot-scope="scope">
-                                    <el-button class="down-load" icon="el-icon-download" circle style="font-size: 18px;"
-                                        @click="confirmDownload(scope.row.index)"></el-button>
-                                </template>
+                                    <!-- <el-button class="down-load" icon="el-icon-download" circle style="font-size: 18px;"
+                                        @click="confirmDownload(scope.row.index)"></el-button> -->
+                                        <el-link  @click="confirmDownload(scope.row.index,2)">Markdown</el-link>
+                                        <el-link  @click="confirmDownload(scope.row.index,3)" style="margin-left: 15px;">HTML</el-link>
+                                    </template>
                             </el-table-column>
                         </el-table>
                     </el-form-item>
@@ -1525,8 +1527,8 @@ export default {
         downloadClose() {
             this.downloader = false
         },
-        confirmDownload(selectVersion) {
-            genReport(this.currentExpId, selectVersion).then(res => {
+        confirmDownload(selectVersion,download_type) {
+            genReport(this.currentExpId, selectVersion,download_type).then(res => {
                 if (res.success) {
                     this.$message({
                         type: 'success',

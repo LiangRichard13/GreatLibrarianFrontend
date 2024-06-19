@@ -7,7 +7,7 @@
         </el-form-item>
 
         <el-form-item label="测试说明">
-          <el-input v-model="newProject.info"></el-input>
+          <el-input v-model="newProject.info" type="textarea"></el-input>
         </el-form-item>
 
         <el-form-item label="API Key">

@@ -44,11 +44,11 @@ export function updateReport(tPid) {
     })
 }
 
-export function genReport(tPid,num) {
+export function genReport(tPid,num,choose) {
     return service({
         url: '/testProjectOperation',
         method: 'get',
-        params:{tPid:tPid,n:num,choose:2}
+        params:{tPid:tPid,n:num,choose:choose}
     })
 }
 

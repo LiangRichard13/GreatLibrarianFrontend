@@ -92,7 +92,7 @@
           </el-form-item>
 
           <el-form-item label="背景介绍">
-            <el-input v-model="newApiKey.intro"></el-input>
+            <el-input v-model="newApiKey.intro" type="textarea"></el-input>
           </el-form-item>
 
           <!-- <div>

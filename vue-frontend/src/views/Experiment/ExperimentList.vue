@@ -573,8 +573,8 @@
                                 <template slot-scope="scope">
                                     <!-- <el-button class="down-load" icon="el-icon-download" circle style="font-size: 18px;"
                                         @click="confirmDownload(scope.row.index)"></el-button> -->
-                                        <el-link  @click="confirmDownload(scope.row.index,2)">Markdown</el-link>
-                                        <el-link  @click="confirmDownload(scope.row.index,3)" style="margin-left: 15px;">HTML</el-link>
+                                        <el-link  @click="confirmDownload(scope.row.index,2)"  style="text-decoration: underline;">Markdown</el-link>
+                                        <el-link  @click="confirmDownload(scope.row.index,3)" style="margin-left: 15px;text-decoration: underline;">HTML</el-link>
                                     </template>
                             </el-table-column>
                         </el-table>
@@ -1535,7 +1535,7 @@ export default {
                         message: this.currentExpId + '-' + this.currentExpName + '正在下载该测试的测试报告'
                     });
                     //处理下载链接
-                    let downloadUrl = res.url;
+                    let downloadUrl = res.url.split('\\Backend')[1];
                     downloadUrl = downloadUrl.replace(/\\/g, '/');
                     downloadUrl = downloadUrl.replace(/App/g, '');
                     downloadUrl = config.API_URL + downloadUrl;

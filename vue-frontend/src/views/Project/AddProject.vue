@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex; flex-direction: column; align-items: center; justify-content: start; height: 100vh;">
     <div style="width: 30%; margin-top: 20px;">
-      <el-form ref="form" :model="newProject" label-width="100px">
+      <el-form ref="form" :model="newProject" label-width="120px">
         <el-form-item label="项目名称">
           <el-input v-model="newProject.name"></el-input>
         </el-form-item>
@@ -10,14 +10,14 @@
           <el-input v-model="newProject.info" type="textarea"></el-input>
         </el-form-item>
 
-        <el-form-item label="API Key">
+        <el-form-item label="API Key(多选)">
           <el-select v-model="newProject.apiKey" placeholder="请选择" multiple>
             <el-option v-for="item in apiKeys" :key="item.id" :label="`${item.name}`" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="数据集">
+        <el-form-item label="数据集(多选)">
           <el-select v-model="newProject.dataset" placeholder="请选择" multiple>
             <el-option v-for="item in dataSet" :key="item.id" :label="`${item.name}`" :value="item.id">
             </el-option>

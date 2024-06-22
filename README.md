@@ -86,7 +86,7 @@ pip install -r requirements.txt       # 安装依赖
 安装了Node.js和npm后，可以使用以下命令安装Vue CLI：
 
 ```
-install -g @vue/cli
+npm install -g @vue/cli
 # 或者使用yarn
 yarn global add @vue/cli
 ```

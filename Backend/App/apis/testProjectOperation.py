@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 import threading
+import zipfile
 
 from flask import jsonify, request, current_app
 from flask_restful import Resource
@@ -56,6 +57,15 @@ def safety_log(content):
     data = [{'time': m[0], 'Q': m[1], 'A': m[2], 'llm_score': m[3], 'fin_score': m[4], 'field': m[5]}
             for m in matches]
     return data
+
+
+# 对文件夹进行压缩
+def zip_folder(folder_path, zip_path):
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:  # 创建一个zip文件
+        for root, dirs, files in os.walk(folder_path):  # 遍历文件夹
+            for file in files:
+                file_path = os.path.join(root, file)  # 获取文件的完整路径
+                zipf.write(file_path, os.path.relpath(file_path, folder_path))  # 在zip文件中写入文件
 
 
 # 实验测试操作
@@ -112,7 +122,10 @@ class TPOperation(Resource):
             return jsonify(
                 {'count': sum(1 for file in os.listdir(dir_r) if file.startswith('report-v')), 'success': True})
         if request.args['choose'] == '2':  # 报告路径【markdown文件】
-            return jsonify({'url': os.path.join(dir_r, 'report-v' + request.args['n'] + '.md'), 'success': True})
+            dirName = 'report-v' + request.args['n'] + '-md'  # markdown文件夹名
+            zipURL = os.path.join(dir_r, dirName + '.zip')  # 输出的zip文件路径
+            zip_folder(os.path.join(dir_r, dirName), zipURL)
+            return jsonify({'url': zipURL, 'success': True})
         if request.args['choose'] == '3':  # 报告路径【html文件】
             return jsonify({'url': os.path.join(dir_r, 'report-v' + request.args['n'] + '.html'), 'success': True})
 

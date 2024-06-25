@@ -69,3 +69,9 @@ class Progress(Resource):
             db.session.rollback()  # 回滚
             db.session.flush()  # 刷新，清空缓存
             return jsonify({'success': False, 'message': str(e)})
+
+    # 判断是否存在工具箱测试异常
+    def delete(self):
+        tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
+        path = os.path.join(BackendPath(), "App", "data", "Logs", tP.tP_id, "traceback.temp")
+        return jsonify({'success': True, 'exists': os.path.exists(path)})

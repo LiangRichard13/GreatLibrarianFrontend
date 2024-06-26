@@ -50,7 +50,7 @@ cd [项目根目录]
 
 #### 2. 设置后端环境
 
-###### 使用Python虚拟环境
+##### 使用Python虚拟环境
 
 在项目的后端目录下创建一个Python虚拟环境，并激活它：
 
@@ -68,7 +68,7 @@ source venv/bin/activate  # 在Windows下使用 venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-###### 使用Conda环境
+##### 使用Conda环境
 
 如果你更喜欢使用Conda来管理Python环境，可以按照以下步骤来配置：
 

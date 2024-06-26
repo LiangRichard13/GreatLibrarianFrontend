@@ -579,8 +579,8 @@
                                         @click="confirmDownload(scope.row.index)"></el-button> -->
                                     <el-link @click="confirmDownload(scope.row.index, 2)"
                                         style="text-decoration: underline;">Markdown</el-link>
-                                    <el-link @click="confirmDownload(scope.row.index, 3)"
-                                        style="margin-left: 15px;text-decoration: underline;">HTML</el-link>
+                                    <!-- <el-link @click="confirmDownload(scope.row.index, 3)"
+                                        style="margin-left: 15px;text-decoration: underline;">HTML</el-link> -->
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -1569,7 +1569,7 @@ export default {
                     //获取到文件名
                     const urlParts = downloadUrl.split('/');
                     const filename = urlParts[urlParts.length - 1];
-                    const desiredFilename = this.currentExpName + filename
+                    const desiredFilename = this.currentExpName+'-'+ filename
 
                     fetch(downloadUrl)
                         .then(response => response.blob())

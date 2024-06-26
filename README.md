@@ -24,7 +24,7 @@
 
 ### 项目结构
 
-```
+```bash
 GreatLibrarianFrontend   项目根目录/
 │
 ├── vue-frontend/            # Vue前端项目文件夹
@@ -43,7 +43,7 @@ GreatLibrarianFrontend   项目根目录/
 
 首先，克隆远程仓库到本地机器：
 
-```
+```bash
 git clone [仓库URL]
 cd [项目根目录]
 ```
@@ -54,7 +54,7 @@ cd [项目根目录]
 
 在项目的后端目录下创建一个Python虚拟环境，并激活它：
 
-```
+```bash
 cd Backend
 python -m venv venv
 source venv/bin/activate  # 在Windows下使用 venv\Scripts\activate
@@ -64,7 +64,7 @@ source venv/bin/activate  # 在Windows下使用 venv\Scripts\activate
 
 安装Flask及其他依赖：
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
@@ -72,7 +72,7 @@ pip install -r requirements.txt
 
 如果你更喜欢使用Conda来管理Python环境，可以按照以下步骤来配置：
 
-```
+```bash
 cd Backend
 conda create --name myenv python=3.11  # 创建一个名为myenv的新环境
 conda activate myenv                 # 激活环境
@@ -83,9 +83,23 @@ pip install -r requirements.txt       # 安装依赖
 
 #### 3. 设置前端环境
 
-安装了Node.js和npm后，可以使用以下命令安装Vue CLI：
+在官网安装node.js，在安装过程中会自动匹配好环境变量，通过以下命令查看是否配置成功
 
+```bash
+node -v
 ```
+
+以管理员身份运行cmd，通过以下命令配置全局安装路径
+
+```bash
+npm config set prefix "D:\node.js"
+```
+
+这里的`D:\node.js`**假设**是刚刚node.js的安装目录，通过`npm config get prefix`来检查是否设置成功
+
+使用以下命令安装Vue CLI：
+
+```bash
 install -g @vue/cli
 # 或者使用yarn
 yarn global add @vue/cli
@@ -93,7 +107,7 @@ yarn global add @vue/cli
 
 在项目的前端目录下安装依赖：
 
-```
+```bash
 cd ../vue-frontend
 npm install  # 或使用 yarn install
 ```
@@ -108,7 +122,7 @@ npm install  # 或使用 yarn install
 
 双击或在命令行运行 `init.sh` 脚本来清除任何旧的数据并准备项目环境：
 
-```
+```bash
 ./init.sh
 ```
 
@@ -116,7 +130,7 @@ npm install  # 或使用 yarn install
 
 完成初始化后，运行 `start.sh` 脚本以启动前后端服务器：
 
-```
+```bash
 ./start.sh
 ```
 
@@ -124,18 +138,33 @@ npm install  # 或使用 yarn install
 
 ##### 手动启动
 
-运行Vue开发服务器：
+在vue-frontend路径下运行Vue开发服务器：
 
-```
+```bash
 npm run serve  # 或使用 yarn serve
 ```
 
-在虚拟环境激活的情况下，运行Flask应用：
+在虚拟环境激活的情况下，在Backend路径下运行Flask应用：
 
-```
+```bash
 python app.py
 ```
 
 ### 访问应用
 
 打开浏览器，访问 `http://localhost:8080` 查看Vue前端页面，同时确保Flask后端服务在 `http://localhost:5000` 运行。
+
+##  演示Demo
+
+### 基础配置
+
+<video width="640" height="360" controls>   <source src="./demo_tutorial/媒体1.mp4" type="video/mp4">   Your browser does not support the video tag. </video>
+
+### **创建项目**
+
+<video width="640" height="360" controls>   <source src="./demo_tutorial/媒体2.mp4" type="video/mp4">   Your browser does not support the video tag. </video>
+
+### 基础能力测评、协作审核及测试报告展示
+
+<video width="640" height="360" controls>   <source src="./demo_tutorial/媒体3.mp4" type="video/mp4">   Your browser does not support the video tag. </video>
+

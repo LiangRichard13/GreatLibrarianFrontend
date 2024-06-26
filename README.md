@@ -156,7 +156,9 @@ python app.py
 
 ##  演示Demo
 [基础配置](./demo_tutorial/媒体1.mp4)
+
 [创建项目](./demo_tutorial/媒体2.mp4)
+
 [基础能力测评、协作审核及测试报告展示](./demo_tutorial/媒体3.mp4)
 
 

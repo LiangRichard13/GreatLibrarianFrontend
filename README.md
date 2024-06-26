@@ -1,5 +1,5 @@
 ##   项目介绍
-<div style="text-align: center;">
+<div style="align: center;">
     <img src="./assets/logo.png" style="height:200px;width:200px"/>
 </div>
 

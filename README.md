@@ -157,6 +157,7 @@ python app.py
 ##  演示Demo
 
 ### 基础配置
+You can [download the video](./demo_tutorial/媒体1.mp4) to see the demo.
 
 <video width="640" height="360" controls>   <source src="./demo_tutorial/媒体1.mp4" type="video/mp4">   Your browser does not support the video tag. </video>
 

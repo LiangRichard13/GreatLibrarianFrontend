@@ -1,5 +1,5 @@
 ##   项目介绍
-<img src="./assets/logo.png" style="height:200px;width:200px"/>
+<img src="./assets/logo.png" style="height:200px;width:200px;text-align:center"/>
 
 ### 项目概述
 

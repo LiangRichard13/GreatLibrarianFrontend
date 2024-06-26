@@ -157,9 +157,9 @@ python app.py
 打开浏览器，访问 `http://localhost:8080` 查看Vue前端页面，同时确保Flask后端服务在 `http://localhost:5000` 运行。
 
 ##  演示Demo
-[基础配置](./assets/媒体1.mp4)
+[基础配置](./assets/基础配置.mp4)
 
-[创建项目](./assets/媒体2.mp4)
+[创建项目](./assets/创建项目.mp4)
 
-[基础能力测评、协作审核及测试报告展示](./assets/媒体3.mp4)
+[基础能力测评、协作审核及测试报告展示](./assets/基础能力测评、协作审核及测试报告展示.mp4)
 

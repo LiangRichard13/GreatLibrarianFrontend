@@ -123,7 +123,7 @@ class TPOperation(Resource):
                 {'count': sum(1 for file in os.listdir(dir_r) if file.startswith('report-v')), 'success': True})
         if request.args['choose'] == '2':  # 报告路径【markdown文件】
             dirName = 'report-v' + request.args['n'] + '-md'  # markdown文件夹名
-            zipURL = os.path.join(dir_r, dirName + '.zip')  # 输出的zip文件路径
+            zipURL = os.path.join(dir_r, 'v' + request.args['n'] + '.zip')  # 输出的zip文件路径
             zip_folder(os.path.join(dir_r, dirName), zipURL)
             return jsonify({'url': zipURL, 'success': True})
         if request.args['choose'] == '3':  # 报告路径【html文件】

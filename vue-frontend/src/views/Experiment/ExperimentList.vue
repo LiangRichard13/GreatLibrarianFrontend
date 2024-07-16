@@ -44,7 +44,8 @@
                                 {{ scope.row.AK2.name }}
                             </div>
                             <el-tag v-else-if="!scope.row.AK2 && scope.row.type === 1" type="danger">无</el-tag>
-                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)" type="info">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)"
+                                type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -151,7 +152,8 @@
                                 {{ scope.row.AK2.name }}
                             </div>
                             <el-tag v-else-if="!scope.row.AK2 && scope.row.type === 1" type="danger">无</el-tag>
-                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)" type="info">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)"
+                                type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -205,7 +207,8 @@
                                 {{ scope.row.AK2.name }}
                             </div>
                             <el-tag v-else-if="!scope.row.AK2 && scope.row.type === 1" type="danger">无</el-tag>
-                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)" type="info">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)"
+                                type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -325,7 +328,8 @@
                                 {{ scope.row.AK2.name }}
                             </div>
                             <el-tag v-else-if="!scope.row.AK2 && scope.row.type === 1" type="danger">无</el-tag>
-                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)" type="info">无</el-tag>
+                            <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)"
+                                type="info">无</el-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">
@@ -394,11 +398,11 @@
                     </el-form-item> -->
 
                     <el-form-item label="指定测试类型">
-                    <el-radio-group v-model="newExperiment.type">
-                        <el-radio-button :label="1">基础能力测试</el-radio-button>
-                        <el-radio-button :label="2">幻觉测试</el-radio-button>
-                        <el-radio-button :label="3">毒性测试</el-radio-button>
-                    </el-radio-group>
+                        <el-radio-group v-model="newExperiment.type">
+                            <el-radio-button :label="1">基础能力测试</el-radio-button>
+                            <el-radio-button :label="2">幻觉测试</el-radio-button>
+                            <el-radio-button :label="3">毒性测试</el-radio-button>
+                        </el-radio-group>
                     </el-form-item>
 
                     <el-form-item label="指定测试数据集">
@@ -423,8 +427,8 @@
                                 :value="item.id">
                             </el-option>
                         </el-select>
-                        <el-select v-else-if="newExperiment.type === 2 || newExperiment.type === 3" v-model="newExperiment.AK2"
-                            placeholder="请选择" disabled>
+                        <el-select v-else-if="newExperiment.type === 2 || newExperiment.type === 3"
+                            v-model="newExperiment.AK2" placeholder="请选择" disabled>
                             <el-option v-for="item in thisProject.apiKey" :key="item.id" :label="`${item.name}`"
                                 :value="item.id">
                             </el-option>
@@ -455,11 +459,11 @@
                         </el-switch>
                     </el-form-item> -->
                     <el-form-item label="指定测试类型">
-                    <el-radio-group v-model="editExperiment_type">
-                        <el-radio-button :label="1">基础能力测试</el-radio-button>
-                        <el-radio-button :label="2">幻觉测试</el-radio-button>
-                        <el-radio-button :label="3">毒性测试</el-radio-button>
-                    </el-radio-group>
+                        <el-radio-group v-model="editExperiment_type">
+                            <el-radio-button :label="1">基础能力测试</el-radio-button>
+                            <el-radio-button :label="2">幻觉测试</el-radio-button>
+                            <el-radio-button :label="3">毒性测试</el-radio-button>
+                        </el-radio-group>
                     </el-form-item>
 
                     <el-form-item label="指定测试数据集">
@@ -484,8 +488,8 @@
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
                             </el-option>
                         </el-select>
-                        <el-select v-else-if="editExperiment_type === 2||editExperiment_type === 3" disabled v-model="editExperiment_AK2"
-                            placeholder="请选择">
+                        <el-select v-else-if="editExperiment_type === 2 || editExperiment_type === 3" disabled
+                            v-model="editExperiment_AK2" placeholder="请选择">
                             <el-option v-for="item in thisProject.apiKey" :key="item.id"
                                 :label="`${item.id} - ${item.name}`" :value="item.id">
                             </el-option>
@@ -573,9 +577,11 @@
                                 <template slot-scope="scope">
                                     <!-- <el-button class="down-load" icon="el-icon-download" circle style="font-size: 18px;"
                                         @click="confirmDownload(scope.row.index)"></el-button> -->
-                                        <el-link  @click="confirmDownload(scope.row.index,2)">Markdown</el-link>
-                                        <el-link  @click="confirmDownload(scope.row.index,3)" style="margin-left: 15px;">HTML</el-link>
-                                    </template>
+                                    <el-link @click="confirmDownload(scope.row.index, 2)"
+                                        style="text-decoration: underline;">Markdown</el-link>
+                                    <!-- <el-link @click="confirmDownload(scope.row.index, 3)"
+                                        style="margin-left: 15px;text-decoration: underline;">HTML</el-link> -->
+                                </template>
                             </el-table-column>
                         </el-table>
                     </el-form-item>
@@ -595,7 +601,7 @@ import { getExperimentByProjectId } from '@/api/experiment'
 import { deleteById, addExperiment, editExperiment, deleteOperationFile, checkOperationFile, generateOperationFile } from '@/api/experiment'
 import { getUserList, addFriendsToExperiment, getFriendsByExperimentId } from '@/api/collaborate'
 import { getQACount } from '@/api/qa'
-import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum, errorHandle } from '@/api/expOperation'
+import { getExperimentProgress, updateExperimentStatus, genReport, getReportNum, errorHandle, getExperimentError } from '@/api/expOperation'
 import { startExp, updateReport } from '@/api/expOperation'
 import { getCallFunction, testConnectivity } from "@/api/apiConfig"
 import config from "@/services/conf"
@@ -1392,6 +1398,7 @@ export default {
 
                 // 遍历 this.proceeding 中的每个测试
                 this.proceeding.forEach((experiment, index) => {
+                    //获取测试的进度
                     getExperimentProgress(experiment.id).then(res => {
                         if (res.success) {
                             if (localStorage.getItem(experiment.id + 'errorTimes') !== null) {
@@ -1430,6 +1437,24 @@ export default {
                                         this.$notify.error({
                                             title: '错误',
                                             message: experiment.id + '-' + experiment.name + '获取进度失败，请检查测试配置再重新开始测试'
+                                        });
+                                        clearInterval(this.interval);
+                                        this.setExpEmpty()
+                                        localStorage.removeItem(experiment.id + 'errorTimes')
+                                    }
+                                })
+                            }
+                        }
+                    })
+                    //判断测试是否异常
+                    getExperimentError(experiment.id).then(res => {
+                        if (res.success) {
+                            if (res.exists !== null) {
+                                errorHandle(experiment.id).then(res => {
+                                    if (res.success) {
+                                        this.$notify.error({
+                                            title: '错误',
+                                            message: experiment.id + '-' + experiment.name + '出现了未知测试异常'
                                         });
                                         clearInterval(this.interval);
                                         this.setExpEmpty()
@@ -1527,15 +1552,15 @@ export default {
         downloadClose() {
             this.downloader = false
         },
-        confirmDownload(selectVersion,download_type) {
-            genReport(this.currentExpId, selectVersion,download_type).then(res => {
+        confirmDownload(selectVersion, download_type) {
+            genReport(this.currentExpId, selectVersion, download_type).then(res => {
                 if (res.success) {
                     this.$message({
                         type: 'success',
                         message: this.currentExpId + '-' + this.currentExpName + '正在下载该测试的测试报告'
                     });
                     //处理下载链接
-                    let downloadUrl = res.url;
+                    let downloadUrl = res.url.split('\\Backend')[1];
                     downloadUrl = downloadUrl.replace(/\\/g, '/');
                     downloadUrl = downloadUrl.replace(/App/g, '');
                     downloadUrl = config.API_URL + downloadUrl;
@@ -1544,6 +1569,7 @@ export default {
                     //获取到文件名
                     const urlParts = downloadUrl.split('/');
                     const filename = urlParts[urlParts.length - 1];
+                    const desiredFilename = this.currentExpName+'-'+ filename
 
                     fetch(downloadUrl)
                         .then(response => response.blob())
@@ -1551,7 +1577,7 @@ export default {
                             const url = window.URL.createObjectURL(new Blob([blob]));
                             const a = document.createElement('a');
                             a.href = url;
-                            a.download = filename;
+                            a.download = desiredFilename;
                             document.body.appendChild(a);
                             a.click();
                             window.URL.revokeObjectURL(url);

@@ -10,6 +10,16 @@ export function getExperimentProgress(expId) {
     })
 }
 
+export function getExperimentError(expId) {
+    return service({
+        url: '/progress',
+        method: 'delete',
+        params: {
+            tPid: expId,
+        }
+    })
+}
+
 export function errorHandle(expId) {
     return service({
         url: '/progress',

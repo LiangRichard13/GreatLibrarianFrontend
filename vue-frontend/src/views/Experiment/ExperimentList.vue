@@ -1451,7 +1451,7 @@ export default {
                     //判断测试是否异常
                     getExperimentError(experiment.id).then(res => {
                         if (res.success) {
-                            if (res.exists !== null) {
+                            if (res.exists) {
                                 errorHandle(experiment.id).then(res => {
                                     if (res.success) {
                                         this.$notify.error({

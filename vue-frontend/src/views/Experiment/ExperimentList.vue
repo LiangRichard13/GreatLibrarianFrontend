@@ -771,8 +771,9 @@ export default {
                         // formData.append('DS', this.newExperiment.DS);
                         // formData.append('pid', this.thisProject.id)
                         // formData.append('type', this.newExperiment.type)
+                        let trimmedName =this.newExperiment.name..replace(/\s+/g, '');
                         const addData = {
-                            name: this.newExperiment.name,
+                            name: trimmedName ,
                             AK1: this.newExperiment.AK1,
                             AK2: this.newExperiment.AK2,
                             DS: this.newExperiment.DS,
@@ -809,8 +810,9 @@ export default {
             else if (this.newExperiment.type === 2 || this.newExperiment.type === 3) {
                 if (this.newExperiment.name.trim()) {
                     if (this.newExperiment.AK1 && this.newExperiment.DS) {
+                        let trimmedName =this.newExperiment.name..replace(/\s+/g, '');
                         const addData = {
-                            name: this.newExperiment.name,
+                            name: trimmedName,
                             AK1: this.newExperiment.AK1,
                             AK2: this.newExperiment.AK2,
                             DS: this.newExperiment.DS,
@@ -978,7 +980,7 @@ export default {
                     });
                 }
             }
-            //幻觉测试配置修改
+            //幻觉、毒性测试配置修改
             else if (this.editExperiment_type === 2 || this.editExperiment_type === 3) {
                 if (this.editExperiment_name.trim()) {
                     if (this.editExperiment_AK1 !== null && this.editExperiment_DS !== null) {
@@ -1449,7 +1451,7 @@ export default {
                     //判断测试是否异常
                     getExperimentError(experiment.id).then(res => {
                         if (res.success) {
-                            if (res.exists !== null) {
+                            if (res.exists) {
                                 errorHandle(experiment.id).then(res => {
                                     if (res.success) {
                                         this.$notify.error({

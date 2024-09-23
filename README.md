@@ -1,4 +1,5 @@
-##   项目介绍
+##   OFFSET项目介绍
+**O**pen **F**ast **F**ull-**S**tack **E**valuation **T**oolkit for Large Language Models
 
 <div align="center">
     <img src="./assets/logo.png" style="height:200px;width:200px"/>

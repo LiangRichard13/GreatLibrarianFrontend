@@ -9,9 +9,16 @@
     </div>
     <template v-if="interactionList && interactionList.length">
       <div class="table-container">
-        <el-input v-model="filterKey" placeholder="请搜索问题" size="large" clearable @input="updateFilter"
-          style="width: 300px;margin-left:0px; margin-bottom: 20px;">
-        </el-input>
+        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+          <!-- 输入框 -->
+          <el-input v-model="filterKey" placeholder="请搜索问题" size="large" clearable @input="updateFilter"
+            style="width: 300px; margin-bottom: 20px;">
+          </el-input>
+
+          <!-- 开关 -->
+          <el-switch v-model="showBadCase" active-text="展示反面用例" style="margin-top: 10px;margin-bottom: 20px">
+          </el-switch>
+        </div>
 
         <!-- 基础能力测试交互记录列表 -->
         <el-table v-if="thisExperiment.type === 1" :data="pageList" style="width: 100%" stripe v-loading="loading"
@@ -41,7 +48,7 @@
                     <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
                   <el-form-item label="大模型得分:">
-                    <span v-if="scope.row.llm_score.length">{{ scope.row.llm_score[0] }}</span>
+                    <span v-if="scope.row.llm_score.length">{{ scope.row.llm_score[0]}}</span>
                     <el-tag type="info" v-else>无</el-tag>
                   </el-form-item>
                   <el-form-item label="最终得分:">
@@ -62,6 +69,13 @@
             <template slot-scope="scope">
               <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}
               </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="结果" width="100px" align="center">
+            <template slot-scope="scope">
+              <el-tag effect="light" v-if="scope.row.fin_score === '1.0'" type="success">正确</el-tag>
+              <el-tag effect="light" v-else-if="scope.row.fin_score === '0.0'" type="danger">错误</el-tag>
+              <el-tag effect="light" v-else type="info">缺失</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="领域" prop="field" width="200px" align="center">
@@ -136,7 +150,7 @@
               <el-form label-position="left" class="three-times-answer">
                 <el-form-item>
                   <h4>回答</h4>
-                  <span>{{ scope.row.A}}</span>
+                  <span>{{ scope.row.A }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -167,6 +181,7 @@
 
 <script>
 import { getInteraction } from "@/api/expOperation"
+// import { filter } from "jszip";
 
 export default {
   name: "interactionList",
@@ -179,13 +194,17 @@ export default {
       pageSize: 10,
       pageList: [], // 用于显示当前页的数据
       loading: true,
-      filteredTotal: 0
+      filteredTotal: 0,
+      showBadCase: false,
+      filter_data:[],
+      handleChange:false
     }
   },
   mounted() {
     let storedExperiment = localStorage.getItem('thisExperiment');
     if (storedExperiment) {
       this.thisExperiment = JSON.parse(storedExperiment);
+      console.log('缓存测试',this.thisExperiment)
     }
     else {
       // 处理没有数据的情况，可能是跳转到此页面或刷新页面
@@ -197,14 +216,22 @@ export default {
     }, 500);
 
   },
+  watch: {
+    // 监听开关状态变化，确保切换时触发过滤
+    showBadCase() {
+      this.handleShowBadCase();
+    }
+  },
   methods: {
     load() {
       getInteraction(this.thisExperiment.id, this.thisExperiment.type).then(res => {
-        if (res.success)
-          this.interactionList = res.data
+        if (res.success){
+        this.interactionList = res.data
         console.log("交互记录", this.interactionList)
         this.updatePageList()
         this.updateTotalPages(this.interactionList)
+        this.filter_data=this.interactionList
+        }
       })
     },
     goBack() {
@@ -216,16 +243,32 @@ export default {
       this.totalPages = Math.ceil(totalItems / this.pageSize);
     },
     updateFilter() {
-      const filteredData = this.interactionList.filter(item => {
-        return item.Q.toLowerCase().includes(this.filterKey.toLowerCase())
-      });
-      this.updateTotalPages(filteredData);  // 更新总页数
-      this.updatePageList(filteredData);
+      if(!this.handleChange)
+      this.currentPage=1
+      console.log('before updateFilter:',this.filter_data)
+      if (!this.showBadCase) {
+        const filteredData = this.interactionList.filter(item => {
+          return item.Q.toLowerCase().includes(this.filterKey.toLowerCase())
+        });
+        this.filter_data=filteredData
+        console.log('after updateFilter:',this.filter_data)
+        this.updateTotalPages(filteredData);  // 更新总页数
+        this.updatePageList(filteredData);
+      }
+      else {
+        const filteredData = this.filter_data.filter(item => {
+          return item.Q.toLowerCase().includes(this.filterKey.toLowerCase())
+        });
+        console.log('after updateFilter:',this.filter_data)
+        this.updateTotalPages(filteredData);  // 更新总页数
+        this.updatePageList(filteredData);
+      }
     },
     // 用于处理当前页变化
     handleSizeChange(newSize) {
       this.pageSize = newSize;
-      this.updateFilter();
+      this.updateTotalPages(this.filter_data);  // 更新总页数
+      this.updatePageList(this.filter_data);
     },
     // 更新当前页的 QA 列表
     updatePageList(filteredData = this.interactionList) {
@@ -234,9 +277,26 @@ export default {
       this.pageList = (filteredData || []).slice(startIndex, endIndex);  // 确保总是有数组可操作
     },
     handleCurrentChange(newPage) {
+      this.handleChange=true
       this.currentPage = newPage;
       this.updateFilter();
+      this.handleChange=false
     },
+    handleShowBadCase() {
+      if (this.showBadCase) {
+        if(!this.handleChange)
+        this.currentPage=1
+        // 基础测试showbadcase
+        console.log("filter_data:",this.filter_data)
+        const filteredData=this.filter_data.filter(item => item.fin_score === "0.0");
+        this.filter_data=filteredData
+        console.log("filter_data:",this.filter_data)
+        this.updateTotalPages(filteredData);  // 更新总页数
+        this.updatePageList(filteredData);
+      } else {
+        this.updateFilter()
+      }
+    }
 
   }
 }

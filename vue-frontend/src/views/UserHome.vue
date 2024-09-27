@@ -9,7 +9,7 @@
             <div class="project-section">
               <el-card class="box-card">
                 <div slot="header" class="clearfix">
-                  <span style="float: left;">我的项目</span>
+                  <span style="float: left;">我创建的项目</span>
                   <el-link style="float: right;" @click="pushToProject()">我的项目列表</el-link>
                 </div>
                 <el-table :data="myProjects">

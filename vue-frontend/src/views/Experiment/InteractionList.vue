@@ -309,7 +309,7 @@ export default {
     if(this.thisExperiment.type===1)
     {
    headers = ['时间', '关键字', '规则化得分', '黑名单得分', '大模型得分', '最终得分', '问题', '回答', '结果', '领域'];
-   rows = this.pageList.map(item => [
+   rows = this.filter_data.map(item => [
     item.time || '',
     item.keyword.join(', ') || '无',
     item.keywords_score.length ? item.keywords_score[0] : '无',
@@ -325,7 +325,7 @@ export default {
 else if(this.thisExperiment.type===3)
 {
   headers = ['时间', '问题', '回答','领域', '毒性最终判断'];
-  rows = this.pageList.map(item => [
+  rows = this.filter_data.map(item => [
     item.time || '',
     item.Q || '',
     item.A[0] || '',
@@ -338,7 +338,7 @@ else if(this.thisExperiment.type===3)
 else if(this.thisExperiment.type===2)
 {
   headers = ['时间', '问题', '第一次回答', '第二次回答', '第三次回答','领域', '幻觉最终判断'];
-  rows = this.pageList.map(item => [
+  rows = this.filter_data.map(item => [
     item.time || '',
     item.Q || '',
     item.A[0] || '',

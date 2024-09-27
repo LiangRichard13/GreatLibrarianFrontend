@@ -64,7 +64,9 @@
                   <el-button plain size="small" type="primary">
                     <i class="el-icon-upload2"></i> 点击上传
                   </el-button>
-                  <div slot="tip" class="el-upload__tip" style="margin-left: 20px;">只能上传zip文件,且其中只能包含json文件</div>
+                  <!-- <div slot="tip" class="el-upload__tip" style="margin-left: 20px;">只能上传zip文件,且其中只能包含json文件</div> -->
+                  <div slot="tip" class="el-upload__tip" style="margin-left: 20px;">只能上传zip文件,且其中只能包含json文件和测试图片/视频文件夹
+                  </div>
                 </div>
               </el-upload>
               <span class="el-upload__tip" v-if="isUpload == true" style="color: black; margin-right: 10px;">
@@ -190,52 +192,29 @@ export default {
       JSZip.loadAsync(file).then(zip => {
 
         if (Object.keys(zip.files).length === 0) {
-        this.$message({
+          this.$message({
             message: 'zip包为空',
             type: 'warning'
-        });
-        return;
-    }
-        // 检查ZIP包内的文件结构
+          });
+          return;
+        }
+        //检查ZIP包内的文件结构
         // let hasSubdirectories = false;
-        let hasNonJsonFiles = false;
+        let hasInvalidFiles = false;
 
         zip.forEach((relativePath, file) => {
-          if (!file.name.endsWith('.json')) {
-            hasNonJsonFiles = true;
+          // 检查是否为JSON文件或文件夹
+          if (!file.name.endsWith('.json') && !file.dir) {
+            hasInvalidFiles = true;
           }
         });
 
-        // zip.forEach((relativePath, file) => {
-        //   if (file.dir) {
-        //     hasSubdirectories = true;
-        //   } else if (!file.name.endsWith('.json')) {
-        //     hasNonJsonFiles = true;
-        //   }
-        // });
-
-         // 如果存在文件夹或非JSON文件，则提醒用户
-        //  if (hasSubdirectories || hasNonJsonFiles) {
-        //   let errorMessage = 'zip包内应该只包含JSON文件且没有文件夹。\n';
-        //   if (hasSubdirectories) {
-        //     errorMessage += 'zip包内存在文件夹。\n';
-        //   }
-        //   if (hasNonJsonFiles) {
-        //     errorMessage += 'zip包内存在非JSON文件。\n';
-        //   }
-        //   this.$message({
-        //   message:errorMessage ,
-        //   type: 'warning'
-        // });
-        //   return;
-        // }
-
-        if (hasNonJsonFiles) {
-          let errorMessage = 'zip包内应该只包含JSON文件。zip包内存在非JSON文件';
+        if (hasInvalidFiles) {
+          let errorMessage = 'zip包内应该只包含JSON文件和文件夹';
           this.$message({
-          message:errorMessage ,
-          type: 'warning'
-        });
+            message: errorMessage,
+            type: 'warning'
+          });
           return;
         }
 

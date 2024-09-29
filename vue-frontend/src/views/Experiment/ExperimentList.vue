@@ -771,7 +771,7 @@ export default {
                         // formData.append('DS', this.newExperiment.DS);
                         // formData.append('pid', this.thisProject.id)
                         // formData.append('type', this.newExperiment.type)
-                        let trimmedName =this.newExperiment.name..replace(/\s+/g, '');
+                        let trimmedName =this.newExperiment.name.replace(/\s+/g, '');
                         const addData = {
                             name: trimmedName ,
                             AK1: this.newExperiment.AK1,
@@ -810,7 +810,7 @@ export default {
             else if (this.newExperiment.type === 2 || this.newExperiment.type === 3) {
                 if (this.newExperiment.name.trim()) {
                     if (this.newExperiment.AK1 && this.newExperiment.DS) {
-                        let trimmedName =this.newExperiment.name..replace(/\s+/g, '');
+                        let trimmedName =this.newExperiment.name.replace(/\s+/g, '');
                         const addData = {
                             name: trimmedName,
                             AK1: this.newExperiment.AK1,

@@ -198,14 +198,14 @@ export default {
     },
     addKey() {
       if (this.newApiKey.value.trim() && this.newApiKey.name.trim()) {
-        if(!this.isValidValue(this.newApiKey.value))
-        {
-          this.$message({
-              message: '密钥形式不符合规范，请检查',
-              type: 'warning'
-            });
-            return
-        }
+        // if(!this.isValidValue(this.newApiKey.value))
+        // {
+        //   this.$message({
+        //       message: '密钥形式不符合规范，请检查',
+        //       type: 'warning'
+        //     });
+        //     return
+        // }
         const data = {
           uid: localStorage.getItem('uid'),
           name: this.newApiKey.name,
@@ -392,7 +392,7 @@ export default {
           }
           else {
             this.$message({
-              message: '连通性出了问题，请检查网络或API key',
+              message: '连通性出了问题，请检查网络、调用函数和API key',
               type: 'warning'
             });
             const specifiedDate = new Date();
@@ -408,11 +408,11 @@ export default {
         this.load()
       })
     },
-    isValidValue(inputString) {
-      // 使用正则表达式匹配以非空内容开始，中间一个点，后面也是非空内容结束的字符串
-      const formatPattern = /^[^.]+\.[^.]+$/;
-      return formatPattern.test(inputString);
-    }
+    // isValidValue(inputString) {
+    //   // 使用正则表达式匹配以非空内容开始，中间一个点，后面也是非空内容结束的字符串
+    //   const formatPattern = /^[^.]+\.[^.]+$/;
+    //   return formatPattern.test(inputString);
+    // }
   }
 }
 

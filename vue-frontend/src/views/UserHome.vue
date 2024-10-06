@@ -7,7 +7,7 @@
           <!-- 左侧项目列表区域 -->
           <el-col :span="18">
             <div class="project-section">
-              <el-card class="box-card">
+              <el-card shadow="hover" class="box-card">
                 <div slot="header" class="clearfix">
                   <span style="float: left;">我创建的项目</span>
                   <el-link style="float: right;" @click="pushToProject()">我的项目列表</el-link>
@@ -42,7 +42,7 @@
                 </el-table>
               </el-card>
 
-              <el-card class="box-card" style="margin-top: 20px;">
+              <el-card shadow="hover" class="box-card" style="margin-top: 20px;">
                 <div slot="header" class="clearfix">
                   <span>我协助的测试</span>
                 </div>
@@ -70,7 +70,7 @@
             <el-badge :value="friendRequestNumebr" class="item" style="margin-top: 20px;">
               <el-button plain icon="el-icon-bell" size="large" @click="pushToFriendRequest">待处理的好友请求</el-button>
             </el-badge>
-            <el-card class="box-card">
+            <el-card shadow="hover" class="box-card">
               <div slot="header" class="clearfix">
                 <span>我的好友</span>
               </div>

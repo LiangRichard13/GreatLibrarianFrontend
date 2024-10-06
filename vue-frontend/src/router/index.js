@@ -57,6 +57,10 @@ const routes = [
                 component: () => import("@/views/Experiment/InteractionList.vue")
             },
             {
+                path: '/database',
+                component: () => import("@/views/Database/DataList.vue")
+            },
+            {
                 path: '/configureNavigation',
                 component: () => import("../components/ConfigureNavigation.vue"),
                 children: [

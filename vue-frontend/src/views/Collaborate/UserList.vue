@@ -6,7 +6,7 @@
     <template v-if="userList&&userList.length">
       <el-row>
         <el-col :span="6" v-for="(user, index) in userList" :key="user.id">
-          <el-card style="margin-bottom: 20px;margin-right: 20px;margin-left: 20px;">
+          <el-card shadow="hover" style="margin-bottom: 20px;margin-right: 20px;margin-left: 20px;">
             <div style="display:flex; align-items: center;">
               <img :src="user.icon" style="width: 50px; height: 50px; border-radius: 50%;" @error="handleImageError" />
               <div style="margin-left: 10px;">

@@ -4,7 +4,7 @@
       <div class="header">
         <div style="height: 70px;width: 100%">
           <div class="header-logo">
-            <img style="width: 45px; height: 45px;float: left" src="../assets/logo.png" alt=""/>
+            <img style="width: 45px; height: 45px;float: left" src="../assets/logo.png" alt="" />
             <div class="header-logo-text">大模型测评工具箱</div>
           </div>
           <div class="header-links">
@@ -13,6 +13,7 @@
             <el-link style="color: white" href="/experimentCollaborate" class="header-link"
               :underline="false">合作</el-link>
             <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">配置</el-link>
+            <el-link style="color: white" href="/database" class="header-link" :underline="false">数据库</el-link>
           </div>
 
           <el-dropdown style="float: right;padding-right: 10px">
@@ -21,7 +22,8 @@
                 <i class="el-icon-caret-bottom"></i>
               </div>
               <!-- <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.iconUrl"> -->
-              <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.iconUrl" @error="handleImageError">
+              <img alt="" style="width: 45px;height: 45px;border-radius: 50%" :src="user.iconUrl"
+                @error="handleImageError">
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
@@ -80,9 +82,9 @@ export default {
       isExpired(loginToken).then(res => {
         if (!res.success) {
           this.$notify({
-          title: '警告',
-          message: '您的令牌已过期，请重新登录',
-          type: 'warning'
+            title: '警告',
+            message: '您的令牌已过期，请重新登录',
+            type: 'warning'
           });
           const uid = localStorage.getItem("uid")
           removeUserIp(uid)//令牌过期则移除用户IP
@@ -231,7 +233,11 @@ export default {
   height: 70px;
   background: black;
   box-shadow: 1px 1px 5px #330867;
-
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  /* 设置较高的 z-index */
 }
 
 .header-links {

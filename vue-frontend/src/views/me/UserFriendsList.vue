@@ -5,7 +5,7 @@
       <el-row :gutter="20">
         <el-col :span="12" v-for="(row, index) in userFriends" :key="index" class="user-card">
           <!-- <div v-for="(item, index) in friendsInfo" :key="index"> -->
-          <el-card>
+          <el-card shadow="hover">
             <div style="display: flex; align-items: center;">
               <img :src="row.icon" style="width: 50px; height: 50px; border-radius: 50%;" @error="handleImageError" />
               <div style="margin-left: 10px;">

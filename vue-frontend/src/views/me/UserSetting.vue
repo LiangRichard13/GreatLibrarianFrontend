@@ -43,10 +43,12 @@
         <img style="padding-left:100px;width: 150px; height: 150px;margin-bottom: 10px;" alt="" :src="user.iconUrl" @error="handleImageError">
         <br>
         <el-upload class="upload-demo" :before-upload="beforeUpload" multiple :limit="1" accept=".png,.jpg">
-          <el-button plain size="small" type="primary" style="margin-left:50px">
+          <el-tooltip class="item" effect="dark" content="请上传 jpg/png 文件" placement="bottom">
+            <el-button plain type="primary" style="margin-left:100px">
             <i class="el-icon-upload2"></i> 点击上传
           </el-button>
-          <div slot="tip" class="el-upload__tip">请上传 jpg/png 文件</div>
+          </el-tooltip>
+          <!-- <span slot="tip" class="el-upload__tip">请上传 jpg/png 文件</span> -->
         </el-upload>
       </div>
     </div>

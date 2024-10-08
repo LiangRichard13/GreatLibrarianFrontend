@@ -463,7 +463,7 @@
                                                 dribbling a basketballC. passing a basketball.
                                             </span><br>
                                             <strong style="color: #4A4A4A;">答：</strong>
-                                            <span style="color: #6D6D6D;">C. dunking a basketball</span>
+                                            <span style="color: #6D6D6D;">A. dunking a basketball</span>
                                         </div>
                                         <div
                                             style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">

@@ -97,10 +97,18 @@
                                 </el-button>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
-                                        <el-button plain icon="el-icon-caret-right" size="mini" type="success"
-                                            @click="confirmStart(scope.$index, scope.row)" :loading="isTesting">
-                                            开始测试
+                                        <el-dropdown>
+                                        <el-button plain size="mini" type="success"
+                                             :loading="isTesting">开始测试
+                                             <i class="el-icon-arrow-down el-icon--right"></i>
                                         </el-button>
+                                        <el-dropdown-menu slot="dropdown">
+                                            <el-dropdown-item><el-tooltip content="模糊匹配方法，适用于开放式问答的评价，对于N个keywords，匹配到任意一个keyword即可获得满分（1分）" placement="top"><el-button size="small" type="primary" style="margin-bottom: 5px;" icon="el-icon-caret-right" plain @click="confirmStart(scope.$index, scope.row,1)">模糊匹配方法-1</el-button></el-tooltip></el-dropdown-item>
+                                            <el-dropdown-item><el-tooltip content="模糊匹配方法，适用于开放式问答的评价，对于N个keywords，每匹配到一个keyword即可获得1/N分" placement="left"><el-button size="small" type="primary" style="margin-bottom: 5px;" icon="el-icon-caret-right" plain @click="confirmStart(scope.$index, scope.row,2)">模糊匹配方法-2</el-button></el-tooltip></el-dropdown-item>
+                                            <el-dropdown-item><el-tooltip content="规则化匹配方法，适用于封闭式问题（选择题/判断题）的评价，对于N个keywords，匹配到任意一个keyword即可获得满分（1分）" placement="left"><el-button size="small" type="primary" style="margin-bottom: 5px;" icon="el-icon-caret-right" plain @click="confirmStart(scope.$index, scope.row,3)">规则化匹配方法-1</el-button></el-tooltip></el-dropdown-item>
+                                            <el-dropdown-item><el-tooltip content="规则化匹配方法，适用于封闭式问题（选择题/判断题）的评价，对于N个keywords，每匹配到一个keyword即可获得1/N分" placement="bottom"><el-button size="small" type="primary" style="margin-bottom: 5px;" icon="el-icon-caret-right" plain @click="confirmStart(scope.$index, scope.row,4)">规则化匹配方法-2</el-button></el-tooltip></el-dropdown-item>
+                                        </el-dropdown-menu>
+                                        </el-dropdown>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
                                         <el-button plain size="mini" icon="el-icon-s-tools" type="warning"
@@ -867,7 +875,7 @@ export default {
                 })
             }
         },
-        handleStartExperiment(index, row) {
+        handleStartExperiment(index, row,number) {
             this.isTesting = true
             this.$message({
                 message: row.id + '-' + row.name + '正在准备执行,请稍等',
@@ -875,8 +883,8 @@ export default {
             });
             this.handleGenerateConfig(row).then(result => {
                 if (result) {
-                    const id = { tPid: row.id }
-                    startExp(id).then(res => {
+                    const data = { tPid: row.id,number:number }
+                    startExp(data).then(res => {
                         if (res.success) {
                             this.$message({
                                 message: row.id + '-' + row.name + '开始执行',
@@ -1371,13 +1379,13 @@ export default {
                 });
             });
         },
-        confirmStart(index, row) {
+        confirmStart(index, row,number) {
             this.$confirm('确定执行该测试吗？一旦执行将直至结束', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.handleStartExperiment(index, row)
+                this.handleStartExperiment(index, row,number)
             }).catch(() => {
                 this.$message({
                     type: 'info',

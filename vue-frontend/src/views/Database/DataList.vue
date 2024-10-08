@@ -19,20 +19,20 @@
                                     </el-option>
                                 </el-select>
 
-                                <el-select v-model="test_dimension" placeholder="测试维度">
-                                    <el-option v-for="item in test_dimension_options" :key="item.value"
+                                <el-select v-model="test_demension" placeholder="测试维度">
+                                    <el-option v-for="item in test_demension_options" :key="item.value"
                                         :label="item.label" :value="item.value">
                                     </el-option>
                                 </el-select>
 
                                 <el-select v-model="data_type_input" placeholder="输入数据类型">
-                                    <el-option v-for="item in data_type_options" :key="item.value" :label="item.label"
+                                    <el-option v-for="item in data_type_input_options" :key="item.value" :label="item.label"
                                         :value="item.value">
                                     </el-option>
                                 </el-select>
 
                                 <el-select v-model="data_type_output" placeholder="输出数据类型">
-                                    <el-option v-for="item in data_type_options" :key="item.value" :label="item.label"
+                                    <el-option v-for="item in data_type_output_options" :key="item.value" :label="item.label"
                                         :value="item.value">
                                     </el-option>
                                 </el-select>
@@ -59,10 +59,12 @@
                                 <template slot-scope="scope">
                                     <!-- 判断文件类型是图片还是视频 -->
                                     <div v-if="isImage(scope.row.file_url)">
-                                        <img :src="scope.row.file_url" style="width: 100px; height: 100px;" />
+                                        <!-- <span>{{scope.row.file_url}}</span> -->
+                                        <img :src="scope.row.file_url" :key="scope.row.file_url" style="width: 100px; height: 100px;" />
                                     </div>
                                     <div v-else-if="isVideo(scope.row.file_url)">
-                                        <video controls style="width: 200px; height: 150px;">
+                                        <!-- <span>{{scope.row.file_url}}</span> -->
+                                        <video controls :key="scope.row.file_url" style="width: 200px; height: 150px;">
                                             <source :src="scope.row.file_url" type="video/mp4" />
                                             您的浏览器不支持视频标签。
                                         </video>
@@ -81,17 +83,17 @@
                                                 <el-tag v-else-if="scope.row.answer_mode === 'level2'">命题问答</el-tag>
                                                 <el-tag type="info" v-else>无</el-tag>
                                             </el-form-item>
-                                            <el-form-item label="更新版本:">
+                                            <el-form-item label="更新时间:">
                                                 <span>{{ scope.row.version_update.update_time }}</span>
                                             </el-form-item>
-                                            <el-form-item label="更新时间:">
+                                            <el-form-item label="更新版本:">
                                                 <span>{{ scope.row.version_update.version }}</span>
                                             </el-form-item>
                                             <el-form-item label="创建者:">
                                                 <span>{{ scope.row.uploader }}</span>
                                             </el-form-item>
                                             <el-form-item label="创建时间:">
-                                                <span>{{ scope.row.date_note }}</span>
+                                                <span>{{ scope.row.data_note }}</span>
                                             </el-form-item>
                                         </el-form>
                                     </div>
@@ -106,7 +108,7 @@
                 </div>
 
                 <!-- 静态展示数据集用例 -->
-                <div v-else>
+                <div v-else v-loading="loading">
                     <el-row>
                         <el-col :span="11">
                             <!-- C-EVAL -->
@@ -614,64 +616,43 @@ export default {
             currentPage: 1, // 当前页码
             pageSize: 8,   // 每页显示的用例数量
             loading: false,
-            filterdata: [
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
-                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
-
-            ],
+            filterdata: [],
+            paginatedData:[],
             // filterdata: [],
             resource: null,
-            test_dimension: null,
+            test_demension: null,
             data_type_input: null,
-            data_type_output: null,
+            data_type_output:null,
             resource_options: [
-                { value: '自筹', label: '自筹' },
-                { value: 'C-Eval', label: 'C-Eval' },
-                { value: 'CMMLU', label: 'CMMLU' }
-            ],
-            test_dimension_options: [
-                { value: '半结构化数据生成', label: '半结构化数据生成' },
+            { value: 'C-Eval', label: 'C-Eval' },
+            { value: 'CMMLU', label: 'CMMLU' },
+            { value: 'https://github.com/cambridgeltl/visual-spatial-reasoning', label: 'Visual-Spatial Reasoning' },
+            { value: 'https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500', label: 'JA-VG-VQA-500' },
+            { value: 'https://huggingface.co/datasets/lmms-lab/TempCompass', label: 'TempCompass' },
+            { value: 'https://huggingface.co/datasets/terryoo/TableVQA-Bench', label: 'TableVQA' },
+            { value: 'https://textvqa.org/dataset/', label: 'TextVQA' },
+            { value: 'https://www.youtube.com/', label: 'YouTuBe' },
+            { value: '自筹', label: '自筹' },
+            { value: 'HalluQA', label: 'HalluQA' },
+            
+        ],
+            test_demension_options: [
+                // { value: '半结构化数据生成', label: '半结构化数据生成' },
                 { value: '常识推理', label: '常识推理' },
-                { value: '代码理解', label: '代码理解' },
-                { value: '代码生成', label: '代码生成' },
-                { value: '多语言能力', label: '多语言能力' },
-                { value: '公平性', label: '公平性' },
-                { value: '合规性', label: '合规性' },
-                { value: '幻觉', label: '幻觉' },
-                { value: '机器翻译', label: '机器翻译' },
-                { value: '鲁棒性', label: '鲁棒性' },
+                // { value: '代码理解', label: '代码理解' },
+                // { value: '代码生成', label: '代码生成' },
+                // { value: '多语言能力', label: '多语言能力' },
+                // { value: '公平性', label: '公平性' },
+                // { value: '合规性', label: '合规性' },
+                // { value: '幻觉', label: '幻觉' },
+                // { value: '机器翻译', label: '机器翻译' },
+                // { value: '鲁棒性', label: '鲁棒性' },
                 { value: '逻辑推理', label: '逻辑推理' },
-                { value: '命名实体识别', label: '命名实体识别' },
-                { value: '任务分解', label: '任务分解' },
+                // { value: '命名实体识别', label: '命名实体识别' },
+                // { value: '任务分解', label: '任务分解' },
                 { value: '数学推理', label: '数学推理' },
-                { value: '文本分类', label: '文本分类' },
-                { value: '文本改写', label: '文本改写' },
+                // { value: '文本分类', label: '文本分类' },
+                // { value: '文本改写', label: '文本改写' },
                 { value: '文本问答', label: '文本问答' },
                 { value: '信息抽取', label: '信息抽取' },
                 { value: '因果推理', label: '因果推理' },
@@ -682,16 +663,23 @@ export default {
                 { value: '视觉空间关系', label: '视觉空间关系' },
                 { value: '视觉语言推理', label: '视觉语言推理' },
                 { value: '视觉蕴含', label: '视觉蕴含' },
+                { value: '视频检索', label: '视频检索' },
                 { value: '图表推理', label: '图表推理' },
                 { value: '图片问答', label: '图片问答' },
-                { value: '视频检索', label: '视频检索' },
-                { value: '有声视频问答', label: '有声视频问答' }
+                { value: '有声视频问答', label: '有声视频问答' },
+                { value: '幻觉', label: '幻觉' },
+                { value: '鲁棒性', label: '鲁棒性' },
+                { value: '公平性', label: '公平性' },
+                { value: '安全性', label: '安全性' }
             ],
-            data_type_options: [
+            data_type_input_options: [
                 { value: 'txt', label: '文本' },
-                { value: 'image', label: '图像' },
-                { value: 'video', label: '视频' },
-                { value: 'audio', label: '音频' }
+                { value: 'txt, video', label: '文本+视频' },
+                { value: 'txt, image', label: '文本+图像' },
+                // { value: 'audio', label: '音频' }
+            ],
+            data_type_output_options: [
+                { value:'txt', label: '文本' },
             ],
             // images: [
             //     require('@/assets/imageNet/a.jpg'),
@@ -706,7 +694,13 @@ export default {
         // 切换页码时触发的回调
         handlePageChange(page) {
             this.currentPage = page;
+            this.updatePaginatedData();
         },
+    updatePaginatedData() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      this.paginatedData = this.filterdata.slice(start, end);
+    },
         // 判断是否为图片格式
         isImage(fileUrl) {
             return /\.(jpg|jpeg|png|gif)$/i.test(fileUrl);
@@ -716,7 +710,7 @@ export default {
             return /\.mp4$/i.test(fileUrl);
         },
         hanedleClear() {
-            this.test_dimension = null
+            this.test_demension = null
             this.data_type_input = null
             this.data_type_output = null
             this.resource = null
@@ -728,17 +722,24 @@ export default {
         },
         handleSearch() {
             this.loading = true
-            if (this.data_type_input || this.data_type_output || this.resource || this.test_dimension) {
+            if (this.data_type_input || this.data_type_output || this.resource || this.test_demension) {
                 const searchOptions = {
                         resource: this.resource,
                         // data_type: { "input": this.data_type_input, "output": this.data_type_output },
                         data_type_input:this.data_type_input,
-                        data_type_output:this.data_type_ouput,
-                        test_dimension: this.test_dimension
+                        data_type_output:this.data_type_output,
+                        test_demension: this.test_demension
                     }
+                // const searchOptions={
+                //         resource:"https://huggingface.co/datasets/lmms-lab/TempCompass",
+                //         data_type_input:"txt, video",
+                //         data_type_output:"txt",
+                //         test_demension:"有声视频问答"
+                // }
                     getDataList(searchOptions).then(res => {
                         if (res.success) {
                             this.filterdata = res.data
+                            this.updatePaginatedData()
                             this.loading = false
                         }
                         else {
@@ -789,12 +790,6 @@ export default {
     computed: {
         totalCases() {
             return this.filterdata.length; // 用例总数
-        },
-        paginatedData() {
-            // 通过当前页码和每页显示数量进行切片分页
-            const start = (this.currentPage - 1) * this.pageSize;
-            const end = start + this.pageSize;
-            return this.filterdata.slice(start, end);
         },
     },
 }

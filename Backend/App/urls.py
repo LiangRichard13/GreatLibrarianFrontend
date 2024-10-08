@@ -5,7 +5,7 @@
 from .extensions import api
 
 from App.apis import (user, friend, APIKey, dataSet, project, projectAPIKey, projectDataSet, testProject,
-                      testProjectOperation, testProjectUser, QA, progress)
+                      testProjectOperation, testProjectUser, QA, progress, dataList)
 
 resources = [
     (user.UserCRUD, '/user'),  # user用户类
@@ -27,7 +27,11 @@ resources = [
     (testProjectOperation.TPOperation, '/testProjectOperation'),  # 实验操作
     (testProjectUser.TestProjectUserCRUD, '/testProjectUser'),  # 实现--协作者
     (QA.QAOperation, '/QA'),  # 人工审核
-    (progress.Progress, '/progress')  # 进度条
+    (progress.Progress, '/progress'),  # 进度条
+
+    # Add dataList module
+    (dataList.DataListSearch, '/datasets'),
+    
 ]
 
 for resource, url in resources:

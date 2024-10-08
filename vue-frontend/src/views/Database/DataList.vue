@@ -685,12 +685,10 @@ export default {
                         });
                     }
                     else if (!this.data_type_ouput) {
-                        if (!this.data_type_input) {
                             this.$message({
                                 type: 'warning',
                                 message: '请选择输出数据类型'
                             });
-                        }
                     }
                 }
             }

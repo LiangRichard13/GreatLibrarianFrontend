@@ -46,13 +46,13 @@
                 </el-row>
                 <!-- 用例展示表 -->
                 <div v-if="filterdata.length" v-loading="loading">
-                    <el-card shadow="hover" class="box-card" style="margin-top: 20px;height: 800px">
+                    <el-card shadow="hover" class="box-card" style="margin-top: 20px;">
                         <div slot="header" class="clearfix">
                             <span style="float: left;">
                                 <h4>用例表</h4>
                             </span>
                         </div>
-                        <el-table :data="filterdata">
+                        <el-table :data="paginatedData">
                             <el-table-column label="问题" prop="question"></el-table-column>
                             <el-table-column label="回答" prop="answer"></el-table-column>
                             <el-table-column label="文件">
@@ -98,8 +98,13 @@
                                 </template>
                             </el-table-column>
                         </el-table>
+                        <!-- 分页组件 -->
+                        <el-pagination background layout="prev, pager, next, total" :total="totalCases"
+                            :page-size="pageSize" @current-change="handlePageChange" :current-page="currentPage">
+                        </el-pagination>
                     </el-card>
                 </div>
+
                 <!-- 静态展示数据集用例 -->
                 <div v-else>
                     <el-row>
@@ -120,7 +125,8 @@
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
                                         <li><strong>大小：</strong>超过13,000道中文考试题</li>
-                                        <li><strong>类别：</strong>半结构化数据生成、代码生成、公平性、幻觉、机器翻译、鲁棒性、文本改写、常识推理、任务分解、知识与常识、合规性、摘要总结、命名实体识别、因果推理、长文本理解、代码理解、逻辑推理、数学推理、文本问答、信息抽取、专业知识</li>
+                                        <li><strong>类别：</strong>半结构化数据生成、代码生成、公平性、幻觉、机器翻译、鲁棒性、文本改写、常识推理、任务分解、知识与常识、合规性、摘要总结、命名实体识别、因果推理、长文本理解、代码理解、逻辑推理、数学推理、文本问答、信息抽取、专业知识
+                                        </li>
                                         <li><strong>版本：</strong>2023年发布</li>
                                     </ul>
                                 </div>
@@ -129,8 +135,8 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：税务行政复议的申请人可以在得知税务机关作出具体行政行为之日起____日内提出行政复议申请。
@@ -138,8 +144,8 @@
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">A</span>
                                         </div>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：有三个直径相同的金属小球，小球1和2带等量同号电荷，两者的距离远大于小球直径，相互作用力为F。小球3不带电，装有绝缘手柄．用小球3先和小球1碰一下，接着又和小球2碰一下，然后移去。则此时小球1和2之间的相互作用力为____。
@@ -147,8 +153,8 @@
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">B</span>
                                         </div>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：事物的质是指____。
@@ -178,7 +184,8 @@
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
                                         <li><strong>大小：</strong>超过12,000道中文多学科、多领域的测试题</li>
-                                        <li><strong>类别：</strong>半结构化数据生成、代码生成、公平性、幻觉、机器翻译、鲁棒性、文本改写、常识推理、任务分解、知识与常识、合规性、摘要总结、命名实体识别、因果推理、长文本理解、代码理解、逻辑推理、数学推理、文本问答、信息抽取、专业知识</li>
+                                        <li><strong>类别：</strong>半结构化数据生成、代码生成、公平性、幻觉、机器翻译、鲁棒性、文本改写、常识推理、任务分解、知识与常识、合规性、摘要总结、命名实体识别、因果推理、长文本理解、代码理解、逻辑推理、数学推理、文本问答、信息抽取、专业知识
+                                        </li>
                                         <li><strong>版本：</strong>2022年发布</li>
                                     </ul>
                                 </div>
@@ -187,8 +194,8 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：某周的日均温分别为9°C、9°C、11°C、12°C、13°C、15°C、16°C，则对喜温作物(生物学零度为10°C)来说，这周的活动的积温为。
@@ -196,8 +203,8 @@
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">A</span>
                                         </div>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：“心诚则灵，心不诚则不灵”的说法是。
@@ -206,8 +213,8 @@
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">C</span>
                                         </div>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：下⾯⼏何体中，过轴的截⾯⼀定是圆⾯的是。
@@ -247,8 +254,8 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span style="color: #6D6D6D;">请判断图片中的内容是属于以上类别中的哪种，只需要回答类别所对应的数字序号，不需要做其他解释。
                                                 0:analog clock
@@ -297,8 +304,8 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span style="color: #6D6D6D;">what page is the alphabet listed on?
                                             </span><br>
@@ -307,8 +314,8 @@
                                         </div>
                                         <img :src="require('@/assets/data_list_image/page31.jpg')"
                                             style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span style="color: #6D6D6D;">what did the passengers in this comic avoid?
                                             </span><br>
@@ -350,8 +357,8 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span style="color: #6D6D6D;">how many players attended wake forest
                                                 university before being
@@ -362,8 +369,8 @@
                                         </div>
                                         <img :src="require('@/assets/data_list_image/player.jpg')"
                                             style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span style="color: #6D6D6D;">what is the last type of vessel listed?
                                             </span><br>
@@ -402,8 +409,8 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span style="color: #6D6D6D;">Please judge whether the following description
                                                 is consistent
@@ -451,8 +458,8 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span style="color: #6D6D6D;">Please complete the following multiple-choice
                                                 questions based
@@ -465,8 +472,8 @@
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">A. dunking a basketball</span>
                                         </div>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span style="color: #6D6D6D;">Please complete the following multiple-choice
                                                 questions based
@@ -487,21 +494,45 @@
                                                 type="video/mp4">
                                             您的浏览器不支持视频标签。
                                         </video>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
-                                            <span style="color: #6D6D6D;">Please complete the following multiple-choice questions based on the video. Please give the correct option directly and do not mention the wrong option you think:In what order did the man do the activities?A. showing off his car key, pulling back inside the carB. pulling back inside the car, showing off his car keyC. throwing away his car key, pulling back inside the carD. pulling back inside the car, throwing away his car key.
+                                            <span style="color: #6D6D6D;">Please complete the following multiple-choice
+                                                questions based
+                                                on the video. Please give the correct option directly and do not mention
+                                                the wrong
+                                                option you think:In what order did the man do the activities?A. showing
+                                                off his car key,
+                                                pulling back inside the carB. pulling back inside the car, showing off
+                                                his car keyC.
+                                                throwing away his car key, pulling back inside the carD. pulling back
+                                                inside the car,
+                                                throwing away his car key.
                                             </span><br>
                                             <strong style="color: #4A4A4A;">答：</strong>
-                                            <span style="color: #6D6D6D;">A. showing off his car key, pulling back inside the car.</span>
+                                            <span style="color: #6D6D6D;">A. showing off his car key, pulling back
+                                                inside the
+                                                car.</span>
                                         </div>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
-                                            <span style="color: #6D6D6D;">Please complete the following multiple-choice questions based on the video. Please give the correct option directly and do not mention the wrong option you think:Which description is a more suitable match for the video?Option 1: The correct order of actions by the man is throwing away his car key, then pulling back inside the car.Option 2: The man first shows off his car key, then pulls back inside the car.
+                                            <span style="color: #6D6D6D;">Please complete the following multiple-choice
+                                                questions based
+                                                on the video. Please give the correct option directly and do not mention
+                                                the wrong
+                                                option you think:Which description is a more suitable match for the
+                                                video?Option 1: The
+                                                correct order of actions by the man is throwing away his car key, then
+                                                pulling back
+                                                inside the car.Option 2: The man first shows off his car key, then pulls
+                                                back inside the
+                                                car.
                                             </span><br>
                                             <strong style="color: #4A4A4A;">答：</strong>
-                                            <span style="color: #6D6D6D;">Option 2: The man first shows off his car key, then pulls back inside the car.</span>
+                                            <span style="color: #6D6D6D;">Option 2: The man first shows off his car key,
+                                                then pulls back
+                                                inside the car.</span>
                                         </div>
                                         <video controls
                                             style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
@@ -539,26 +570,29 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
-                                            <span style="color: #6D6D6D;">给定以下对图片的描述，请你判断描述与图片间的对应关系是否一致。如果一致请仅回答True，如果不一致请仅回答False，不需要做其他任何解释。 描述：两个人正在打网球。
+                                            <span
+                                                style="color: #6D6D6D;">给定以下对图片的描述，请你判断描述与图片间的对应关系是否一致。如果一致请仅回答True，如果不一致请仅回答False，不需要做其他任何解释。
+                                                描述：两个人正在打网球。
                                             </span><br>
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">True</span>
                                         </div>
                                         <img :src="require('@/assets/data_list_image/tennis.jpg')"
-                                        style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;" class="QA">
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
-                                            <span style="color: #6D6D6D;">基于给定的一对图片和描述，描述与图片之间的关系有：“蕴含（Entailment）”、“矛盾（Contradiction）”和“中立（Nutral）”。蕴含（Entailment）是指图片中有充分的证据证明描述是正确的。矛盾（Contradiction）是指图片中有充分的证据证明描述是错误的。中立（Nutral）是指图片中没有充分的证据证明描述是正确的还是错误的。请你判断下列描述对于图片的关系是“蕴含（Entailment）”、“矛盾（Contradiction）”还是“中立（Nutral）”，只需要说出正确答案，不要提及错误选项以及做其他任何解释。描述：有人刚刚刷完牙。
+                                            <span
+                                                style="color: #6D6D6D;">基于给定的一对图片和描述，描述与图片之间的关系有：“蕴含（Entailment）”、“矛盾（Contradiction）”和“中立（Nutral）”。蕴含（Entailment）是指图片中有充分的证据证明描述是正确的。矛盾（Contradiction）是指图片中有充分的证据证明描述是错误的。中立（Nutral）是指图片中没有充分的证据证明描述是正确的还是错误的。请你判断下列描述对于图片的关系是“蕴含（Entailment）”、“矛盾（Contradiction）”还是“中立（Nutral）”，只需要说出正确答案，不要提及错误选项以及做其他任何解释。描述：有人刚刚刷完牙。
                                             </span><br>
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">Neutral</span>
                                         </div>
                                         <img :src="require('@/assets/data_list_image/toothbrush.jpg')"
-                                        style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
                                     </div>
                                 </div>
                             </el-card>
@@ -577,8 +611,40 @@ export default {
     name: "dataList",
     data() {
         return {
+            currentPage: 1, // 当前页码
+            pageSize: 8,   // 每页显示的用例数量
             loading: false,
-            filterdata: [{ "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "string(level1/level2)", "date_note": "string" },],
+            filterdata: [
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+
+            ],
             // filterdata: [],
             resource: null,
             test_dimension: null,
@@ -586,7 +652,7 @@ export default {
             data_type_output: null,
             resource_options: [
                 { value: '自筹', label: '自筹' },
-                { value: 'C-eval', label: 'C-eval' },
+                { value: 'C-Eval', label: 'C-Eval' },
                 { value: 'CMMLU', label: 'CMMLU' }
             ],
             test_dimension_options: [
@@ -637,6 +703,10 @@ export default {
         };
     },
     methods: {
+        // 切换页码时触发的回调
+        handlePageChange(page) {
+            this.currentPage = page;
+        },
         // 判断是否为图片格式
         isImage(fileUrl) {
             return /\.(jpg|jpeg|png|gif)$/i.test(fileUrl);
@@ -657,49 +727,76 @@ export default {
             });
         },
         handleSearch() {
-            this.loading=true
+            this.loading = true
             if (this.data_type_input || this.data_type_output || this.resource || this.test_dimension) {
-                if (this.data_type_input && this.data_type_output) {
-                    const searchOptions = {
+                const searchOptions = {
                         resource: this.resource,
-                        data_type: { "input": this.data_type_input, "output": this.data_type_output },
+                        // data_type: { "input": this.data_type_input, "output": this.data_type_output },
+                        data_type_input:this.data_type_input,
+                        data_type_output:this.data_type_ouput,
                         test_dimension: this.test_dimension
                     }
                     getDataList(searchOptions).then(res => {
                         if (res.success) {
                             this.filterdata = res.data
-                            this.loading=false
+                            this.loading = false
                         }
-                        else
-                        {
-                            this.loading=false
+                        else {
+                            this.loading = false
                         }
                     }
                     )
-                }
-                else {
-                    if (!this.data_type_input) {
-                        this.$message({
-                            type: 'warning',
-                            message: '请选择输入数据类型'
-                        });
-                    }
-                    else if (!this.data_type_ouput) {
-                            this.$message({
-                                type: 'warning',
-                                message: '请选择输出数据类型'
-                            });
-                    }
-                }
+                // if (this.data_type_input && this.data_type_output) {
+                //     const searchOptions = {
+                //         resource: this.resource,
+                //         data_type: { "input": this.data_type_input, "output": this.data_type_output },
+                //         test_dimension: this.test_dimension
+                //     }
+                //     getDataList(searchOptions).then(res => {
+                //         if (res.success) {
+                //             this.filterdata = res.data
+                //             this.loading = false
+                //         }
+                //         else {
+                //             this.loading = false
+                //         }
+                //     }
+                //     )
+                // }
+                // else {
+                //     if (!this.data_type_input) {
+                //         this.$message({
+                //             type: 'warning',
+                //             message: '请选择输入数据类型'
+                //         });
+                //     }
+                //     else if (!this.data_type_ouput) {
+                //         this.$message({
+                //             type: 'warning',
+                //             message: '请选择输出数据类型'
+                //         });
+                //     }
+                // }
             }
             else {
                 this.$message({
                     type: 'warning',
-                    message: '请先选择筛选选项'
+                    message: '筛选选项不能全为空！'
                 });
             }
         }
-    }
+    },
+    computed: {
+        totalCases() {
+            return this.filterdata.length; // 用例总数
+        },
+        paginatedData() {
+            // 通过当前页码和每页显示数量进行切片分页
+            const start = (this.currentPage - 1) * this.pageSize;
+            const end = start + this.pageSize;
+            return this.filterdata.slice(start, end);
+        },
+    },
 }
 </script>
 <style scoped>
@@ -708,8 +805,8 @@ export default {
     width: 100%;
 }
 
-.QA{
-    border-radius:4px ;
+.QA {
+    border-radius: 4px;
     border-color: black;
     border-style: dashed;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
@@ -731,7 +828,8 @@ export default {
 }
 
 .light-purple:hover {
-    transform: scale(1.01); /* 放大5% */
+    transform: scale(1.01);
+    /* 放大5% */
 }
 
 
@@ -739,13 +837,19 @@ export default {
     margin-left: 20px;
 }
 
-img, video {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-    border-radius: 8px; /* 可选：给图片和视频添加圆角 */
-    transition: box-shadow 0.3s ease; /* 鼠标悬浮时的动画效果 */
+img,
+video {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    border-radius: 8px;
+    /* 可选：给图片和视频添加圆角 */
+    transition: box-shadow 0.3s ease;
+    /* 鼠标悬浮时的动画效果 */
 }
 
-img:hover, video:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* 鼠标悬浮时加深阴影 */
+img:hover,
+video:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    /* 鼠标悬浮时加深阴影 */
 }
 </style>

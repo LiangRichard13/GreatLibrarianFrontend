@@ -52,7 +52,7 @@
                                 <h4>用例表</h4>
                             </span>
                         </div>
-                        <el-table :data="filterdata">
+                        <el-table :data="paginatedData">
                             <el-table-column label="问题" prop="question"></el-table-column>
                             <el-table-column label="回答" prop="answer"></el-table-column>
                             <el-table-column label="文件">
@@ -98,15 +98,20 @@
                                 </template>
                             </el-table-column>
                         </el-table>
+                        <!-- 分页组件 -->
+                        <el-pagination background layout="prev, pager, next, total" :total="totalCases"
+                            :page-size="pageSize" @current-change="handlePageChange" :current-page="currentPage">
+                        </el-pagination>
                     </el-card>
                 </div>
+
                 <!-- 静态展示数据集用例 -->
                 <div v-else>
                     <el-row>
                         <el-col :span="11">
                             <!-- C-EVAL -->
                             <el-card shadow="hover" class="light-purple"
-                                style="margin-top: 20px; border-radius: 12px; padding: 20px;">
+                                style="margin-top: 20px; border-radius: 12px; padding: 20px;height: 900px;">
                                 <!-- Card Header -->
                                 <div slot="header" class="clearfix"
                                     style="border-bottom: 2px solid #E0E0E0; padding-bottom: 10px;">
@@ -120,9 +125,9 @@
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
                                         <li><strong>大小：</strong>超过13,000道中文考试题</li>
-                                        <li><strong>类别：</strong>52个不同科目，涵盖中文基础教育、高等教育多个领域</li>
+                                        <li><strong>类别：</strong>半结构化数据生成、代码生成、公平性、幻觉、机器翻译、鲁棒性、文本改写、常识推理、任务分解、知识与常识、合规性、摘要总结、命名实体识别、因果推理、长文本理解、代码理解、逻辑推理、数学推理、文本问答、信息抽取、专业知识
+                                        </li>
                                         <li><strong>版本：</strong>2023年发布</li>
-                                        <li><strong>应用领域：</strong>中文教育评估、语言模型性能测试、跨领域知识评估</li>
                                     </ul>
                                 </div>
 
@@ -130,8 +135,8 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：税务行政复议的申请人可以在得知税务机关作出具体行政行为之日起____日内提出行政复议申请。
@@ -139,8 +144,8 @@
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">A</span>
                                         </div>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：有三个直径相同的金属小球，小球1和2带等量同号电荷，两者的距离远大于小球直径，相互作用力为F。小球3不带电，装有绝缘手柄．用小球3先和小球1碰一下，接着又和小球2碰一下，然后移去。则此时小球1和2之间的相互作用力为____。
@@ -148,8 +153,8 @@
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">B</span>
                                         </div>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：事物的质是指____。
@@ -165,7 +170,7 @@
                         <el-col :span="11">
                             <!-- CMMLU -->
                             <el-card shadow="hover" class="light-purple"
-                                style="margin-top: 20px; border-radius: 12px; padding: 20px;">
+                                style="margin-top: 20px; border-radius: 12px; padding: 20px;height: 900px;">
                                 <!-- Card Header -->
                                 <div slot="header" class="clearfix"
                                     style="border-bottom: 2px solid #E0E0E0; padding-bottom: 10px;">
@@ -179,9 +184,9 @@
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
                                         <li><strong>大小：</strong>超过12,000道中文多学科、多领域的测试题</li>
-                                        <li><strong>类别：</strong>57个不同科目，涵盖中文人文、科学、工程等领域</li>
+                                        <li><strong>类别：</strong>半结构化数据生成、代码生成、公平性、幻觉、机器翻译、鲁棒性、文本改写、常识推理、任务分解、知识与常识、合规性、摘要总结、命名实体识别、因果推理、长文本理解、代码理解、逻辑推理、数学推理、文本问答、信息抽取、专业知识
+                                        </li>
                                         <li><strong>版本：</strong>2022年发布</li>
-                                        <li><strong>应用领域：</strong>中文多语言理解、跨领域测试、大规模语言模型评估</li>
                                     </ul>
                                 </div>
 
@@ -189,8 +194,8 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：某周的日均温分别为9°C、9°C、11°C、12°C、13°C、15°C、16°C，则对喜温作物(生物学零度为10°C)来说，这周的活动的积温为。
@@ -198,8 +203,8 @@
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">A</span>
                                         </div>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：“心诚则灵，心不诚则不灵”的说法是。
@@ -208,8 +213,8 @@
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">C</span>
                                         </div>
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span
                                                 style="color: #6D6D6D;">以下是一道单项选择题，请你直接给出正确的选项，不要提及你认为的错误选项。以下是问题：下⾯⼏何体中，过轴的截⾯⼀定是圆⾯的是。
@@ -222,11 +227,11 @@
                             </el-card>
                         </el-col>
                     </el-row>
-                    <el-row>
+                    <el-row style="display: flex;">
                         <el-col :span="11">
                             <!-- IMGE-NET -->
                             <el-card shadow="hover" class="light-purple"
-                                style="margin-top: 20px; border-radius: 12px; padding: 20px;">
+                                style="margin-top: 20px; border-radius: 12px; padding: 20px;height:1500px">
                                 <!-- Card Header -->
                                 <div slot="header" class="clearfix"
                                     style="border-bottom: 2px solid #E0E0E0; padding-bottom: 10px;">
@@ -240,9 +245,8 @@
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
                                         <li><strong>大小：</strong>14,197,122张图像</li>
-                                        <li><strong>类别：</strong>21,841类物体</li>
+                                        <li><strong>类别：</strong>图片分类</li>
                                         <li><strong>版本：</strong>2021年度更新版</li>
-                                        <li><strong>应用领域：</strong>图像分类、对象识别、计算机视觉</li>
                                     </ul>
                                 </div>
 
@@ -250,8 +254,8 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
                                     <div class="block">
-                                        <div
-                                            style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
                                             <strong style="color: #4A4A4A;">问：</strong>
                                             <span style="color: #6D6D6D;">请判断图片中的内容是属于以上类别中的哪种，只需要回答类别所对应的数字序号，不需要做其他解释。
                                                 0:analog clock
@@ -267,12 +271,328 @@
                                             <strong style="color: #4A4A4A;">答：</strong>
                                             <span style="color: #6D6D6D;">3</span>
                                         </div>
-                                        <!-- <el-carousel height="400px" indicator-position="outside">
-                                        <el-carousel-item v-for="(image, index) in images" :key="index"> -->
-                                        <img :src="require('@/assets/imageNet/bandaid.jpg')"
+                                        <img :src="require('@/assets/data_list_image/bandAid.jpg')"
                                             style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
-                                        <!-- </el-carousel-item>
-                                    </el-carousel> -->
+                                    </div>
+                                </div>
+                            </el-card>
+                        </el-col>
+
+                        <el-col :span="11">
+                            <!-- TextVQA -->
+                            <el-card shadow="hover" class="light-purple"
+                                style="margin-top: 20px; border-radius: 12px; padding: 20px;height: 1500px">
+                                <!-- Card Header -->
+                                <div slot="header" class="clearfix"
+                                    style="border-bottom: 2px solid #E0E0E0; padding-bottom: 10px;">
+                                    <span style="float: left;">
+                                        <h3 style="font-size: 24px; color: #4A4A4A;">TextVQA</h3>
+                                    </span>
+                                </div>
+
+                                <!-- Dataset Basic Information Section -->
+                                <div style="padding: 20px 0;">
+                                    <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
+                                    <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
+                                        <li><strong>大小：</strong>45,336张图像及相应的93,000个问题</li>
+                                        <li><strong>类别：</strong>图片问答</li>
+                                        <li><strong>版本：</strong>2019年发布</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Q&A Section -->
+                                <div style="padding: 20px 0;">
+                                    <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
+                                    <div class="block">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span style="color: #6D6D6D;">what page is the alphabet listed on?
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">page 31</span>
+                                        </div>
+                                        <img :src="require('@/assets/data_list_image/page31.jpg')"
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span style="color: #6D6D6D;">what did the passengers in this comic avoid?
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">a cold</span>
+                                        </div>
+                                        <img :src="require('@/assets/data_list_image/comic.jpg')"
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
+                                    </div>
+                                </div>
+                            </el-card>
+                        </el-col>
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="11">
+                            <!-- TableVQA -->
+                            <el-card shadow="hover" class="light-purple"
+                                style="margin-top: 20px; border-radius: 12px; padding: 20px;height:1200px">
+                                <!-- Card Header -->
+                                <div slot="header" class="clearfix"
+                                    style="border-bottom: 2px solid #E0E0E0; padding-bottom: 10px;">
+                                    <span style="float: left;">
+                                        <h3 style="font-size: 24px; color: #4A4A4A;">TableVQA</h3>
+                                    </span>
+                                </div>
+
+                                <!-- Dataset Basic Information Section -->
+                                <div style="padding: 20px 0;">
+                                    <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
+                                    <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
+                                        <li><strong>大小：</strong>超过18,000张包含表格的图像及相应的问答对</li>
+                                        <li><strong>类别：</strong>图表推理</li>
+                                        <li><strong>版本：</strong>2020年发布</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Q&A Section -->
+                                <div style="padding: 20px 0;">
+                                    <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
+                                    <div class="block">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span style="color: #6D6D6D;">how many players attended wake forest
+                                                university before being
+                                                drafted?
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">2</span>
+                                        </div>
+                                        <img :src="require('@/assets/data_list_image/player.jpg')"
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span style="color: #6D6D6D;">what is the last type of vessel listed?
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">Lightship</span>
+                                        </div>
+                                        <img :src="require('@/assets/data_list_image/lasttype.jpg')"
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
+                                    </div>
+                                </div>
+                            </el-card>
+                        </el-col>
+                        <el-col :span="11">
+                            <!-- Visual-Spatial Reasoning -->
+                            <el-card shadow="hover" class="light-purple"
+                                style="margin-top: 20px; border-radius: 12px; padding: 20px;height:1200px">
+                                <!-- Card Header -->
+                                <div slot="header" class="clearfix"
+                                    style="border-bottom: 2px solid #E0E0E0; padding-bottom: 10px;">
+                                    <span style="float: left;">
+                                        <h3 style="font-size: 24px; color: #4A4A4A;">Visual-Spatial Reasoning</h3>
+                                    </span>
+                                </div>
+
+                                <!-- Dataset Basic Information Section -->
+                                <div style="padding: 20px 0;">
+                                    <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
+                                    <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
+                                        <li><strong>大小：</strong>超过12,000张图像及相应的空间推理问题</li>
+                                        <li><strong>类别：</strong>视觉空间关系</li>
+                                        <li><strong>版本：</strong>2020年发布</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Q&A Section -->
+                                <div style="padding: 20px 0;">
+                                    <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
+                                    <div class="block">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span style="color: #6D6D6D;">Please judge whether the following description
+                                                is consistent
+                                                with the spatial relationship of the objects in the picture. If it is
+                                                consistent, please
+                                                just answer: True. If it is not consistent, please just answer: False.
+                                                No other
+                                                explanation is required.Description:The sandwich is at the side of the
+                                                dining table.
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">True</span>
+                                        </div>
+                                        <img :src="require('@/assets/data_list_image/sandwich.jpg')"
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
+                                    </div>
+                                </div>
+                            </el-card>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="11">
+                            <!-- 视频检索和视频问答 -->
+                            <el-card shadow="hover" class="light-purple"
+                                style="margin-top: 20px; border-radius: 12px; padding: 20px;height:2000px">
+                                <!-- Card Header -->
+                                <div slot="header" class="clearfix"
+                                    style="border-bottom: 2px solid #E0E0E0; padding-bottom: 10px;">
+                                    <span style="float: left;">
+                                        <h3 style="font-size: 24px; color: #4A4A4A;">TempCompass</h3>
+                                    </span>
+                                </div>
+
+                                <!-- Dataset Basic Information Section -->
+                                <div style="padding: 20px 0;">
+                                    <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
+                                    <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
+                                        <li><strong>大小：</strong>超过50,000条时间序列相关的数据记录，包含视频测试数据</li>
+                                        <li><strong>类别：</strong>视频问答、视频检索</li>
+                                        <li><strong>版本：</strong>2022年发布</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Q&A Section -->
+                                <div style="padding: 20px 0;">
+                                    <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
+                                    <div class="block">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span style="color: #6D6D6D;">Please complete the following multiple-choice
+                                                questions based
+                                                on the video. Please give the correct option directly and do not mention
+                                                the wrong
+                                                option you think:What is the man doing in the video?A. dunking a
+                                                basketballB.
+                                                dribbling a basketballC. passing a basketball.
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">A. dunking a basketball</span>
+                                        </div>
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span style="color: #6D6D6D;">Please complete the following multiple-choice
+                                                questions based
+                                                on the video. Please give the correct option directly and do not mention
+                                                the wrong
+                                                option you think:Which description is a more suitable match for the
+                                                video?Option 1:
+                                                The man is dribbling a basketball.Option 2: A man is dunking a
+                                                basketball.
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">Option 2: A man is dunking a
+                                                basketball.</span>
+                                        </div>
+                                        <video controls
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
+                                            <source :src="require('@/assets/data_list_video/dunking.mp4')"
+                                                type="video/mp4">
+                                            您的浏览器不支持视频标签。
+                                        </video>
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span style="color: #6D6D6D;">Please complete the following multiple-choice
+                                                questions based
+                                                on the video. Please give the correct option directly and do not mention
+                                                the wrong
+                                                option you think:In what order did the man do the activities?A. showing
+                                                off his car key,
+                                                pulling back inside the carB. pulling back inside the car, showing off
+                                                his car keyC.
+                                                throwing away his car key, pulling back inside the carD. pulling back
+                                                inside the car,
+                                                throwing away his car key.
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">A. showing off his car key, pulling back
+                                                inside the
+                                                car.</span>
+                                        </div>
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span style="color: #6D6D6D;">Please complete the following multiple-choice
+                                                questions based
+                                                on the video. Please give the correct option directly and do not mention
+                                                the wrong
+                                                option you think:Which description is a more suitable match for the
+                                                video?Option 1: The
+                                                correct order of actions by the man is throwing away his car key, then
+                                                pulling back
+                                                inside the car.Option 2: The man first shows off his car key, then pulls
+                                                back inside the
+                                                car.
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">Option 2: The man first shows off his car key,
+                                                then pulls back
+                                                inside the car.</span>
+                                        </div>
+                                        <video controls
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
+                                            <source :src="require('@/assets/data_list_video/carandman.mp4')"
+                                                type="video/mp4">
+                                            您的浏览器不支持视频标签。
+                                        </video>
+                                    </div>
+                                </div>
+                            </el-card>
+                        </el-col>
+                        <el-col :span="11">
+                            <!-- 视觉语言推理和视觉蕴含 -->
+                            <el-card shadow="hover" class="light-purple"
+                                style="margin-top: 20px; border-radius: 12px; padding: 20px;height:2000px">
+                                <!-- Card Header -->
+                                <div slot="header" class="clearfix"
+                                    style="border-bottom: 2px solid #E0E0E0; padding-bottom: 10px;">
+                                    <span style="float: left;">
+                                        <h3 style="font-size: 24px; color: #4A4A4A;">JA-VG-VQA-500</h3>
+                                    </span>
+                                </div>
+
+                                <!-- Dataset Basic Information Section -->
+                                <div style="padding: 20px 0;">
+                                    <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
+                                    <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
+                                        <li><strong>大小：</strong>500张图像及相应的问答对</li>
+                                        <li><strong>类别：</strong>视觉语言推理、视觉蕴含</li>
+                                        <li><strong>版本：</strong>2021年发布</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Q&A Section -->
+                                <div style="padding: 20px 0;">
+                                    <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">用例展示</h4>
+                                    <div class="block">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span
+                                                style="color: #6D6D6D;">给定以下对图片的描述，请你判断描述与图片间的对应关系是否一致。如果一致请仅回答True，如果不一致请仅回答False，不需要做其他任何解释。
+                                                描述：两个人正在打网球。
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">True</span>
+                                        </div>
+                                        <img :src="require('@/assets/data_list_image/tennis.jpg')"
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
+                                        <div style="border-radius: 8px; background-color: #F7F7F7; padding: 15px; margin-bottom: 10px;"
+                                            class="QA">
+                                            <strong style="color: #4A4A4A;">问：</strong>
+                                            <span
+                                                style="color: #6D6D6D;">基于给定的一对图片和描述，描述与图片之间的关系有：“蕴含（Entailment）”、“矛盾（Contradiction）”和“中立（Nutral）”。蕴含（Entailment）是指图片中有充分的证据证明描述是正确的。矛盾（Contradiction）是指图片中有充分的证据证明描述是错误的。中立（Nutral）是指图片中没有充分的证据证明描述是正确的还是错误的。请你判断下列描述对于图片的关系是“蕴含（Entailment）”、“矛盾（Contradiction）”还是“中立（Nutral）”，只需要说出正确答案，不要提及错误选项以及做其他任何解释。描述：有人刚刚刷完牙。
+                                            </span><br>
+                                            <strong style="color: #4A4A4A;">答：</strong>
+                                            <span style="color: #6D6D6D;">Neutral</span>
+                                        </div>
+                                        <img :src="require('@/assets/data_list_image/toothbrush.jpg')"
+                                            style="width: 100%; height: 30%; object-fit: cover; border-radius: 8px;">
                                     </div>
                                 </div>
                             </el-card>
@@ -291,8 +611,40 @@ export default {
     name: "dataList",
     data() {
         return {
+            currentPage: 1, // 当前页码
+            pageSize: 8,   // 每页显示的用例数量
             loading: false,
-            filterdata: [{ "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "string(level1/level2)", "date_note": "string" },],
+            filterdata: [
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/icon_0434f2400ce9b7e.jpg", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level1", "date_note": "string" },
+                { "question": "string", "answer": "string", "file_url": "http://localhost:5000/data/icon/test.mp4", "uploader": "string", "version_update": { "version": "string", "update_time": "string" }, "answer_mode": "level2", "date_note": "string" },
+
+            ],
             // filterdata: [],
             resource: null,
             test_dimension: null,
@@ -300,7 +652,7 @@ export default {
             data_type_output: null,
             resource_options: [
                 { value: '自筹', label: '自筹' },
-                { value: 'C-eval', label: 'C-eval' },
+                { value: 'C-Eval', label: 'C-Eval' },
                 { value: 'CMMLU', label: 'CMMLU' }
             ],
             test_dimension_options: [
@@ -351,6 +703,10 @@ export default {
         };
     },
     methods: {
+        // 切换页码时触发的回调
+        handlePageChange(page) {
+            this.currentPage = page;
+        },
         // 判断是否为图片格式
         isImage(fileUrl) {
             return /\.(jpg|jpeg|png|gif)$/i.test(fileUrl);
@@ -371,51 +727,89 @@ export default {
             });
         },
         handleSearch() {
-            if (this.data_type_input||this.data_type_output||this.resource||this.test_dimension) {
-                if (this.data_type_input && this.data_type_output) {
-                    const searchOptions = {
+            this.loading = true
+            if (this.data_type_input || this.data_type_output || this.resource || this.test_dimension) {
+                const searchOptions = {
                         resource: this.resource,
-                        data_type: { "input": this.data_type_input, "output": this.data_type_output },
+                        // data_type: { "input": this.data_type_input, "output": this.data_type_output },
+                        data_type_input:this.data_type_input,
+                        data_type_output:this.data_type_ouput,
                         test_dimension: this.test_dimension
                     }
                     getDataList(searchOptions).then(res => {
                         if (res.success) {
                             this.filterdata = res.data
+                            this.loading = false
+                        }
+                        else {
+                            this.loading = false
                         }
                     }
                     )
-                }
-                else {
-                    if (!this.data_type_input) {
-                        this.$message({
-                            type: 'warning',
-                            message: '请选择输入数据类型'
-                        });
-                    }
-                    else if (!this.data_type_ouput) {
-                        if (!this.data_type_input) {
-                            this.$message({
-                                type: 'warning',
-                                message: '请选择输出数据类型'
-                            });
-                        }
-                    }
-                }
+                // if (this.data_type_input && this.data_type_output) {
+                //     const searchOptions = {
+                //         resource: this.resource,
+                //         data_type: { "input": this.data_type_input, "output": this.data_type_output },
+                //         test_dimension: this.test_dimension
+                //     }
+                //     getDataList(searchOptions).then(res => {
+                //         if (res.success) {
+                //             this.filterdata = res.data
+                //             this.loading = false
+                //         }
+                //         else {
+                //             this.loading = false
+                //         }
+                //     }
+                //     )
+                // }
+                // else {
+                //     if (!this.data_type_input) {
+                //         this.$message({
+                //             type: 'warning',
+                //             message: '请选择输入数据类型'
+                //         });
+                //     }
+                //     else if (!this.data_type_ouput) {
+                //         this.$message({
+                //             type: 'warning',
+                //             message: '请选择输出数据类型'
+                //         });
+                //     }
+                // }
             }
-            else{
+            else {
                 this.$message({
-                                type: 'warning',
-                                message: '请先选择筛选选项'
-                            });
+                    type: 'warning',
+                    message: '筛选选项不能全为空！'
+                });
             }
         }
-    }
+    },
+    computed: {
+        totalCases() {
+            return this.filterdata.length; // 用例总数
+        },
+        paginatedData() {
+            // 通过当前页码和每页显示数量进行切片分页
+            const start = (this.currentPage - 1) * this.pageSize;
+            const end = start + this.pageSize;
+            return this.filterdata.slice(start, end);
+        },
+    },
 }
 </script>
 <style scoped>
 /* 可以根据需要调整选择器和卡片的布局 */
 .box-card {
     width: 100%;
+}
+
+.QA {
+    border-radius: 4px;
+    border-color: black;
+    border-style: dashed;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
 }
 
 .el-select {
@@ -433,7 +827,29 @@ export default {
     background: #f8f8f9;
 }
 
+.light-purple:hover {
+    transform: scale(1.01);
+    /* 放大5% */
+}
+
+
 .el-button {
     margin-left: 20px;
+}
+
+img,
+video {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    border-radius: 8px;
+    /* 可选：给图片和视频添加圆角 */
+    transition: box-shadow 0.3s ease;
+    /* 鼠标悬浮时的动画效果 */
+}
+
+img:hover,
+video:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    /* 鼠标悬浮时加深阴影 */
 }
 </style>

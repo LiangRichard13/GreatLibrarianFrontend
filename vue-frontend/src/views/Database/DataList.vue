@@ -127,7 +127,7 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
-                                        <li><strong>大小：</strong>超过三百个问答对</li>
+                                        <li><strong>大小：</strong>超过300个问答对</li>
                                         <li><strong>类别：</strong>公平性、安全性、鲁棒性
                                         </li>
                                         <li><strong>版本：</strong>2024年更新</li>
@@ -190,7 +190,7 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
-                                        <li><strong>大小：</strong>超过10,000个问答对</li>
+                                        <li><strong>大小：</strong>超过10,000个问答对，从中抽取450条</li>
                                         <li><strong>类别：</strong>幻觉
                                         </li>
                                         <li><strong>版本：</strong>2023年发布</li>
@@ -383,7 +383,7 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
-                                        <li><strong>大小：</strong>14,197,122张图像</li>
+                                        <li><strong>大小：</strong>14,197,122张图像，从中抽取750张图片并构建相应问答对</li>
                                         <li><strong>类别：</strong>图片分类</li>
                                         <li><strong>版本：</strong>2021年度更新版</li>
                                     </ul>
@@ -433,7 +433,7 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
-                                        <li><strong>大小：</strong>45,336张图像及相应的93,000个问题</li>
+                                        <li><strong>大小：</strong>45,336张图像及相应的93,000个问题，从中抽取并保留835个用例</li>
                                         <li><strong>类别：</strong>图片问答</li>
                                         <li><strong>版本：</strong>2019年发布</li>
                                     </ul>
@@ -486,7 +486,7 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
-                                        <li><strong>大小：</strong>超过18,000张包含表格的图像及相应的问答对</li>
+                                        <li><strong>大小：</strong>超过18,000张包含表格的图像及相应的问答对，从中抽取750个用例</li>
                                         <li><strong>类别：</strong>图表推理</li>
                                         <li><strong>版本：</strong>2020年发布</li>
                                     </ul>
@@ -538,7 +538,7 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
-                                        <li><strong>大小：</strong>超过12,000张图像及相应的空间推理问题</li>
+                                        <li><strong>大小：</strong>超过12,000张图像及相应的空间推理问题，从中抽取并保留939个用例</li>
                                         <li><strong>类别：</strong>视觉空间关系</li>
                                         <li><strong>版本：</strong>2020年发布</li>
                                     </ul>
@@ -587,7 +587,7 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
-                                        <li><strong>大小：</strong>超过50,000条时间序列相关的数据记录，包含视频测试数据</li>
+                                        <li><strong>大小：</strong>超过50,000条时间序列相关的数据记录，包含视频测试数据，从中抽取410个视频和1580个多选题和视频到文本的匹配问题                                        </li>
                                         <li><strong>类别：</strong>视频问答、视频检索</li>
                                         <li><strong>版本：</strong>2022年发布</li>
                                     </ul>
@@ -699,7 +699,7 @@
                                 <div style="padding: 20px 0;">
                                     <h4 style="font-size: 18px; color: #5A5A5A; margin-bottom: 10px;">基本信息</h4>
                                     <ul style="list-style-type: none; padding: 0; color: #6D6D6D; line-height: 1.8;">
-                                        <li><strong>大小：</strong>500张图像及相应的问答对</li>
+                                        <li><strong>大小：</strong>使用其中的图像利用gpt4o生成了475个用例</li>
                                         <li><strong>类别：</strong>视觉语言推理、视觉蕴含</li>
                                         <li><strong>版本：</strong>2021年发布</li>
                                     </ul>

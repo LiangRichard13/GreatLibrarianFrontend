@@ -18,9 +18,11 @@
                   <!-- <el-table-column label="测试说明" prop="info"></el-table-column> -->
                   <el-table-column label="LLM">
                     <template slot-scope="scope">
+                      <div style="height: 70px; overflow-y: auto; display: flex; flex-direction: column;">
                       <div v-for="apiKey in scope.row.apiKey" :key="apiKey.id">
                         <!-- {{ apiKey.id }} - {{ apiKey.name }} -->
                         {{ apiKey.name }}
+                      </div>
                       </div>
                     </template>
                   </el-table-column>
@@ -28,9 +30,11 @@
                   <!-- 数据集 列 -->
                   <el-table-column label="数据集">
                     <template slot-scope="scope">
+                      <div style="height: 70px; overflow-y: auto; display: flex; flex-direction: column;">
                       <div v-for="data in scope.row.dataSet" :key="data.id">
                         <!-- {{ data.id }} - {{ data.name }} -->
                         {{ data.name }}
+                        </div>
                       </div>
                     </template>
                   </el-table-column>

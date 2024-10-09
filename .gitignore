@@ -2,3 +2,4 @@
 __pycache__/
 .DS_Store
 Backend/App/data/
+Backend/instance/sqlite3.db

@@ -947,7 +947,12 @@ export default {
     border-radius: 4px;
     border-color: black;
     border-style: dashed;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.QA:hover{
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 .el-select {
@@ -975,8 +980,7 @@ export default {
     margin-left: 20px;
 }
 
-img,
-video {
+img,video {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     /* 添加阴影效果 */
     border-radius: 8px;
@@ -985,8 +989,7 @@ video {
     /* 鼠标悬浮时的动画效果 */
 }
 
-img:hover,
-video:hover {
+img:hover,video:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     /* 鼠标悬浮时加深阴影 */
 }

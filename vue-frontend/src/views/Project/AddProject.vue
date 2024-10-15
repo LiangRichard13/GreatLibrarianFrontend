@@ -1,5 +1,6 @@
 <template>
   <div style="display: flex; flex-direction: column; align-items: center; justify-content: start; height: 100vh;">
+    <h3 style="letter-spacing: 1px;font-weight: 400;padding-bottom: 20px;text-align: center">添加项目</h3>
     <div style="width: 30%; margin-top: 20px;">
       <el-form ref="form" :model="newProject" label-width="120px">
         <el-form-item label="项目名称">

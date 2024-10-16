@@ -30,23 +30,27 @@
           <div>
             <div v-for="(item, index) in composition" :key="index">
               <span>第 {{ index + 1 }} 项</span>
-              <el-tooltip placement="right" effect="dark" content="数据集和测试维度至少选择一项">
+              <!-- <el-tooltip placement="right" effect="dark" content="数据集和测试维度至少选择一项"> -->
               <el-form-item label="抽取来源">
+                <el-tooltip placement="right" effect="dark" content="数据集和测试维度至少选择一项"> 
                 <el-select v-model="item.resource_name" placeholder="数据集">
                   <el-option v-for="option in resource_options" :key="option.value" :label="option.label"
                     :value="option.value">
                   </el-option>
                 </el-select>
+                </el-tooltip>
               <!-- </el-form-item> -->
               <!-- 测试维度抽取项 -->
               <!-- <el-form-item :label="'测试维度抽取项' + (index + 1)"> -->
-                <el-select v-model="item.test_dimension_name" style="margin-left: 10px;" placeholder="测试维度">
+                <el-tooltip placement="right" effect="dark" content="数据集和测试维度至少选择一项"> 
+                <el-select v-model="item.test_dimension_name" style="margin-top: 10px;" placeholder="测试维度">
                   <el-option v-for="option in test_demension_options" :key="option.value" :label="option.label"
                     :value="option.value">
                   </el-option>
                 </el-select>
+                </el-tooltip>
               </el-form-item>
-            </el-tooltip>
+            <!-- </el-tooltip> -->
               <!-- 数据配比 -->
               <el-form-item  label="抽取数量">
                 <el-tooltip placement="right" effect="dark">

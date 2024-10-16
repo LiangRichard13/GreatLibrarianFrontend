@@ -2,10 +2,10 @@
   <div>
     <h3 style="letter-spacing: 1px;font-weight: 400;padding-bottom: 20px;text-align: center">测试集构建</h3>
     <el-steps :active="active" finish-status="success" align-center>
-      <el-step title="步骤 1" description="设定抽取数据数量并选择数据抽取方式"></el-step>
-      <el-step title="步骤 2" description="选择数据配比"></el-step>
-      <el-step title="步骤 3" description="进行数据检索与抽取" process-status="wait"></el-step>
-      <el-step title="步骤 4" description="构建测试集" process-status="wait"></el-step>
+      <!-- <el-step title="步骤 1" description="设定抽取数据数量并选择数据抽取方式"></el-step> -->
+      <el-step title="步骤 1" description="选择数据总数和配比"></el-step>
+      <el-step title="步骤 2" description="进行数据检索与抽取" process-status="wait"></el-step>
+      <el-step title="步骤 3" description="构建测试集" process-status="wait"></el-step>
       <!-- <el-step title="步骤 5" description="测试集构建完成" process-status="success"></el-step> -->
     </el-steps>
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: start; height: 100vh;">
@@ -19,26 +19,38 @@
             </el-tooltip>
           </el-form-item>
           <!-- 选择数据的抽取方式 -->
-          <el-form-item label="选择数据抽取方式">
+          <!-- <el-form-item label="选择数据抽取方式">
             <el-select v-model="choose_type" placeholder="选择数据抽取方式">
               <el-option label="按数据集抽取" value="resource"></el-option>
               <el-option label="按测试维度抽取" value="test_dimension"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
 
           <!-- 数据集抽取项 -->
-          <div v-if="choose_type === 'resource'">
+          <div>
             <div v-for="(item, index) in composition" :key="index">
-              <el-form-item :label="'数据集抽取项' + (index + 1)">
-                <el-select v-model="item.resource_name" placeholder="数据来源">
+              <span>第 {{ index + 1 }} 项</span>
+              <el-tooltip placement="right" effect="dark" content="数据集和测试维度至少选择一项">
+              <el-form-item label="抽取来源">
+                <el-select v-model="item.resource_name" placeholder="数据集">
                   <el-option v-for="option in resource_options" :key="option.value" :label="option.label"
                     :value="option.value">
                   </el-option>
                 </el-select>
+              <!-- </el-form-item> -->
+              <!-- 测试维度抽取项 -->
+              <!-- <el-form-item :label="'测试维度抽取项' + (index + 1)"> -->
+                <el-select v-model="item.test_dimension_name" style="margin-left: 10px;" placeholder="测试维度">
+                  <el-option v-for="option in test_demension_options" :key="option.value" :label="option.label"
+                    :value="option.value">
+                  </el-option>
+                </el-select>
               </el-form-item>
-              <el-form-item>
+            </el-tooltip>
+              <!-- 数据配比 -->
+              <el-form-item  label="抽取数量">
                 <el-tooltip placement="right" effect="dark">
-                  <div slot="content">数量范围为0~{{ getMaxCaseNumber(index) }}</div>
+                  <div slot="content">抽取数量范围为0~{{ getMaxCaseNumber(index) }}</div>
                   <el-input-number @change="updateCaseNumbers()" v-model="item.case_number" :min="0"
                     :max="getMaxCaseNumber(index)" :label="'设定数据数量' + (index + 1)">
                   </el-input-number>
@@ -50,7 +62,7 @@
           </div>
 
           <!-- 测试维度抽取项 -->
-          <div v-if="choose_type === 'test_dimension'">
+          <!-- <div v-if="choose_type === 'test_dimension'">
             <div v-for="(item, index) in composition" :key="index">
               <el-form-item :label="'测试维度抽取项' + (index + 1)">
                 <el-select v-model="item.test_dimension_name" placeholder="数据来源">
@@ -69,10 +81,10 @@
               </el-form-item>
             </div>
             <el-form-item>剩余可分配的数量：<el-tag type="warning">{{ remainingCaseNumber }}</el-tag></el-form-item>
-          </div>
+          </div> -->
 
           <!-- 增加、减少抽取项 -->
-          <div v-if="choose_type">
+          <div>
             <el-form-item label="增加/减少抽取项数量">
               <el-button-group>
                 <el-button plain type="primary" icon="el-icon-plus" @click="item_number_change(1)">增加抽取项</el-button>
@@ -98,11 +110,11 @@ export default {
   data() {
     return {
       active: 0,
-      choose_type: null,
+      // choose_type: null,
       // item_number: 1,
       total_case_number: 100,
       remainingCaseNumber: 100,
-      composition: [],
+      composition: [{"resource_name":null,"test_dimension_name":null,"case_number":0}],
       resource_options: [
         { value: 'C-Eval', label: 'C-Eval' },
         { value: 'CMMLU', label: 'CMMLU' },
@@ -145,27 +157,28 @@ export default {
   },
   // mounted() {
   // },
-  watch: {
-    choose_type(newValue) {
-      if (newValue === "resource" || newValue === "test_dimension") {
-        // if (this.active === 0)
-          this.active=1 // 如果选择的是 resource 或 test_dimension，activate++
-        if (newValue === "resource")
-          this.composition.push({ resource_name: null, case_number: 0 });
-        else if (newValue === "test_dimension")
-          this.composition.push({ test_dimension_name: null, case_number: 0 });
-      }
-    }
-  },
+  // watch: {
+  //   choose_type(newValue) {
+  //     if (newValue === "resource" || newValue === "test_dimension") {
+  //       // if (this.active === 0)
+  //         this.active=1 // 如果选择的是 resource 或 test_dimension，activate++
+  //       if (newValue === "resource")
+  //         this.composition.push({ resource_name: null, case_number: 0 });
+  //       else if (newValue === "test_dimension")
+  //         this.composition.push({ test_dimension_name: null, case_number: 0 });
+  //     }
+  //   }
+  // },
   methods:
   {
     item_number_change(option) {
       if (option) {
         if (this.composition.length < 11) {
-          if (this.choose_type === "resource")
-            this.composition.push({ resource_name: null, case_number: 0 });
-          else if (this.choose_type === "test_dimension")
-            this.composition.push({ test_dimension_name: null, case_number: 0 });
+          // if (this.choose_type === "resource")
+          //   this.composition.push({ resource_name: null,case_number: 0 });
+          // else if (this.choose_type === "test_dimension")
+          //   this.composition.push({test_dimension_name: null, case_number: 0 });
+          this.composition.push({ resource_name: null,test_dimension_name:null,case_number: 0 });
         }
         else {
           this.$message({
@@ -241,18 +254,22 @@ export default {
       this.submitAndget()
     },
     checkNull() {
-      if (this.choose_type === 'resource') {
-        return this.composition.some(item => item.resource_name === null);
-      }
-      else if (this.choose_type === 'test_dimension') {
-        return this.composition.some(item => item.test_dimension_name === null);
-      }
+      // if (this.choose_type === 'resource') {
+      //   return this.composition.some(item => item.resource_name === null);
+      // }
+      // else if (this.choose_type === 'test_dimension') {
+      //   return this.composition.some(item => item.test_dimension_name === null);
+      // }
+
+      //用于检查是否有一抽取项既没有选择数据来源又没有选择测试维度
+      return this.composition.some(item => item.test_dimension_name === null && item.resource_name === null);
+
     },
     submitAndget() {
-      if (this.active === 1)
+      if (this.active === 0)
         this.active++
       this.submitLoading = true
-      const sendData = { choose_type: this.choose_type, composition: this.composition }
+      const sendData = { composition: this.composition }
       buildTest(sendData).then(res => {
         if (res.success) {
           if (!res.data.length) { 
@@ -262,12 +279,12 @@ export default {
               message: '未检索出任何数据，请重新筛选'
             });
             this.submitLoading = false
-            this.active = 1
+            this.active = 0
             return
           }
           else{
           // 成功响应且有数据返回
-            if(this.active===2)
+            if(this.active===1)
             this.active++
           this.build_data=res.data
           this.exportZip()
@@ -276,7 +293,7 @@ export default {
         else {
           // 响应失败
           this.submitLoading = false
-          this.active = 1
+          this.active = 0
         }
       })
       // console.log(sendData)
@@ -337,9 +354,9 @@ export default {
         link.href = URL.createObjectURL(content);
         link.download = "datasets.zip";  // 压缩包的名称
         link.click();
-        if(this.active===3)
+        if(this.active===2)
         this.active++
-        this.choose_type=null
+        // this.choose_type=null
         this.total_case_number=100
         this.submitLoading=false
         // 释放内存

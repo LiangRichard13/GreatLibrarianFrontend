@@ -17,6 +17,12 @@ DATA_SAVE_DIR = DATASET_CONF["DATA_SAVE_DIR"]
 SHARED_LINKS = {}  # 用于存储生成的临时链接
 
 
+def soft_jsonify(obj):
+    try:
+        return jsonify(obj)
+    except:
+        return obj
+
 class DataListSearch(Resource):
 
     #媒体文件设置临时链接
@@ -123,10 +129,10 @@ class DataListSearch(Resource):
                         "data_note": dataset.get('metadata', {}).get('data_note', '')
                     })
 
-            return jsonify({"data": filtered_datasets, "success": True})
+            return soft_jsonify({"data": filtered_datasets, "success": True})
 
         except Exception as e:
-            return jsonify({"message": str(e), "success": False}), 500
+            return soft_jsonify({"message": str(e), "success": False}), 500
 
 
 import random
@@ -158,37 +164,44 @@ class TestsetBuild(Resource):
 
             formatted_data["data"].append({
                 "question": data['data_content']['question'],
-                "answer": data['data_content']['answer'].get("keywords", [[]])[0] if test_dimension_name in ["幻觉", "鲁棒性", "公平性", "安全性"] else data['data_content']['answer'],
+                "answer": str(data['data_content']['answer'].get("keywords", [[]])[0]) if test_dimension_name in ["幻觉", "鲁棒性", "公平性", "安全性"] else str(data['data_content']['answer']),
                 "file_url": file_url
             })
-
+        print('formatted_data',formatted_data)
         return formatted_data
 
     # 构建测试数据集的方法
     def build_testset(self, composition):
         result_data = []
+        print("Building testset with composition:", composition)  # 打印传入的 composition 数据
         
         for item in composition:
             resource_name = item.get('resource_name')
             test_dimension_name = item.get('test_dimension_name')
             case_number = item.get('case_number')
 
+            print("Processing item:", item)  # 打印每一个 item
+
             # 验证必要字段
             if not resource_name and not test_dimension_name:
+                print("Missing required fields: resource_name or test_dimension_name")
                 return {"message": "Either 'resource_name' or 'test_dimension_name' must be provided", "success": False}, 400
             if not isinstance(case_number, int) or case_number <= 0:
+                print("Invalid case_number:", case_number)
                 return {"message": "Invalid 'case_number'", "success": False}, 400
 
             # 处理仅有resource_name的情况
             if resource_name and not test_dimension_name:
-                matching_data = []  # 存储与当前来源名匹配的数据
+                matching_data = []
                 for dataset in self.datasets:
                     if dataset['metadata']['resource'] == resource_name:
                         matching_data.append(dataset)
 
-                # 打乱并选择数据
+                print(f"Found {len(matching_data)} matching datasets for resource_name:", resource_name)
+                
                 random.shuffle(matching_data)
                 selected_data = matching_data[:min(case_number, len(matching_data))]
+                print("Selected data:", selected_data)
 
                 # 按 test_dimension_name 分类数据
                 test_dimension_dict = {}
@@ -200,8 +213,9 @@ class TestsetBuild(Resource):
 
                 # 格式化并添加到结果数据
                 for test_dimension_name, grouped_data in test_dimension_dict.items():
-                    formatted_data = self.format_selected_data(grouped_data, test_dimension_name)  # 使用格式化函数
-                    result_data.append(formatted_data)  # 添加到结果数据
+                    formatted_data = self.format_selected_data(grouped_data, test_dimension_name)
+                    result_data.append(formatted_data)
+                    print('添加到result_data:',result_data)
 
             # 处理仅有test_dimension_name的情况
             elif test_dimension_name and not resource_name:
@@ -210,13 +224,14 @@ class TestsetBuild(Resource):
                     if dataset['metadata']['test_dimension'] == test_dimension_name:
                         matching_data.append(dataset)
 
+                print(f"Found {len(matching_data)} matching datasets for test_dimension_name:", test_dimension_name)
+
                 random.shuffle(matching_data)
                 selected_data = matching_data[:min(case_number, len(matching_data))]
 
-                # 将选中的数据格式化
                 if selected_data:
                     formatted_data = self.format_selected_data(selected_data, test_dimension_name)
-                    result_data.append(formatted_data)  # 添加到结果数据
+                    result_data.append(formatted_data)
 
             # 处理同时有resource_name和test_dimension_name的情况
             elif resource_name and test_dimension_name:
@@ -226,29 +241,30 @@ class TestsetBuild(Resource):
                             dataset['metadata']['test_dimension'] == test_dimension_name):
                         matching_data.append(dataset)
 
+                print(f"Found {len(matching_data)} matching datasets for resource_name and test_dimension_name:", resource_name, test_dimension_name)
+
                 random.shuffle(matching_data)
                 selected_data = matching_data[:min(case_number, len(matching_data))]
 
-                # 将选中的数据格式化
                 if selected_data:
                     formatted_data = self.format_selected_data(selected_data, test_dimension_name)
-                    result_data.append(formatted_data)  # 添加到结果数据
-
-        return {
-            "data": result_data,
-            "success": True  # 返回成功标志
-        }, 200
+                    result_data.append(formatted_data)
+        
+        print("Final result_data:", result_data)
+        return {"data": result_data, "success": True}, 200
 
     def post(self):
         try:
             paras = request.json
+            print("Received parameters:", paras)  # 打印传入的参数
             composition = paras.get('composition', [])
             
             # 调用 post 方法构建测试集
-            response, status_code = self.build_testset(composition)
-            return jsonify(response), status_code
+            result_data, status_code = self.build_testset(composition)
+            print(result_data, type(result_data))
+            return result_data, status_code
 
         except Exception as e:
-            return jsonify({"message": str(e), "success": False}), 500
+            return soft_jsonify({"message": str(e), "success": False}), 500
 
 

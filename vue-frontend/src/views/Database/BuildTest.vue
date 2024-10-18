@@ -331,6 +331,7 @@ export default {
         };
 
         answers_array.forEach((answer, i) => {
+          console.log("answer",answer)
           const cleanedString = answer.replace(/["[\]]/g, '')
           const answerArray = cleanedString.split(',').map(item => item.trim());
           if (input_data.LLMEval) {

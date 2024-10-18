@@ -129,7 +129,126 @@ class DataListSearch(Resource):
             return jsonify({"message": str(e), "success": False}), 500
 
 
+import random
 
+class TestsetBuild(Resource):
+    def __init__(self):
+        # 加载数据
+        self.data_list_search = DataListSearch()
+        self.datasets = self.data_list_search.load_data()
+        
+    def format_selected_data(self, selected_data, test_dimension_name):
+        """格式化选中的数据"""
+        formatted_data = {
+            "field": test_dimension_name,
+            "data": []
+        }
+        for data in selected_data:
+            question_content = data.get('data_content', {}).get('question', {})
+            if isinstance(question_content, dict):
+                file_url = question_content.get('file_url', '')
+            else:
+                file_url = ''
 
+            if file_url.startswith('./'):
+                uniqid = data['uniqid']
+                file_url = f"http://localhost:5000/data/data_save/{uniqid}{file_url[1:]}"
+            elif file_url.startswith("http"):
+                pass
+
+            formatted_data["data"].append({
+                "question": data['data_content']['question'],
+                "answer": data['data_content']['answer'].get("keywords", [[]])[0] if test_dimension_name in ["幻觉", "鲁棒性", "公平性", "安全性"] else data['data_content']['answer'],
+                "file_url": file_url
+            })
+
+        return formatted_data
+
+    # 构建测试数据集的方法
+    def build_testset(self, composition):
+        result_data = []
+        
+        for item in composition:
+            resource_name = item.get('resource_name')
+            test_dimension_name = item.get('test_dimension_name')
+            case_number = item.get('case_number')
+
+            # 验证必要字段
+            if not resource_name and not test_dimension_name:
+                return {"message": "Either 'resource_name' or 'test_dimension_name' must be provided", "success": False}, 400
+            if not isinstance(case_number, int) or case_number <= 0:
+                return {"message": "Invalid 'case_number'", "success": False}, 400
+
+            # 处理仅有resource_name的情况
+            if resource_name and not test_dimension_name:
+                matching_data = []  # 存储与当前来源名匹配的数据
+                for dataset in self.datasets:
+                    if dataset['metadata']['resource'] == resource_name:
+                        matching_data.append(dataset)
+
+                # 打乱并选择数据
+                random.shuffle(matching_data)
+                selected_data = matching_data[:min(case_number, len(matching_data))]
+
+                # 按 test_dimension_name 分类数据
+                test_dimension_dict = {}
+                for data in selected_data:
+                    test_dimension = data['metadata']['test_dimension']
+                    if test_dimension not in test_dimension_dict:
+                        test_dimension_dict[test_dimension] = []
+                    test_dimension_dict[test_dimension].append(data)
+
+                # 格式化并添加到结果数据
+                for test_dimension_name, grouped_data in test_dimension_dict.items():
+                    formatted_data = self.format_selected_data(grouped_data, test_dimension_name)  # 使用格式化函数
+                    result_data.append(formatted_data)  # 添加到结果数据
+
+            # 处理仅有test_dimension_name的情况
+            elif test_dimension_name and not resource_name:
+                matching_data = []
+                for dataset in self.datasets:
+                    if dataset['metadata']['test_dimension'] == test_dimension_name:
+                        matching_data.append(dataset)
+
+                random.shuffle(matching_data)
+                selected_data = matching_data[:min(case_number, len(matching_data))]
+
+                # 将选中的数据格式化
+                if selected_data:
+                    formatted_data = self.format_selected_data(selected_data, test_dimension_name)
+                    result_data.append(formatted_data)  # 添加到结果数据
+
+            # 处理同时有resource_name和test_dimension_name的情况
+            elif resource_name and test_dimension_name:
+                matching_data = []
+                for dataset in self.datasets:
+                    if (dataset['metadata']['resource'] == resource_name and 
+                            dataset['metadata']['test_dimension'] == test_dimension_name):
+                        matching_data.append(dataset)
+
+                random.shuffle(matching_data)
+                selected_data = matching_data[:min(case_number, len(matching_data))]
+
+                # 将选中的数据格式化
+                if selected_data:
+                    formatted_data = self.format_selected_data(selected_data, test_dimension_name)
+                    result_data.append(formatted_data)  # 添加到结果数据
+
+        return {
+            "data": result_data,
+            "success": True  # 返回成功标志
+        }, 200
+
+    def post(self):
+        try:
+            paras = request.json
+            composition = paras.get('composition', [])
+            
+            # 调用 post 方法构建测试集
+            response, status_code = self.build_testset(composition)
+            return jsonify(response), status_code
+
+        except Exception as e:
+            return jsonify({"message": str(e), "success": False}), 500
 
 

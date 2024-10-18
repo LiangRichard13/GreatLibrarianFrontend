@@ -30,25 +30,29 @@
           <div>
             <div v-for="(item, index) in composition" :key="index">
               <span>第 {{ index + 1 }} 项</span>
-              <el-tooltip placement="right" effect="dark" content="数据集和测试维度至少选择一项">
+              <!-- <el-tooltip placement="right" effect="dark" content="数据集和测试维度至少选择一项"> -->
               <el-form-item label="抽取来源">
-                <el-select v-model="item.resource_name" placeholder="数据集">
-                  <el-option v-for="option in resource_options" :key="option.value" :label="option.label"
-                    :value="option.value">
-                  </el-option>
-                </el-select>
-              <!-- </el-form-item> -->
-              <!-- 测试维度抽取项 -->
-              <!-- <el-form-item :label="'测试维度抽取项' + (index + 1)"> -->
-                <el-select v-model="item.test_dimension_name" style="margin-left: 10px;" placeholder="测试维度">
-                  <el-option v-for="option in test_demension_options" :key="option.value" :label="option.label"
-                    :value="option.value">
-                  </el-option>
-                </el-select>
+                <el-tooltip placement="right" effect="dark" content="数据集和测试维度至少选择一项">
+                  <el-select v-model="item.resource_name" placeholder="数据集">
+                    <el-option v-for="option in resource_options" :key="option.value" :label="option.label"
+                      :value="option.value">
+                    </el-option>
+                  </el-select>
+                </el-tooltip>
+                <!-- </el-form-item> -->
+                <!-- 测试维度抽取项 -->
+                <!-- <el-form-item :label="'测试维度抽取项' + (index + 1)"> -->
+                <el-tooltip placement="right" effect="dark" content="数据集和测试维度至少选择一项">
+                  <el-select v-model="item.test_dimension_name" style="margin-top: 10px;" placeholder="测试维度">
+                    <el-option v-for="option in test_demension_options" :key="option.value" :label="option.label"
+                      :value="option.value">
+                    </el-option>
+                  </el-select>
+                </el-tooltip>
               </el-form-item>
-            </el-tooltip>
+              <!-- </el-tooltip> -->
               <!-- 数据配比 -->
-              <el-form-item  label="抽取数量">
+              <el-form-item label="抽取数量">
                 <el-tooltip placement="right" effect="dark">
                   <div slot="content">抽取数量范围为0~{{ getMaxCaseNumber(index) }}</div>
                   <el-input-number @change="updateCaseNumbers()" v-model="item.case_number" :min="0"
@@ -114,7 +118,7 @@ export default {
       // item_number: 1,
       total_case_number: 100,
       remainingCaseNumber: 100,
-      composition: [{"resource_name":null,"test_dimension_name":null,"case_number":0}],
+      composition: [{ "resource_name": null, "test_dimension_name": null, "case_number": 0 }],
       resource_options: [
         { value: 'C-Eval', label: 'C-Eval' },
         { value: 'CMMLU', label: 'CMMLU' },
@@ -152,7 +156,7 @@ export default {
         { value: '安全性', label: '安全性' }
       ],
       submitLoading: false,
-      build_data:[]
+      build_data: []
     }
   },
   // mounted() {
@@ -173,12 +177,12 @@ export default {
   {
     item_number_change(option) {
       if (option) {
-        if (this.composition.length < 11) {
+        if (this.composition.length < 10) {
           // if (this.choose_type === "resource")
           //   this.composition.push({ resource_name: null,case_number: 0 });
           // else if (this.choose_type === "test_dimension")
           //   this.composition.push({test_dimension_name: null, case_number: 0 });
-          this.composition.push({ resource_name: null,test_dimension_name:null,case_number: 0 });
+          this.composition.push({ resource_name: null, test_dimension_name: null, case_number: 0 });
         }
         else {
           this.$message({
@@ -272,7 +276,7 @@ export default {
       const sendData = { composition: this.composition }
       buildTest(sendData).then(res => {
         if (res.success) {
-          if (!res.data.length) { 
+          if (!res.data.length) {
             // 成功响应但没有任何数据返回
             this.$message({
               type: 'warning',
@@ -282,12 +286,12 @@ export default {
             this.active = 0
             return
           }
-          else{
-          // 成功响应且有数据返回
-            if(this.active===1)
-            this.active++
-          this.build_data=res.data
-          this.exportZip()
+          else {
+            // 成功响应且有数据返回
+            if (this.active === 1)
+              this.active++
+            this.build_data = res.data
+            this.exportZip()
           }
         }
         else {
@@ -304,20 +308,18 @@ export default {
         let answers_array = [];
 
         input_data.data.forEach((data) => {
-          let prompt 
-          if(data.file_url)
-        {
+          let prompt
+          if (data.file_url) {
             prompt = {
-            file_url: data.file_url,
-            text: data.question
-          };
-        }
-        else
-        { 
-          prompt=data.question
-        }
+              file_url: data.file_url,
+              text: data.question
+            };
+          }
+          else {
+            prompt = data.question
+          }
           prompt_array.push(prompt);
-          answers_array.push(data.keywords);
+          answers_array.push(data.answer);
         });
 
         let template = {
@@ -328,12 +330,24 @@ export default {
           evaluation: {}
         };
 
-        answers_array.forEach((keywords, i) => {
-          template["evaluation"][i] = [
-            {
-              keywords: [keywords]  // 确保 keywords 是二维数组
-            }
-          ];
+        answers_array.forEach((answer, i) => {
+          const cleanedString = answer.replace(/["[\]]/g, '')
+          const answerArray = cleanedString.split(',').map(item => item.trim());
+          if (input_data.LLMEval) {
+            template["evaluation"][i] = [
+              {
+                keywords: [answerArray] , // 确保 keywords 是二维数组
+                LLMEval:[[true]]
+              }
+            ];
+          }
+          else {
+            template["evaluation"][i] = [
+              {
+                keywords: [answerArray]
+              }
+            ];
+          }
         });
         return template;
       });
@@ -354,11 +368,11 @@ export default {
         link.href = URL.createObjectURL(content);
         link.download = "datasets.zip";  // 压缩包的名称
         link.click();
-        if(this.active===2)
-        this.active++
+        if (this.active === 2)
+          this.active++
         // this.choose_type=null
-        this.total_case_number=100
-        this.submitLoading=false
+        this.total_case_number = 100
+        this.submitLoading = false
         // 释放内存
         URL.revokeObjectURL(link.href);
       });

@@ -31,6 +31,7 @@ resources = [
 
     # Add dataList module
     (dataList.DataListSearch, '/datasets'),
+    (dataList.TestsetBuild, '/datasets/testset_build'),
     
 ]
 

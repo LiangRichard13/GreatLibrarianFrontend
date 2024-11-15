@@ -13,7 +13,7 @@
             <el-link style="color: white" href="/experimentCollaborate" class="header-link"
               :underline="false">合作</el-link>
             <el-link style="color: white" href="/keyConfig" class="header-link" :underline="false">配置</el-link>
-            <el-link style="color: white" href="/database" class="header-link" :underline="false">数据库</el-link>
+            <el-link style="color: white" href="/searchData" class="header-link" :underline="false">数据库</el-link>
           </div>
 
           <el-dropdown style="float: right;padding-right: 10px">

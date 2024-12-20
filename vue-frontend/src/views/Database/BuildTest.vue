@@ -96,7 +96,10 @@
               </el-button-group>
             </el-form-item>
             <el-form-item>
-              <el-button plain type="success" style="margin-top: 10px" @click="confirmSubmit()">确认</el-button>
+              <el-button-group style="margin-top: 10px">
+              <el-button plain type="success" @click="confirmSubmit()">确认</el-button>
+              <el-button plain style="margin-left: 10px" @click="resetForm()">重置</el-button>
+            </el-button-group>
             </el-form-item>
           </div>
         </el-form>
@@ -234,6 +237,15 @@ export default {
           message: '已取消执行'
         });
       });
+    },
+    resetForm(){
+      this.composition=[{ "resource_name": null, "test_dimension_name": null, "case_number": 0 }]
+      this.total_case_number=100
+      this.remainingCaseNumber=100
+      this.$message({
+          type: 'info',
+          message: '选项已重置'
+        });
     },
     handleSubmit() {
       // 检查resource_name或者test_dimension_name是否为空

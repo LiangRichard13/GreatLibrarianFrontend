@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 设置数据库和数据文件夹的路径
-DATABASE_PATH="Backend/instance/sqlite3.db"
-DATA_FOLDER_PATH="Backend/App/data"
+DATABASE_PATH="../Backend/instance/sqlite3.db"
+DATA_FOLDER_PATH="../Backend/App/data"
 
 # 显示操作提示信息
 echo "Init your project.Clear all database data and static files."

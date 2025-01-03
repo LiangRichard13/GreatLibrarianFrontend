@@ -44,7 +44,8 @@ select_conda_env # 选择conda环境
 cd Backend && python app.py &
 
 # 启动前端
-cd vue-frontend && npm install && npm run serve &
+#cd vue-frontend && npm install && npm run serve &
+cd vue-frontend && npm run serve &
 
 # 无限循环以防止脚本结束
 while true; do

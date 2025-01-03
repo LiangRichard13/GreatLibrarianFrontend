@@ -10,10 +10,12 @@ from .urls import *
 from flask_cors import *
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+from App.utils.log import setup_logging
 
 
 def create_app():
     app = Flask(__name__, static_folder='data')
+    setup_logging()
     # 配置数据库
     db_uri = 'sqlite:///sqlite3.db'  # sqlite配置
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
@@ -23,8 +25,7 @@ def create_app():
     # 初始化插件
     init_extensions(app=app)
     # 初始化CORS扩展并配置允许的来源
-    # CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
-    CORS(app, resources=r'/*', origins="http://localhost:8080", methods=['GET', 'POST', 'DELETE', 'PUT'])
+    CORS(app, resources={r"/*": {"origins": ["http://192.168.70.12:*"]}}, methods=['GET', 'POST', 'DELETE', 'PUT'])
 
     # 在这里添加事件监听，以在每次数据库连接时启用外键约束
     @event.listens_for(Engine, "connect")

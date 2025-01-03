@@ -49,15 +49,16 @@ def update_code_to_class(file_path, updated_code, class_name):
 
     # 解析代码为AST
     tree = ast.parse(code)
+    updated_ast = ast.parse(updated_code)
     try:
         # 遍历AST找到目标类
         for node in ast.walk(tree):
             if isinstance(node, ast.ClassDef) and node.name == class_name:
                 # 遍历类的成员找到__call__函数
-                for class_node in node.body:
+                for i, class_node in enumerate(node.body):
                     if isinstance(class_node, ast.FunctionDef) and class_node.name == '__call__':
-                        # 替换__call__函数的代码块
-                        class_node.body = ast.parse(updated_code).body[0].body
+                        # 替换整个__call__函数（包括签名和函数体）
+                        node.body[i] = updated_ast.body[0]
         updated_code = ast.unparse(tree)  # 重新生成代码
         with open(file_path, 'w', encoding='UTF-8') as file:
             file.write(updated_code)  # 将更新后的代码写回文件

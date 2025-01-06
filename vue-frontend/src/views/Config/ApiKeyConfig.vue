@@ -69,10 +69,10 @@
         </el-table-column>
         <el-table-column label="上次连通性测试" width="230px">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.testResult===0" type="danger" class="testResult">未通过</el-tag>
-          <el-tag v-else-if="scope.row.testResult===1" type="success" class="testResult">已通过</el-tag>
-          <span v-if="scope.row.testTime"> {{ scope.row.testTime }}</span>
-          <el-tag v-else type="info">未测试</el-tag>
+            <el-tag v-if="scope.row.testResult === 0" type="danger" class="testResult">未通过</el-tag>
+            <el-tag v-else-if="scope.row.testResult === 1" type="success" class="testResult">已通过</el-tag>
+            <span v-if="scope.row.testTime"> {{ scope.row.testTime }}</span>
+            <el-tag v-else type="info">未测试</el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -172,26 +172,23 @@ export default {
           Promise.all(this.apiKeys.map(item => {
             return getCallFunction(item.id).then(res => {
               item.callFunction = res.code;
-              if(localStorage.getItem(item.id+'_testConnectivity_normal'))
-              {
-                item.testTime=localStorage.getItem(item.id+'_testConnectivity_normal')
-                item.testResult=1
+              if (localStorage.getItem(item.id + '_testConnectivity_normal')) {
+                item.testTime = localStorage.getItem(item.id + '_testConnectivity_normal')
+                item.testResult = 1
               }
-              else if(localStorage.getItem(item.id+'_testConnectivity_error'))
-              {
-                item.testTime=localStorage.getItem(item.id+'_testConnectivity_error')
-                item.testResult=0
+              else if (localStorage.getItem(item.id + '_testConnectivity_error')) {
+                item.testTime = localStorage.getItem(item.id + '_testConnectivity_error')
+                item.testResult = 0
               }
-              else
-              {
-                item.testTime=null
+              else {
+                item.testTime = null
               }
               return item; // 返回更新后的 item
             });
           })).then(updatedApiKeys => {
 
             this.apiKeys = updatedApiKeys;
-            console.log('经过处理的apikeys',this.apiKeys)
+            console.log('经过处理的apikeys', this.apiKeys)
           });
         });
       }
@@ -238,10 +235,10 @@ export default {
       deleteById(deleteId).then(res => {
         if (res.success) {
           this.apiKeys.splice(index, 1);
-          if( localStorage.getItem(row.id+'_testConnectivity_error'))
-          localStorage.removeItem(row.id+'_testConnectivity_error')
-          if(localStorage.getItem(row.id+'_testConnectivity_normal'))
-          localStorage.removeItem(row.id+'_testConnectivity_normal')
+          if (localStorage.getItem(row.id + '_testConnectivity_error'))
+            localStorage.removeItem(row.id + '_testConnectivity_error')
+          if (localStorage.getItem(row.id + '_testConnectivity_normal'))
+            localStorage.removeItem(row.id + '_testConnectivity_normal')
           this.$message({
             message: '删除成功',
             type: 'success',
@@ -363,51 +360,71 @@ export default {
       this.resetCodeEditor()
     },
     handleTest(row) {
+      // 防止重复触发
+      // if (this.connectivityTesting) return;
+
+      // 初始化重试机制
+      this.retries = this.retries ?? 3;
+      const delay = 1080; // 1 second
+
       if (!row.callFunction) {
         this.$message({
           message: '还没有编辑API key调用函数',
           type: 'warning'
         });
-        return
+        return;
       }
-      this.$message({
-          message: '正在测试，请稍等',
-          type: 'info'
-        });
-      this.connectivityTesting = true
-      testConnectivity(row.value, row.callFunction).then(res => {
-        if (res.success) {
-          if (res.result) {
-            this.$message({
-              message: '连通性良好',
-              type: 'success'
-            });
-            const specifiedDate = new Date();
 
-            if(localStorage.getItem(row.id+'_testConnectivity_error'))
-           {    
-          localStorage.removeItem(row.id+'_testConnectivity_error')
-           }
-            localStorage.setItem(row.id+'_testConnectivity_normal',specifiedDate.toLocaleString())
-          }
-          else {
-            this.$message({
-              message: '连通性出了问题，请检查网络、调用函数和API key',
-              type: 'warning'
-            });
+      const message = this.retries === 3
+        ? '正在测试，请稍等'
+        : '正在重新尝试测试，请稍等';
+
+      this.$message({
+        message,
+        type: 'info'
+      });
+
+      this.connectivityTesting = true;
+
+      testConnectivity(row.value, row.callFunction,this.retries)
+        .then(res => {
+          if (res.success) {
             const specifiedDate = new Date();
-            if(localStorage.getItem(row.id+'_testConnectivity_normal'))
-           {    
-          localStorage.removeItem(row.id+'_testConnectivity_normal')
-           }
-            localStorage.setItem(row.id+'_testConnectivity_error',specifiedDate.toLocaleString())
+            if (res.result) {
+              this.$message({
+                message: '连通性良好',
+                type: 'success'
+              });
+              localStorage.setItem(row.id + '_testConnectivity_normal', specifiedDate.toLocaleString());
+              localStorage.removeItem(row.id + '_testConnectivity_error');
+            } else {
+              this.$message({
+                message: '连通性出了问题，请检查网络、调用函数和API key',
+                type: 'warning'
+              });
+              localStorage.setItem(row.id + '_testConnectivity_error', specifiedDate.toLocaleString());
+              localStorage.removeItem(row.id + '_testConnectivity_normal');
+            }
           }
-          this.connectivityTesting = false
-        }
-        this.connectivityTesting = false
-        this.load()
-      })
-    },
+          this.retries = 3;
+        })
+        .catch(() => {
+          if (this.retries > 0) {
+            this.retries--;
+            setTimeout(() => this.handleTest(row), delay);
+          } else {
+            this.retries = 3;
+            this.$message({
+              message: '请求超时，请稍后重试。',
+              type: 'error'
+            });
+          }
+        })
+        .finally(() => {
+          this.connectivityTesting = false;
+          this.load();
+        });
+    }
     // isValidValue(inputString) {
     //   // 使用正则表达式匹配以非空内容开始，中间一个点，后面也是非空内容结束的字符串
     //   const formatPattern = /^[^.]+\.[^.]+$/;
@@ -435,7 +452,8 @@ export default {
 .main {
   padding: 20px;
 }
-.testResult{
+
+.testResult {
   margin-right: 10px;
 }
 </style>

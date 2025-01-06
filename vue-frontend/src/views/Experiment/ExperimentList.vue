@@ -1380,7 +1380,7 @@ export default {
             });
         },
         confirmStart(index, row,number) {
-            this.$confirm('确定执行该测试吗？一旦执行将直至结束', '提示', {
+            this.$confirm('确定执行该测试吗？执行将直至结束', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'

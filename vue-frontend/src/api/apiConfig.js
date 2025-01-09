@@ -47,10 +47,10 @@ export function getCallFunction(id) {
 }
 
 
-export function testConnectivity(value,code) {
+export function testConnectivity(value,code,retries) {
     return service({
         url: '/APIKey',
         method: 'put',
-        data: {choose:"3",value:value,code:code}
+        data: {choose:"3",value:value,code:code,retries:retries}
     })
 }

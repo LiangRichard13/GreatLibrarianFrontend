@@ -74,8 +74,11 @@ class APIKeyCRUD(Resource):
             except Exception as e:
                 return jsonify({'success': False, 'message': str(e)})
         elif request.json['choose'] == '3':  # 连通性测试
-            value, code = request.json['value'], request.json['code']  # apikey值,call函数
+            value, code, retries = request.json['value'], request.json['code'], request.json['retries']
             path = os.path.join(BackendPath(), 'App', 'utils', 'check.py')
-            update_code_to_class(path, code, 'new_llm')
-            print(f'网络连通性测试:{checkllm(new_llm(value))}')
+            print(f'type:{type(retries)}--{retries}')
+            if retries == 3:
+                update_code_to_class(path, code, 'new_llm')
+            time.sleep(1)  # 程序休眠，供Debug重载留时间
+            # print(f'网络连通性测试:{checkllm(new_llm(value))}')
             return jsonify({'success': True, 'result': checkllm(new_llm(value))})

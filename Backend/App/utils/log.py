@@ -4,6 +4,7 @@ import logging
 import os
 import re
 from datetime import datetime
+from App.utils.backend_path import BackendPath
 
 # 正则表达式匹配 ANSI 转义序列
 ansi_escape_pattern = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
@@ -31,11 +32,11 @@ class ANSIFilter(logging.Filter):
 # 配置日志
 def setup_logging():
     # 创建日志文件夹（如果不存在）
-    log_dir = 'logs'
+    log_dir = os.path.join(BackendPath(), 'GLF_Logs', datetime.now().strftime('%Y%m%d'))
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     # 设置日志文件路径
-    log_file = os.path.join(log_dir, f'GLF_{datetime.now().strftime("%Y%m%d_%H%M%S")}.log')
+    log_file = os.path.join(log_dir, f'{datetime.now().strftime("%Y%m%d_%H%M%S")}.log')
     # 配置日志格式
     log_format = '%(asctime)s - %(levelname)s - %(message)s'
     logging.basicConfig(

@@ -98,16 +98,31 @@
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
                                         <el-dropdown>
-                                        <el-button plain size="mini" type="success"
-                                             :loading="isTesting">开始测试
-                                             <i class="el-icon-arrow-down el-icon--right"></i>
-                                        </el-button>
-                                        <el-dropdown-menu slot="dropdown">
-                                            <el-dropdown-item><el-tooltip content="模糊匹配方法，适用于开放式问答的评价，对于N个keywords，匹配到任意一个keyword即可获得满分（1分）" placement="top"><el-button size="small" type="primary" style="margin-bottom: 5px;" icon="el-icon-caret-right" plain @click="confirmStart(scope.$index, scope.row,1)">模糊匹配方法-1</el-button></el-tooltip></el-dropdown-item>
-                                            <el-dropdown-item><el-tooltip content="模糊匹配方法，适用于开放式问答的评价，对于N个keywords，每匹配到一个keyword即可获得1/N分" placement="left"><el-button size="small" type="primary" style="margin-bottom: 5px;" icon="el-icon-caret-right" plain @click="confirmStart(scope.$index, scope.row,2)">模糊匹配方法-2</el-button></el-tooltip></el-dropdown-item>
-                                            <el-dropdown-item><el-tooltip content="规则化匹配方法，适用于封闭式问题（选择题/判断题）的评价，对于N个keywords，匹配到任意一个keyword即可获得满分（1分）" placement="left"><el-button size="small" type="primary" style="margin-bottom: 5px;" icon="el-icon-caret-right" plain @click="confirmStart(scope.$index, scope.row,3)">规则化匹配方法-1</el-button></el-tooltip></el-dropdown-item>
-                                            <el-dropdown-item><el-tooltip content="规则化匹配方法，适用于封闭式问题（选择题/判断题）的评价，对于N个keywords，每匹配到一个keyword即可获得1/N分" placement="bottom"><el-button size="small" type="primary" style="margin-bottom: 5px;" icon="el-icon-caret-right" plain @click="confirmStart(scope.$index, scope.row,4)">规则化匹配方法-2</el-button></el-tooltip></el-dropdown-item>
-                                        </el-dropdown-menu>
+                                            <el-button plain size="mini" type="success" :loading="isTesting">开始测试
+                                                <i class="el-icon-arrow-down el-icon--right"></i>
+                                            </el-button>
+                                            <el-dropdown-menu slot="dropdown">
+                                                <el-dropdown-item><el-tooltip
+                                                        content="模糊匹配方法，适用于开放式问答的评价，对于N个keywords，匹配到任意一个keyword即可获得满分（1分）"
+                                                        placement="top"><el-button size="small" type="primary"
+                                                            style="margin-bottom: 5px;" icon="el-icon-caret-right" plain
+                                                            @click="confirmStart(scope.$index, scope.row, 1)">模糊匹配方法-1</el-button></el-tooltip></el-dropdown-item>
+                                                <el-dropdown-item><el-tooltip
+                                                        content="模糊匹配方法，适用于开放式问答的评价，对于N个keywords，每匹配到一个keyword即可获得1/N分"
+                                                        placement="left"><el-button size="small" type="primary"
+                                                            style="margin-bottom: 5px;" icon="el-icon-caret-right" plain
+                                                            @click="confirmStart(scope.$index, scope.row, 2)">模糊匹配方法-2</el-button></el-tooltip></el-dropdown-item>
+                                                <el-dropdown-item><el-tooltip
+                                                        content="规则化匹配方法，适用于封闭式问题（选择题/判断题）的评价，对于N个keywords，匹配到任意一个keyword即可获得满分（1分）"
+                                                        placement="left"><el-button size="small" type="primary"
+                                                            style="margin-bottom: 5px;" icon="el-icon-caret-right" plain
+                                                            @click="confirmStart(scope.$index, scope.row, 3)">规则化匹配方法-1</el-button></el-tooltip></el-dropdown-item>
+                                                <el-dropdown-item><el-tooltip
+                                                        content="规则化匹配方法，适用于封闭式问题（选择题/判断题）的评价，对于N个keywords，每匹配到一个keyword即可获得1/N分"
+                                                        placement="bottom"><el-button size="small" type="primary"
+                                                            style="margin-bottom: 5px;" icon="el-icon-caret-right" plain
+                                                            @click="confirmStart(scope.$index, scope.row, 4)">规则化匹配方法-2</el-button></el-tooltip></el-dropdown-item>
+                                            </el-dropdown-menu>
                                         </el-dropdown>
                                     </el-dropdown-item>
                                     <el-dropdown-item>
@@ -779,9 +794,9 @@ export default {
                         // formData.append('DS', this.newExperiment.DS);
                         // formData.append('pid', this.thisProject.id)
                         // formData.append('type', this.newExperiment.type)
-                        let trimmedName =this.newExperiment.name.replace(/\s+/g, '');
+                        let trimmedName = this.newExperiment.name.replace(/\s+/g, '');
                         const addData = {
-                            name: trimmedName ,
+                            name: trimmedName,
                             AK1: this.newExperiment.AK1,
                             AK2: this.newExperiment.AK2,
                             DS: this.newExperiment.DS,
@@ -818,7 +833,7 @@ export default {
             else if (this.newExperiment.type === 2 || this.newExperiment.type === 3) {
                 if (this.newExperiment.name.trim()) {
                     if (this.newExperiment.AK1 && this.newExperiment.DS) {
-                        let trimmedName =this.newExperiment.name.replace(/\s+/g, '');
+                        let trimmedName = this.newExperiment.name.replace(/\s+/g, '');
                         const addData = {
                             name: trimmedName,
                             AK1: this.newExperiment.AK1,
@@ -875,15 +890,17 @@ export default {
                 })
             }
         },
-        handleStartExperiment(index, row,number) {
+        handleStartExperiment(index, row, number) {
             this.isTesting = true
             this.$message({
                 message: row.id + '-' + row.name + '正在准备执行,请稍等',
                 type: 'info'
             });
-            this.handleGenerateConfig(row).then(result => {
+            this.handleGenerateConfig(row).then(async result => {
                 if (result) {
-                    const data = { tPid: row.id,number:number }
+                    // 停留两秒等待配置文件重载
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    const data = { tPid: row.id, number: number }
                     startExp(data).then(res => {
                         if (res.success) {
                             this.$message({
@@ -1101,204 +1118,234 @@ export default {
             });
 
         },
+        retryTestConnectivity(value, callFunction, maxRetries = 3, delay = 1000) {
+            return new Promise((resolve, reject) => {
+                const attempt = (retriesLeft) => {
+                    testConnectivity(value, callFunction, retriesLeft)
+                        .then(resolve) // 如果成功，直接返回结果
+                        .catch((error) => {
+                            if (retriesLeft > 0) {
+                                console.log(`重试中...剩余尝试次数：${retriesLeft - 1}`);
+                                setTimeout(() => attempt(retriesLeft - 1), delay); // 延迟后重试
+                            } else {
+                                console.error("连接失败，重试次数已用尽", error);
+                                reject(error); // 最终失败
+                            }
+                        });
+                };
+                attempt(maxRetries); // 开始第一次尝试
+            });
+        },
         generateConfig(thisTest) {
             return new Promise((resolve, reject) => {
                 var AK1_callFunction = this.getCode(thisTest.AK1.id);
                 var AK2_callFunction = this.getCode(thisTest.AK2.id);
+
                 Promise.all([AK1_callFunction, AK2_callFunction]).then(values => {
                     console.log("AK1 的调用函数代码：", values[0]);
                     console.log("AK2 的调用函数代码：", values[1]);
+
                     if (values[0] !== null && values[1] !== null) {
-                        testConnectivity(thisTest.AK1.value, values[0]).then(res => {
-                            if (res.success) {
-                                if (!res.result) {
+                        // 使用带重试机制的函数
+                        this.retryTestConnectivity(thisTest.AK1.value, values[0])
+                            .then(res => {
+                                if (res.success && res.result) {
+                                    return this.retryTestConnectivity(thisTest.AK2.value, values[1]);
+                                } else {
                                     this.$message({
                                         message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
                                         type: 'error'
                                     });
-                                    this.isTesting = false
-                                    reject(false)
+                                    throw new Error("AK1 连通性失败");
                                 }
-                                else {
-                                    testConnectivity(thisTest.AK2.value, values[1]).then(res => {
-                                        if (res.success) {
-                                            if (!res.result) {
-                                                this.$message({
-                                                    message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
-                                                    type: 'error'
-                                                });
-                                                this.isTesting = false
-                                                reject(false)
-                                            }
-                                            else {
-                                                let checkData = { tPid: thisTest.id, code: values[0], className: 'new_llm1', type: 1 }
-                                                checkOperationFile(checkData).then(res => {
-                                                    if (res.success) {
-                                                        checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2', type: 1 }
-                                                        checkOperationFile(checkData).then(res => {
-                                                            if (res.success) {
-                                                                generateOperationFile(thisTest.id).then(res => {
-                                                                    if (res.success) {
-                                                                        this.$message({
-                                                                            message: '已生成新配置文件',
-                                                                            type: 'success'
-                                                                        });
-                                                                        // this.setExpEmpty()
-                                                                        this.isTesting = false
-                                                                        resolve(true)
-                                                                    }
-                                                                    else {
-                                                                        this.$message({
-                                                                            message: '配置文件生成错误',
-                                                                            type: 'error'
-                                                                        });
-                                                                        this.isTesting = false
-                                                                        reject(false)
-                                                                    }
-                                                                })
-                                                            }
-                                                            else {
-                                                                this.$message({
-                                                                    message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
-                                                                    type: 'error'
-                                                                });
-                                                                this.isTesting = false
-                                                                reject(false)
-                                                            }
-                                                        })
-                                                    }
-                                                    else {
-                                                        this.$message({
-                                                            message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
-                                                            type: 'error'
-                                                        });
-                                                        this.isTesting = false
-                                                        reject(false)
-                                                    }
-                                                })
-                                            }
-                                        }
-                                    })
+                            })
+                            .then(res => {
+                                if (res.success && res.result) {
+                                    // 检查文件操作
+                                    let checkData = { tPid: thisTest.id, code: values[0], className: 'new_llm1', type: 1 };
+                                    return checkOperationFile(checkData);
+                                } else {
+                                    this.$message({
+                                        message: `评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
+                                        type: 'error'
+                                    });
+                                    throw new Error("AK2 连通性失败");
                                 }
-                            }
-                        })
-                    }
-                    else {
+                            })
+                            .then(res => {
+                                if (res.success) {
+                                    let checkData = { tPid: thisTest.id, code: values[1], className: 'new_llm2', type: 1 };
+                                    return checkOperationFile(checkData);
+                                } else {
+                                    throw new Error("AK1 编译失败");
+                                }
+                            })
+                            .then(res => {
+                                if (res.success) {
+                                    return generateOperationFile(thisTest.id);
+                                } else {
+                                    throw new Error("AK2 编译失败");
+                                }
+                            })
+                            .then(res => {
+                                if (res.success) {
+                                    this.$message({
+                                        message: '已生成新配置文件',
+                                        type: 'success'
+                                    });
+                                    this.isTesting = false;
+                                    resolve(true);
+                                } else {
+                                    throw new Error("配置文件生成错误");
+                                }
+                            })
+                            .catch(error => {
+                                console.error(error.message);
+                                this.isTesting = false;
+                                reject(false);
+                            });
+                    } else {
+                        // 处理调用函数未定义的情况
                         if (values[0] === null && values[1] !== null) {
-                            this.$confirm(`还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
+                            this.$confirm(`还没有编辑被测模型 ${thisTest.AK1.name} 的API key调用函数，要进行编辑吗？`, '提示', {
                                 confirmButtonText: '确定',
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
-                                this.isTesting = false
-                                this.$router.push("/keyConfig")
-                                reject(false)
+                                this.isTesting = false;
+                                this.$router.push("/keyConfig");
+                                reject(false);
                             }).catch(() => {
-                                this.isTesting = false
-                                reject(false)
+                                this.isTesting = false;
+                                reject(false);
                             });
-                        }
-                        else if (values[0] !== null && values[1] === null) {
-                            this.$confirm(`还没有编辑评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK2.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
+                        } else if (values[0] !== null && values[1] === null) {
+                            this.$confirm(`还没有编辑评估模型 ${thisTest.AK2.name} 的API key调用函数，要进行编辑吗？`, '提示', {
                                 confirmButtonText: '确定',
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
-                                this.isTesting = false
-                                this.$router.push("/keyConfig")
-                                reject(false)
+                                this.isTesting = false;
+                                this.$router.push("/keyConfig");
+                                reject(false);
                             }).catch(() => {
-                                this.isTesting = false
-                                reject(false)
+                                this.isTesting = false;
+                                reject(false);
                             });
-                        }
-                        else {
-                            this.$confirm(`还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK2.name + ' ' : ''}和评估模型 ${thisTest.AK2 && thisTest.AK2.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
+                        } else {
+                            this.$confirm(`还没有编辑被测模型和评估模型的API key调用函数，要进行编辑吗？`, '提示', {
                                 confirmButtonText: '确定',
                                 cancelButtonText: '取消',
                                 type: 'warning'
                             }).then(() => {
-                                this.isTesting = false
-                                this.$router.push("/keyConfig")
-                                reject(false)
+                                this.isTesting = false;
+                                this.$router.push("/keyConfig");
+                                reject(false);
                             }).catch(() => {
-                                this.isTesting = false
-                                reject(false)
+                                this.isTesting = false;
+                                reject(false);
                             });
                         }
                     }
-                })
-            })
+                });
+            });
         },
         generateConfig_hallucination_toxicity(thisTest) {
             return new Promise((resolve, reject) => {
                 var AK1_callFunction = this.getCode(thisTest.AK1.id);
-                AK1_callFunction.then(value => {
-                    if (value !== null) {
-                        testConnectivity(thisTest.AK1.value, value).then(res => {
-                            if (res.success) {
-                                if (!res.result) {
+
+                AK1_callFunction
+                    .then((value) => {
+                        if (value === null) {
+                            // 调用函数不存在，提示用户编辑
+                            this.$confirm(
+                                `还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + " " : ""
+                                }的API key的调用函数，要进行编辑吗？`,
+                                "提示",
+                                {
+                                    confirmButtonText: "确定",
+                                    cancelButtonText: "取消",
+                                    type: "warning",
+                                }
+                            )
+                                .then(() => {
+                                    this.isTesting = false;
+                                    this.$router.push("/keyConfig");
+                                    reject(new Error("调用函数缺失"));
+                                })
+                                .catch(() => {
+                                    this.isTesting = false;
+                                    reject(new Error("用户取消操作"));
+                                });
+                        } else {
+                            // 测试连通性（带重试机制）
+                            this.retryTestConnectivity(thisTest.AK1.value, value)
+                                .then((connectivityResult) => {
+                                    if (!connectivityResult.success || !connectivityResult.result) {
+                                        this.$message({
+                                            message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name
+                                                ? thisTest.AK1.name + " "
+                                                : ""
+                                                }的API key连通性出了问题，请检查网络或API key`,
+                                            type: "error",
+                                        });
+                                        throw new Error("连通性测试失败");
+                                    }
+
+                                    // 检查调用函数编译
+                                    let checkData = {
+                                        tPid: thisTest.id,
+                                        code: value,
+                                        className: "new_llm1",
+                                        type: thisTest.type,
+                                    };
+                                    return checkOperationFile(checkData);
+                                })
+                                .then((checkResult) => {
+                                    if (!checkResult.success) {
+                                        this.$message({
+                                            message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name
+                                                ? thisTest.AK1.name + " "
+                                                : ""
+                                                }的API key调用函数编译失败，请检查语法错误`,
+                                            type: "error",
+                                        });
+                                        throw new Error("调用函数编译失败");
+                                    }
+
+                                    // 生成配置文件
+                                    return generateOperationFile(thisTest.id);
+                                })
+                                .then((generateResult) => {
+                                    if (!generateResult.success) {
+                                        this.$message({
+                                            message: "配置文件生成错误",
+                                            type: "error",
+                                        });
+                                        throw new Error("配置文件生成失败");
+                                    }
+
+                                    // 配置文件生成成功
                                     this.$message({
-                                        message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key连通性出了问题，请检查网络或API key`,
-                                        type: 'error'
+                                        message: "已生成新配置文件",
+                                        type: "success",
                                     });
-                                    this.isTesting = false
-                                    reject(false)
-                                }
-                                else {
-                                    let checkData = { tPid: thisTest.id, code: value, className: 'new_llm1', type: thisTest.type }
-                                    checkOperationFile(checkData).then(res => {
-                                        if (res.success) {
-                                            generateOperationFile(thisTest.id).then(res => {
-                                                if (res.success) {
-                                                    this.$message({
-                                                        message: '已生成新配置文件',
-                                                        type: 'success'
-                                                    });
-                                                    this.isTesting = false
-                                                    resolve(true)
-                                                }
-                                                else {
-                                                    this.$message({
-                                                        message: '配置文件生成错误',
-                                                        type: 'error'
-                                                    });
-                                                    this.isTesting = false
-                                                    reject(false)
-                                                }
-                                            })
-                                        }
-                                        else {
-                                            this.$message({
-                                                message: `被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key调用函数编译失败，请检查语法错误`,
-                                                type: 'error'
-                                            });
-                                            this.isTesting = false
-                                            reject(false)
-                                        }
-                                    })
-                                }
-                            }
-                        })
-                    }
-                    else {
-                        this.$confirm(`还没有编辑被测模型 ${thisTest.AK1 && thisTest.AK1.name ? thisTest.AK1.name + ' ' : ''}的API key的调用函数，要进行编辑吗？`, '提示', {
-                            confirmButtonText: '确定',
-                            cancelButtonText: '取消',
-                            type: 'warning'
-                        }).then(() => {
-                            this.isTesting = false
-                            this.$router.push("/keyConfig")
-                            reject(false)
-                        }).catch(() => {
-                            this.isTesting = false
-                            reject(false)
-                        });
-                    }
-                })
-
-
-            })
+                                    this.isTesting = false;
+                                    resolve(true);
+                                })
+                                .catch((error) => {
+                                    console.error(error.message);
+                                    this.isTesting = false;
+                                    reject(error);
+                                });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("获取调用函数失败：", error);
+                        this.isTesting = false;
+                        reject(error);
+                    });
+            });
         },
         getCode(id) {
             return getCallFunction(id).then(res => {
@@ -1379,13 +1426,13 @@ export default {
                 });
             });
         },
-        confirmStart(index, row,number) {
-            this.$confirm('确定执行该测试吗？一旦执行将直至结束', '提示', {
+        confirmStart(index, row, number) {
+            this.$confirm('确定执行该测试吗？执行将直至结束', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.handleStartExperiment(index, row,number)
+                this.handleStartExperiment(index, row, number)
             }).catch(() => {
                 this.$message({
                     type: 'info',
@@ -1441,7 +1488,7 @@ export default {
                             else {
                                 localStorage.setItem(experiment.id + 'errorTimes', '1')
                             }
-                            if (Number(localStorage.getItem(experiment.id + 'errorTimes')) >= 5) {
+                            if (Number(localStorage.getItem(experiment.id + 'errorTimes')) >= 13) {
                                 errorHandle(experiment.id).then(res => {
                                     if (res.success) {
                                         this.$notify.error({
@@ -1579,7 +1626,7 @@ export default {
                     //获取到文件名
                     const urlParts = downloadUrl.split('/');
                     const filename = urlParts[urlParts.length - 1];
-                    const desiredFilename = this.currentExpName+'-'+ filename
+                    const desiredFilename = this.currentExpName + '-' + filename
 
                     fetch(downloadUrl)
                         .then(response => response.blob())

@@ -74,7 +74,10 @@
           </el-table-column>
           <el-table-column label="治理大模型评判结果">
             <template slot-scope="scope">
-              <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.llm_judge }}
+              <div v-if="scope.row.llm_judge" style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.llm_judge }}
+              </div>
+              <div v-else>
+                <el-tag effect="light" type="warning">无</el-tag>
               </div>
             </template>
           </el-table-column>

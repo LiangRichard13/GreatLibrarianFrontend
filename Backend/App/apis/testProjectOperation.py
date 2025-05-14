@@ -47,14 +47,27 @@ def hallucination_log(content):
     return data
 
 
+# def safety_log(content):
+#     matches = re.compile(
+#         r'New Epoch ----------.*?INFO - (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO - '
+#         r'To LLM:	 (.*?)\n.*?To User:	 (.*?)\n.*?'
+#         r'The model gets (\d+\.\d+) points in this testcase by LLMEval method.*?'
+#         r'The final score of this testcase is (\d+\.\d+), in (.*?) field\.',
+#         re.DOTALL).findall(content)
+#     data = [{'time': m[0], 'Q': m[1], 'A': m[2], 'llm_score': m[3], 'fin_score': m[4], 'field': m[5]}
+#             for m in matches]
+#     return data
+
 def safety_log(content):
     matches = re.compile(
         r'New Epoch ----------.*?INFO - (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO - '
-        r'To LLM:	 (.*?)\n.*?To User:	 (.*?)\n.*?'
+        r'To LLM:\t (.*?)\n.*?To User:\t (.*?)\n.*?'
+        r'(?:来自治理大模型的评判：\s*(.*?)\s*治理大模型评判结束.*?)?'
         r'The model gets (\d+\.\d+) points in this testcase by LLMEval method.*?'
         r'The final score of this testcase is (\d+\.\d+), in (.*?) field\.',
         re.DOTALL).findall(content)
-    data = [{'time': m[0], 'Q': m[1], 'A': m[2], 'llm_score': m[3], 'fin_score': m[4], 'field': m[5]}
+    data = [{'time': m[0], 'Q': m[1], 'A': m[2], 'llm_judge': m[3].strip() if m[3] else "", 'llm_score': m[4],
+             'fin_score': m[5], 'field': m[6]}
             for m in matches]
     return data
 
@@ -113,8 +126,9 @@ class TPOperation(Resource):
         tP = TestProject.query.filter(TestProject.tP_id == request.args['tPid']).first()
         config_path = os.path.join(BackendPath(), 'App', 'data', 'config', 'config_' + tP.tP_id + '.py')  # 配置文件路径
         # 更新报告命令
-        command = 'conda run -n ' + current_app.config['conda_env'] + ' poetry run glupdate --config_path=' + config_path + \
-                  ' --test_id=' + tP.tP_id + ' --logs_path=' + os.path.join(BackendPath(), 'App', 'data')+ \
+        command = 'conda run -n ' + current_app.config[
+            'conda_env'] + ' poetry run glupdate --config_path=' + config_path + \
+                  ' --test_id=' + tP.tP_id + ' --logs_path=' + os.path.join(BackendPath(), 'App', 'data') + \
                   ' --test_type=' + {1: 'general', 2: 'hallucination', 3: 'safety'}.get(tP.tP_type, None)
         print(command)
         try:
@@ -129,7 +143,9 @@ class TPOperation(Resource):
         dir_r = os.path.join(BackendPath(), 'App', 'data', 'Logs', request.args['tPid'])  # 报告目录
         if request.args['choose'] == '1':  # 报告数量
             return jsonify(
-                {'count': sum(1 for file in os.listdir(dir_r) if file.startswith('report-v') and os.path.isdir(os.path.join(dir_r, file))), 'success': True})
+                {'count': sum(1 for file in os.listdir(dir_r) if
+                              file.startswith('report-v') and os.path.isdir(os.path.join(dir_r, file))),
+                 'success': True})
         if request.args['choose'] == '2':  # 报告路径【markdown文件】
             dirName = 'report-v' + request.args['n'] + '-md'  # markdown文件夹名
             zipURL = os.path.join(dir_r, 'v' + request.args['n'] + '.zip')  # 输出的zip文件路径

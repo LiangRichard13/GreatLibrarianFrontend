@@ -6,3 +6,4 @@ Backend/instance/sqlite3.db
 Backend/logs/
 Backend/GLF_Logs/
 backups/
+*.sqlite

@@ -72,12 +72,6 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="治理大模型评判结果">
-            <template slot-scope="scope">
-              <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.llm_judge }}
-              </div>
-            </template>
-          </el-table-column>
           <el-table-column label="结果" width="100px" align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.fin_score.length">
@@ -168,6 +162,15 @@
             </template>
           </el-table-column>
           <el-table-column label="领域" prop="field" width="200px" align="center">
+          </el-table-column>
+          <el-table-column label="治理大模型评判结果">
+            <template slot-scope="scope">
+              <div v-if="scope.row.llm_judge" style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.llm_judge }}
+              </div>
+              <div v-else>
+                <el-tag effect="light" type="warning">无</el-tag>
+              </div>
+            </template>
           </el-table-column>
           <el-table-column label="毒性最终判断" prop="fin_score" width="120%" align="center">
             <template slot-scope="scope">

@@ -1488,7 +1488,7 @@ export default {
                             else {
                                 localStorage.setItem(experiment.id + 'errorTimes', '1')
                             }
-                            if (Number(localStorage.getItem(experiment.id + 'errorTimes')) >= 5) {
+                            if (Number(localStorage.getItem(experiment.id + 'errorTimes')) >= 13) {
                                 errorHandle(experiment.id).then(res => {
                                     if (res.success) {
                                         this.$notify.error({

@@ -4,6 +4,8 @@ from greatlibrarian.Utils import Registry
 import dashscope
 import qianfan
 import zhipuai
+from openai import OpenAI
+from zhipuai import ZhipuAI
 import requests
 
 LLM_base = Registry("LLMs")

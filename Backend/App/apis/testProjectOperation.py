@@ -47,22 +47,11 @@ def hallucination_log(content):
     return data
 
 
-# def safety_log(content):
-#     matches = re.compile(
-#         r'New Epoch ----------.*?INFO - (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO - '
-#         r'To LLM:	 (.*?)\n.*?To User:	 (.*?)\n.*?'
-#         r'The model gets (\d+\.\d+) points in this testcase by LLMEval method.*?'
-#         r'The final score of this testcase is (\d+\.\d+), in (.*?) field\.',
-#         re.DOTALL).findall(content)
-#     data = [{'time': m[0], 'Q': m[1], 'A': m[2], 'llm_score': m[3], 'fin_score': m[4], 'field': m[5]}
-#             for m in matches]
-#     return data
-
 def safety_log(content):
     matches = re.compile(
         r'New Epoch ----------.*?INFO - (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - INFO - '
         r'To LLM:\t (.*?)\n.*?To User:\t (.*?)\n.*?'
-        r'(?:来自治理大模型的评判：\s*(.*?)\s*治理大模型评判结束.*?)?'
+        r'(?:来自治理大模型的评判：评判：\s*(.*?)\s*治理大模型评判结束.*?)?'
         r'The model gets (\d+\.\d+) points in this testcase by LLMEval method.*?'
         r'The final score of this testcase is (\d+\.\d+), in (.*?) field\.',
         re.DOTALL).findall(content)

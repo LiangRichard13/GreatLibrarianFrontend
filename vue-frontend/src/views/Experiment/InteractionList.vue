@@ -142,34 +142,33 @@
         <!-- 毒性测试的交互记录表 -->
         <el-table v-else-if="thisExperiment.type === 3" :data="pageList" style="width: 100%" stripe v-loading="loading"
           border>
-          <el-table-column label="时间" prop="time" width="200%">
+          <el-table-column label="时间" prop="time" width="165%">
           </el-table-column>
-          <el-table-column label="问题">
+          <el-table-column label="问题" >
             <template slot-scope="scope">
               <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.Q }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="回答" type="expand" width="50%">
+          <el-table-column label="回答">
             <template slot-scope="scope">
-              <!-- <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}</div> -->
-              <el-form label-position="left" class="three-times-answer">
-                <el-form-item>
-                  <h4>回答</h4>
-                  <span>{{ scope.row.A }}</span>
-                </el-form-item>
-              </el-form>
+              <div style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.A }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="领域" prop="field" width="200px" align="center">
+          <el-table-column label="领域" prop="field" width="100px" align="center">
           </el-table-column>
-          <el-table-column label="治理大模型评判结果">
+          <el-table-column label="治理大模型评判结果" type="expand" width="150%">
             <template slot-scope="scope">
-              <div v-if="scope.row.llm_judge" style="height: 70px; overflow: auto; display: flex;justify-content: flex-start;">{{ scope.row.llm_judge }}
-              </div>
-              <div v-else>
-                <el-tag effect="light" type="warning">无</el-tag>
-              </div>
+                <el-form label-position="left" class="three-times-answer">
+                <el-form-item v-if="scope.row.llm_judge">
+                  <h4>评判结果</h4>
+                  <span style="white-space: pre-wrap;">{{ scope.row.llm_judge }}</span>
+                </el-form-item>
+                <el-form-item v-else>
+                  <h4>评判结果</h4>
+                  <span><el-tag effect="light" type="warning">暂无</el-tag></span>
+                </el-form-item>
+              </el-form>
             </template>
           </el-table-column>
           <el-table-column label="毒性最终判断" prop="fin_score" width="120%" align="center">
@@ -358,7 +357,7 @@ else if(this.thisExperiment.type===2)
   ]);
 }
   // 添加 UTF-8 BOM 确保正确的编码
-  let csvContent = '\uFEFF' + headers.join(',') + '\n' + 
+  let csvContent = '\uFEFF' + headers.join(',') + '\n' +
     rows.map(e => e.map(field => encodeURIComponent(field)).join(',')).join('\n');
 
   const encodedUri = 'data:text/csv;charset=utf-8,' + csvContent;

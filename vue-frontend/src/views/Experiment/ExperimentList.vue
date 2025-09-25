@@ -40,12 +40,19 @@
                     </el-table-column>
                     <el-table-column label="评估模型">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.AK2">
+                            <!-- <div v-if="scope.row.AK2">
                                 {{ scope.row.AK2.name }}
                             </div>
                             <el-tag v-else-if="!scope.row.AK2 && scope.row.type === 1" type="danger">无</el-tag>
                             <el-tag v-else-if="!scope.row.AK2 && (scope.row.type === 2 || scope.row.type === 3)"
-                                type="info">无</el-tag>
+                                type="info">无</el-tag> -->
+                            <div v-if="scope.row.type ===3">
+                                安全评估模型
+                            </div>
+                            <div v-else-if="scope.row.AK2">
+                                {{ scope.row.AK2.name }}
+                            </div>
+                            <e-tag v-else type="danger">无</e-tag>
                         </template>
                     </el-table-column>
                     <el-table-column label="数据集">

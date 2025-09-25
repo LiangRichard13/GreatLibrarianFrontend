@@ -4,8 +4,8 @@ module.exports = defineConfig({
     proxy: {
       '/api': {
           // target: 'http://0.0.0.0:5000',
-          target: 'http://192.168.70.12:5000',
-        // target: 'http://localhost:5000', // 后端API的地址
+          // target: 'http://192.168.70.12:5000',
+        target: 'http://localhost:5000', // 后端API的地址
         changeOrigin: true,
         pathRewrite: {
           '^/api': '' // 重写路径，去掉/api前缀
@@ -16,5 +16,5 @@ module.exports = defineConfig({
     overlay:false
     }
   },
-  transpileDependencies: true,
+  transpileDependencies: true
 })
